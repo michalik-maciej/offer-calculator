@@ -1,14 +1,17 @@
 {
-  "name": "@senior-calculator/schemas",
+  "name": "@senior-calculator/domain",
   "version": "0.0.1",
   "private": true,
   "main": "./index.ts",
   "types": "./index.ts",
   "scripts": {
-    "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "lint": "eslint \"**/*.{ts,tsx}\"",
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
-    "valibot": "^1.2.0"
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.17.13"
   }
 }
