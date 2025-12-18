@@ -1,38 +1,60 @@
-import type { Collection } from "../../schemas/src/collection.js"
-import type { Component } from "../../schemas/src/component.js"
+import { find } from "lodash/fp"
+import { Component } from "../../schemas/src/Component"
+import { ShelfUnit } from "../../schemas/src/ShelfUnit"
 
-import { aggregateComponentDemand } from "../aggregations/aggregateComponentDemand.js"
-import {
-  calculateShelfUnitDemand,
-  type ComponentDemand,
-} from "../shelf-unit/calculateShelfUnitDemand.js"
-
-export interface CalculateShelfDemandInput {
-  collections: Collection[]
-  catalog: Component[]
+type ShelfCalculationContext = {
+  numberOfLayouts: number
+  shelfUnits: ShelfUnit[]
 }
 
-export type ShelfDemandResult = ComponentDemand[]
-
-/**
- * Calculates shelf + support component demand for the given collections.
- */
 export function calculateShelfDemand(
-  input: CalculateShelfDemandInput
-): ShelfDemandResult {
-  const lines: ComponentDemand[] = []
+  { numberOfLayouts, shelfUnits }: ShelfCalculationContext,
+  catalog: Component[],
+) {
+  const SUPPORTS_PER_SHELF = 2
+  const demand: (Component & { quantity: number })[] = []
 
-  for (const collection of input.collections) {
-    for (const shelfUnit of collection.shelfUnits) {
-      lines.push(
-        ...calculateShelfUnitDemand({
-          shelfUnit,
-          catalog: input.catalog,
-          collectionQuantity: collection.quantity,
-        })
+  const addToDemand = (component: Component, quantity: number) => {
+    const existing = demand.find((item) => item.id === component.id)
+    if (existing) {
+      existing.quantity += quantity
+      return
+    }
+
+    demand.push({ ...component, quantity })
+  }
+
+  for (const shelfUnit of shelfUnits) {
+    const unitInstances = shelfUnit.quantity * numberOfLayouts
+
+    for (const shelf of shelfUnit.shelves) {
+      const shelfInstances = shelf.quantity * unitInstances
+      if (shelfInstances === 0) continue
+
+      const availableShelf = find(
+        { category: "shelf", depth: shelf.depth, width: shelfUnit.width },
+        catalog,
       )
+
+      if (!availableShelf) {
+        throw new Error(
+          `No shelf found for width ${shelfUnit.width}cm and depth ${shelf.depth}cm`,
+        )
+      }
+
+      const availableSupport = find(
+        { category: "support", depth: shelf.depth },
+        catalog,
+      )
+
+      if (!availableSupport) {
+        throw new Error(`No support found for depth ${shelf.depth}cm`)
+      }
+
+      addToDemand(availableShelf, shelfInstances)
+      addToDemand(availableSupport, shelfInstances * SUPPORTS_PER_SHELF)
     }
   }
 
-  return aggregateComponentDemand(lines)
+  return demand
 }
