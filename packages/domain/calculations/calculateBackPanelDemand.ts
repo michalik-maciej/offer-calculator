@@ -23,6 +23,10 @@ export function calculateBackPanelDemand(
       filter({ category: "back", width }, catalog),
     )
 
+    if (availableBackPanels.length === 0) {
+      throw new Error(`No back panels found for width ${width}cm`)
+    }
+
     let remainder = height - BACK_CLEARANCE_CM
 
     for (const backPanel of availableBackPanels) {
@@ -32,7 +36,7 @@ export function calculateBackPanelDemand(
       if (countPerShelfUnit === 0) continue
 
       demand.push({
-        ...backPanel,
+        id: backPanel.id,
         quantity: unitQuantity * countPerShelfUnit,
       })
 

@@ -21,7 +21,7 @@ export function calculateBaseShelfDemand(
     }
 
     return {
-      ...availableShelf,
+      id: availableShelf.id,
       quantity,
     }
   }, shelfUnitsByWidth)
