@@ -1,4 +1,5 @@
 import * as v from "valibot"
+
 import { ShelfUnitSchema } from "../ShelfUnit.js"
 
 export const LinearWallLayoutSchema = v.object({
@@ -10,3 +11,8 @@ export const LinearWallLayoutSchema = v.object({
 })
 
 export type LinearWallLayout = v.InferOutput<typeof LinearWallLayoutSchema>
+
+export function parseLinearWallLayout(dto: unknown) {
+  // TODO throw if invalid
+  return v.parse(LinearWallLayoutSchema, dto)
+}

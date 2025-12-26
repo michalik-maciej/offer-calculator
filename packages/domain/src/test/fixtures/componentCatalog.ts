@@ -1,5 +1,4 @@
-// packages/domain/test/fixtures/componentCatalog.ts
-import { Component } from "../../../schemas/src/Component"
+import { Component } from "@/schemas/Component"
 
 export const componentCatalogMock: Component[] = [
   {

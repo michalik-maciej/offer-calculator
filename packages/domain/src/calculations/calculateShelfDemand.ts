@@ -1,6 +1,7 @@
 import { find } from "lodash/fp"
-import { Component } from "../../schemas/src/Component"
-import { ShelfUnit } from "../../schemas/src/ShelfUnit"
+
+import { Component } from "@/schemas/Component"
+import { ShelfUnit } from "@/schemas/ShelfUnit"
 
 type ShelfCalculationContext = {
   numberOfLayouts: number

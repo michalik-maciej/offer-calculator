@@ -1,6 +1,7 @@
-import js from "@eslint/js"
 import eslintConfigPrettier from "eslint-config-prettier"
+import simpleImportSort from "eslint-plugin-simple-import-sort"
 import tseslint from "typescript-eslint"
+import js from "@eslint/js"
 
 export default [
   {
@@ -21,6 +22,9 @@ export default [
       ecmaVersion: "latest",
       sourceType: "module",
     },
+    plugins: {
+      "simple-import-sort": simpleImportSort,
+    },
     rules: {
       "no-undef": "off",
       "no-unused-vars": "off",
@@ -28,6 +32,35 @@ export default [
         "warn",
         { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
       ],
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: ["../src/*", "./src/*"],
+        },
+      ],
+      "simple-import-sort/imports": [
+        "error",
+        {
+          groups: [
+            // 1️⃣ 3rd-party packages (react, lodash, express, etc.)
+            ["^\\w", "^@?\\w"],
+
+            // 2️⃣ internal packages via alias (@/domain, @/api, etc.)
+            ["^@/"],
+
+            // 3️⃣ relative imports within package
+            ["^\\.", "^\\.\\./"],
+          ],
+        },
+      ],
+      "simple-import-sort/exports": "error",
+    },
+    settings: {
+      "import/resolver": {
+        typescript: {
+          project: "./tsconfig.base.json",
+        },
+      },
     },
   },
 

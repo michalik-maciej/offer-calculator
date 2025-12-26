@@ -1,4 +1,5 @@
-import { describe, it, expect } from "vitest"
+import { describe, expect, it } from "vitest"
+
 import { calculateBackPanelDemand } from "./calculateBackPanelDemand"
 import { componentCatalogMock } from "../test/fixtures/componentCatalog"
 

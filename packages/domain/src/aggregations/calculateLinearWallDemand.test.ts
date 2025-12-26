@@ -1,6 +1,7 @@
-import { describe, it, expect } from "vitest"
-import { componentCatalogMock } from "../test/fixtures/componentCatalog"
+import { describe, expect, it } from "vitest"
+
 import { calculateLinearWallDemand } from "./calculateLinearWallDemand"
+import { componentCatalogMock } from "../test/fixtures/componentCatalog"
 
 describe("calculateLinearWallDemand", () => {
   it("returns complete demand", () => {

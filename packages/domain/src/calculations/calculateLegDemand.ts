@@ -1,5 +1,6 @@
 import { find } from "lodash/fp"
-import { Component } from "../../schemas/src/Component"
+
+import { Component } from "@/schemas/Component"
 
 type LegCalculationContext = {
   height: number

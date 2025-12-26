@@ -1,12 +1,12 @@
-import { LinearWallLayout } from "../../schemas/src/LinearWallLayout"
-import { Component } from "../../schemas/src/Component"
+import { Component } from "@/schemas/Component"
+import { LinearWallLayout } from "@/schemas/layouts/LinearWallLayout"
 
-import { aggregateComponentDemand } from "../aggregations/aggregateComponentDemand"
+import { aggregateComponentDemand } from "./aggregateComponentDemand"
 import { calculateBackPanelDemand } from "../calculations/calculateBackPanelDemand"
 import { calculateBaseShelfDemand } from "../calculations/calculateBaseShelfDemand"
-import { calculateShelfDemand } from "../calculations/calculateShelfDemand"
 import { calculateFootDemand } from "../calculations/calculateFootDemand"
 import { calculateLegDemand } from "../calculations/calculateLegDemand"
+import { calculateShelfDemand } from "../calculations/calculateShelfDemand"
 import { countShelfUnitsByWidth } from "../helpers/countShelfUnitsByWidth"
 
 export function calculateLinearWallDemand(
