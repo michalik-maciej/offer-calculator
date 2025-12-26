@@ -9,12 +9,10 @@ describe("calculateBackPanelDemand", () => {
       height: 180,
       shelfUnitsByWidth: [
         {
-          id: "shelf-unit-1",
           width: 100,
           quantity: 1,
         },
         {
-          id: "shelf-unit-2",
           width: 80,
           quantity: 3,
         },

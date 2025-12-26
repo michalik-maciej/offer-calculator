@@ -9,19 +9,17 @@ describe("calculateShelfDemand", () => {
       numberOfLayouts: 2,
       shelfUnits: [
         {
-          id: "shelf-unit-1",
           width: 100,
           quantity: 2,
           shelves: [
-            { id: "shelf-1.1", depth: 37, quantity: 4 },
-            { id: "shelf-1.2", depth: 47, quantity: 2 },
+            { depth: 37, quantity: 4 },
+            { depth: 47, quantity: 2 },
           ],
         },
         {
-          id: "shelf-unit-2",
           width: 80,
           quantity: 1,
-          shelves: [{ id: "shelf-2.1", depth: 37, quantity: 5 }],
+          shelves: [{ depth: 37, quantity: 5 }],
         },
       ],
     }
@@ -45,10 +43,9 @@ describe("calculateShelfDemand", () => {
           numberOfLayouts: 1,
           shelfUnits: [
             {
-              id: "shelf-unit-1",
               width: 80,
               quantity: 1,
-              shelves: [{ id: "shelf-1", depth: 39, quantity: 1 }],
+              shelves: [{ depth: 39, quantity: 1 }],
             },
           ],
         },

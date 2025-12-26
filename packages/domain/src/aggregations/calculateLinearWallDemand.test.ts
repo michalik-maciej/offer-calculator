@@ -9,23 +9,20 @@ describe("calculateLinearWallDemand", () => {
       {
         depth: 47,
         height: 130,
-        id: "layout-1",
         numberOfLayouts: 2,
         shelfUnits: [
           {
-            id: "shelf-unit-1",
             width: 100,
             quantity: 1,
             shelves: [
-              { id: "shelf-1.1", depth: 37, quantity: 1 },
-              { id: "shelf-1.2", depth: 47, quantity: 1 },
+              { depth: 37, quantity: 1 },
+              { depth: 47, quantity: 1 },
             ],
           },
           {
-            id: "shelf-unit-2",
             width: 80,
             quantity: 4,
-            shelves: [{ id: "shelf-2.1", depth: 37, quantity: 5 }],
+            shelves: [{ depth: 37, quantity: 5 }],
           },
         ],
       },

@@ -1,8 +1,9 @@
 import { Request, Response } from "express"
 
 import { calculateLinearWallDemand } from "@/domain/aggregations/calculateLinearWallDemand"
-import { componentCatalogMock as catalog } from "@/domain/test/fixtures/componentCatalog"
 import { parseLinearWallLayout } from "@/schemas/layouts/LinearWallLayout"
+
+import { catalog } from "../catalog"
 
 export function calculateLinearWallController(req: Request, res: Response) {
   try {
