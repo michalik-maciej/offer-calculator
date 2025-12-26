@@ -1,17 +1,21 @@
 {
   "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022"],
     "baseUrl": ".",
-    "lib": ["ES2021"],
+    "strict": true,
+    "moduleResolution": "NodeNext",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
     "paths": {
-      "@/api/*": [
-        "packages/api/src/*"
-      ],
-      "@/domain/*": [
-        "packages/domain/src/*"
-      ],
-      "@/schemas/*": [
-        "packages/schemas/src/*"
-      ],
-    },
-  }
+      "@/*": ["src/*"],
+      "@/api/*": ["packages/api/src/*"],
+      "@/domain/*": ["packages/domain/src/*"],
+      "@/schemas/*": ["packages/schemas/src/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "tests/**/*.ts"],
+  "exclude": ["**/node_modules/**", "**/dist/**", "**/.turbo/**"]
 }

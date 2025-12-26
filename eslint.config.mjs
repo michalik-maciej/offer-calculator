@@ -35,7 +35,7 @@ export default [
       "no-restricted-imports": [
         "error",
         {
-          patterns: ["../src/*", "./src/*"],
+          patterns: ["../../src/*"],
         },
       ],
       "simple-import-sort/imports": [
