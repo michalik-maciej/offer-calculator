@@ -27,7 +27,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/LinearWallLayout"
+              $ref: "#/components/schemas/LayoutLinearWall"
       responses:
         "200":
           description: BOM calculated successfully
@@ -113,7 +113,7 @@ components:
     # --------------------
     # Layout input
     # --------------------
-    LinearWallLayout:
+    LayoutLinearWall:
       type: object
       required: [height, quantity, shelfUnits]
       properties:
@@ -196,7 +196,7 @@ components:
           type: string
           enum: [LINEAR_WALL]
         layout:
-          $ref: "#/components/schemas/LinearWallLayout"
+          $ref: "#/components/schemas/LayoutLinearWall"
 
     ProjectResponse:
       type: object

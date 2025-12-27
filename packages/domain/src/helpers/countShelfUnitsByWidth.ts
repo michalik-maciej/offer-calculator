@@ -1,7 +1,7 @@
-import { LinearWallLayout } from "@/schemas/layouts/LinearWallLayout"
+import { LayoutLinearWall } from "@/schemas/LayoutLinearWall"
 
 export function countShelfUnitsByWidth(
-  shelfUnits: LinearWallLayout["shelfUnits"],
+  shelfUnits: LayoutLinearWall["shelfUnits"],
   numberOfLayouts: number,
 ): {
   quantity: number

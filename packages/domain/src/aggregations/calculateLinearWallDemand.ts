@@ -1,5 +1,5 @@
 import { Component } from "@/schemas/Component"
-import { LinearWallLayout } from "@/schemas/layouts/LinearWallLayout"
+import { LayoutLinearWall } from "@/schemas/LayoutLinearWall"
 
 import { aggregateComponentDemand } from "./aggregateComponentDemand"
 import { calculateBackPanelDemand } from "../calculations/calculateBackPanelDemand"
@@ -10,7 +10,7 @@ import { calculateShelfDemand } from "../calculations/calculateShelfDemand"
 import { countShelfUnitsByWidth } from "../helpers/countShelfUnitsByWidth"
 
 export function calculateLinearWallDemand(
-  { depth, height, shelfUnits, numberOfLayouts }: LinearWallLayout,
+  { depth, height, shelfUnits, numberOfLayouts }: LayoutLinearWall,
   catalog: Component[],
 ) {
   const shelfUnitsByWidth = countShelfUnitsByWidth(shelfUnits, numberOfLayouts)
