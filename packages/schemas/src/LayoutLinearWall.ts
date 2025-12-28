@@ -10,8 +10,3 @@ export const LayoutLinearWallSchema = v.object({
 })
 
 export type LayoutLinearWall = v.InferOutput<typeof LayoutLinearWallSchema>
-
-export function parseLayoutLinearWall(dto: unknown) {
-  // TODO throw if invalid
-  return v.parse(LayoutLinearWallSchema, dto)
-}

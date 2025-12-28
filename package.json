@@ -30,6 +30,7 @@
     "node": ">=20"
   },
   "dependencies": {
+    "valibot": "^1.2.0",
     "vitest": "^4.0.16"
   }
 }

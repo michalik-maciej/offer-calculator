@@ -3,22 +3,28 @@ import { describe, expect, it } from "vitest"
 
 import { app } from "../src/app"
 
-describe("POST /api/calculate/linear-wall", () => {
+describe("POST /api/calculate/offer", () => {
   it("returns BOM for valid linear wall layout", async () => {
     const response = await request(app)
-      .post("/api/calculate/linear-wall")
+      .post("/api/calculate/offer")
       .send({
-        height: 180,
-        depth: 47,
-        numberOfLayouts: 1,
-        quantity: 1,
-        shelfUnits: [
+        discountPercentage: 10,
+        layouts: [
           {
-            width: 100,
+            height: 180,
+            depth: 47,
+            numberOfLayouts: 1,
             quantity: 1,
-            shelves: [],
+            shelfUnits: [
+              {
+                width: 100,
+                quantity: 1,
+                shelves: [],
+              },
+            ],
           },
         ],
+        title: "Test Offer",
       })
 
     expect(response.status).toBe(200)
@@ -34,13 +40,12 @@ describe("POST /api/calculate/linear-wall", () => {
   })
 
   it("returns 400 for invalid payload", async () => {
-    const response = await request(app)
-      .post("/api/calculate/linear-wall")
-      .send({
-        quantity: 1,
-      })
+    const response = await request(app).post("/api/calculate/offer").send({
+      quantity: 1,
+    })
 
     expect(response.status).toBe(400)
-    expect(response.body).toHaveProperty("message")
+    expect(response.body).toHaveProperty("issues")
+    expect(response.body.issues).toHaveLength(3)
   })
 })

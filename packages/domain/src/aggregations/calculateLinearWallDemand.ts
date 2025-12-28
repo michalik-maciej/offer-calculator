@@ -1,7 +1,6 @@
 import { Component } from "@/schemas/Component"
 import { LayoutLinearWall } from "@/schemas/LayoutLinearWall"
 
-import { aggregateComponentDemand } from "./aggregateComponentDemand"
 import { calculateBackPanelDemand } from "../calculations/calculateBackPanelDemand"
 import { calculateBaseShelfDemand } from "../calculations/calculateBaseShelfDemand"
 import { calculateFootDemand } from "../calculations/calculateFootDemand"
@@ -46,13 +45,11 @@ export function calculateLinearWallDemand(
     numberOfShelfUnits,
   }
 
-  const rawDemand = [
+  return [
     ...calculateBackPanelDemand(backPanelContext, catalog),
     ...calculateBaseShelfDemand(baseShelfContext, catalog),
     ...calculateShelfDemand(shelfContext, catalog),
     ...calculateLegDemand(legContext, catalog),
     ...calculateFootDemand(footContext, catalog),
   ]
-
-  return aggregateComponentDemand(rawDemand)
 }

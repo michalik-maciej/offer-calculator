@@ -7,8 +7,5 @@
   "scripts": {
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "check-types": "tsc --noEmit"
-  },
-  "dependencies": {
-    "valibot": "^1.2.0"
   }
 }
