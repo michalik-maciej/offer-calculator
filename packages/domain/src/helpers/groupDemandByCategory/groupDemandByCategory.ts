@@ -16,7 +16,7 @@ export function groupDemandByCategory(
   for (const { id, quantity } of rawDemand) {
     const component = find({ id }, catalog)
     if (!component) {
-      throw new Error(`Component with id ${id} not found in catalog`)
+      throw new Error(`Component with id "${id}" not found in catalog`)
     }
 
     const bucket = result[component.category] ?? []

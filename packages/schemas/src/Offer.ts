@@ -5,20 +5,11 @@ import { LayoutWallSchema } from "./LayoutWall"
 
 export const OfferInputSchema = v.object({
   discountPercentage: v.pipe(v.number(), v.minValue(0), v.maxValue(100)),
-  layouts: v.array(LayoutWallSchema || LayoutGondolaSchema),
+  layouts: v.array(v.union([LayoutGondolaSchema, LayoutWallSchema])),
   title: v.string(),
 })
 
 export type OfferInput = v.InferOutput<typeof OfferInputSchema>
-
-export const OfferSchema = v.object({
-  discountPercentage: v.pipe(v.number(), v.minValue(0), v.maxValue(100)),
-  id: v.pipe(v.string(), v.uuid()),
-  layouts: v.array(LayoutWallSchema || LayoutGondolaSchema),
-  title: v.string(),
-})
-
-export type Offer = v.InferOutput<typeof OfferSchema>
 
 export const OfferOutputSchema = v.object({
   basePrice: v.pipe(v.number(), v.minValue(0)),

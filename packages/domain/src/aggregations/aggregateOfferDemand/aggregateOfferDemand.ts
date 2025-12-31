@@ -1,14 +1,26 @@
+import { compact } from "lodash/fp"
+
 import { Component } from "@/schemas/Component"
+import { isLayoutGondola } from "@/schemas/LayoutGondola"
+import { isLayoutWall } from "@/schemas/LayoutWall"
 import { OfferInput } from "@/schemas/Offer"
 
+import { aggregateGondolaDemand } from "../aggregateGondolaDemand/aggregateGondolaDemand"
 import { aggregateWallDemand } from "../aggregateWallDemand/aggregateWallDemand"
 
 export const aggregateOfferDemand = (
   layouts: OfferInput["layouts"],
   catalog: Component[],
 ) => {
-  const rawDemand = layouts.flatMap((layout) =>
-    aggregateWallDemand(layout, catalog),
+  const rawDemand = compact(
+    layouts.flatMap((layout) => {
+      switch (true) {
+        case isLayoutWall(layout):
+          return aggregateWallDemand(layout, catalog)
+        case isLayoutGondola(layout):
+          return aggregateGondolaDemand(layout, catalog)
+      }
+    }),
   )
 
   const map = new Map<string, { id: string; quantity: number }>()

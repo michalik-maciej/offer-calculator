@@ -10,3 +10,6 @@ export const LayoutWallSchema = v.object({
 })
 
 export type LayoutWall = v.InferOutput<typeof LayoutWallSchema>
+
+export const isLayoutWall = (layout: unknown): layout is LayoutWall =>
+  v.safeParse(LayoutWallSchema, layout).success

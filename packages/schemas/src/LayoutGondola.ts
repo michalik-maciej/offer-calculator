@@ -15,3 +15,6 @@ export const LayoutGondolaSchema = v.object({
 })
 
 export type LayoutGondola = v.InferOutput<typeof LayoutGondolaSchema>
+
+export const isLayoutGondola = (layout: unknown): layout is LayoutGondola =>
+  v.safeParse(LayoutGondolaSchema, layout).success
