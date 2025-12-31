@@ -1,8 +1,8 @@
 import { Request, Response } from "express"
 import { safeParse } from "valibot"
 
-import { calculateOfferDemand } from "@/domain/aggregations/calculateOfferDemand"
-import { calculateOfferPrice } from "@/domain/aggregations/calculateOfferPrice"
+import { aggregateOfferDemand } from "@/domain/aggregations/aggregateOfferDemand/aggregateOfferDemand"
+import { aggregateOfferPrice } from "@/domain/aggregations/aggregateOfferPrice/aggregateOfferPrice"
 import { OfferInputSchema } from "@/schemas/Offer"
 
 import { catalog } from "../catalog"
@@ -17,8 +17,8 @@ export function calculateOfferController(req: Request, res: Response) {
     })
   }
   const { layouts, discountPercentage } = output
-  const bom = calculateOfferDemand(layouts, catalog)
-  const { basePrice, discountPrice } = calculateOfferPrice({
+  const bom = aggregateOfferDemand(layouts, catalog)
+  const { basePrice, discountPrice } = aggregateOfferPrice({
     bom,
     discountPercentage,
     catalog,

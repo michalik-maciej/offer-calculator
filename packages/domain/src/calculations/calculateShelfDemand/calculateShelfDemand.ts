@@ -15,14 +15,14 @@ export function calculateShelfDemand(
   const SUPPORTS_PER_SHELF = 2
   const demand: { id: string; quantity: number }[] = []
 
-  const addToDemand = (component: Component, quantity: number) => {
-    const existing = demand.find((item) => item.id === component.id)
+  const addToDemand = ({ id }: Component, quantity: number) => {
+    const existing = find({ id }, demand)
     if (existing) {
       existing.quantity += quantity
       return
     }
 
-    demand.push({ id: component.id, quantity })
+    demand.push({ id, quantity })
   }
 
   for (const shelfUnit of shelfUnits) {

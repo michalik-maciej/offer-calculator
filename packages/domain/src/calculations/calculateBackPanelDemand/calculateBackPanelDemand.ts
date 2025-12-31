@@ -30,18 +30,18 @@ export function calculateBackPanelDemand(
 
     let remainder = height - BACK_CLEARANCE_CM
 
-    for (const backPanel of availableBackPanels) {
-      if (!backPanel.height || remainder < backPanel.height) continue
+    for (const { id, height: panelHeight } of availableBackPanels) {
+      if (!panelHeight || remainder < panelHeight) continue
 
-      const countPerShelfUnit = Math.floor(remainder / backPanel.height)
+      const countPerShelfUnit = Math.floor(remainder / panelHeight)
       if (countPerShelfUnit === 0) continue
 
       demand.push({
-        id: backPanel.id,
+        id,
         quantity: unitQuantity * countPerShelfUnit,
       })
 
-      remainder %= backPanel.height
+      remainder %= panelHeight
     }
   }
 

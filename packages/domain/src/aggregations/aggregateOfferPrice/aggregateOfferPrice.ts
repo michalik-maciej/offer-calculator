@@ -11,7 +11,7 @@ interface OfferPriceParams {
   catalog: Component[]
 }
 
-export const calculateOfferPrice = ({
+export const aggregateOfferPrice = ({
   bom,
   discountPercentage = 0,
   catalog,

@@ -1,14 +1,14 @@
 import { Component } from "@/schemas/Component"
 import { LayoutLinearWall } from "@/schemas/LayoutLinearWall"
 
-import { calculateBackPanelDemand } from "../calculations/calculateBackPanelDemand"
-import { calculateBaseShelfDemand } from "../calculations/calculateBaseShelfDemand"
-import { calculateFootDemand } from "../calculations/calculateFootDemand"
-import { calculateLegDemand } from "../calculations/calculateLegDemand"
-import { calculateShelfDemand } from "../calculations/calculateShelfDemand"
-import { countShelfUnitsByWidth } from "../helpers/countShelfUnitsByWidth"
+import { calculateBackPanelDemand } from "../../calculations/calculateBackPanelDemand/calculateBackPanelDemand"
+import { calculateBaseShelfDemand } from "../../calculations/calculateBaseShelfDemand/calculateBaseShelfDemand"
+import { calculateFootDemand } from "../../calculations/calculateFootDemand/calculateFootDemand"
+import { calculateLegDemand } from "../../calculations/calculateLegDemand/calculateLegDemand"
+import { calculateShelfDemand } from "../../calculations/calculateShelfDemand/calculateShelfDemand"
+import { countShelfUnitsByWidth } from "../../helpers/countShelfUnitsByWidth/countShelfUnitsByWidth"
 
-export function calculateLinearWallDemand(
+export function aggregateLinearWallDemand(
   { depth, height, shelfUnits, numberOfLayouts }: LayoutLinearWall,
   catalog: Component[],
 ) {

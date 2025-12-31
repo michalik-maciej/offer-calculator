@@ -18,3 +18,34 @@ export const OfferSchema = v.object({
 })
 
 export type Offer = v.InferOutput<typeof OfferSchema>
+
+export const OfferOutputSchema = v.object({
+  basePrice: v.pipe(v.number(), v.minValue(0)),
+  discountPrice: v.pipe(v.number(), v.minValue(0)),
+  demandBreakdown: v.record(
+    v.picklist([
+      "back",
+      "baseCover",
+      "foot",
+      "leg",
+      "misc",
+      "shelf",
+      "support",
+    ]),
+    v.array(
+      v.object({
+        componentId: v.string(),
+        quantity: v.pipe(v.number(), v.minValue(0)),
+      }),
+    ),
+  ),
+  layouts: v.array(
+    v.object({
+      description: v.string(),
+      basePrice: v.pipe(v.number(), v.minValue(0)),
+    }),
+  ),
+  title: v.string(),
+})
+
+export type OfferOutput = v.InferOutput<typeof OfferOutputSchema>

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 
 import { calculateFootDemand } from "./calculateFootDemand"
-import { componentCatalogMock } from "../test/fixtures/componentCatalog"
+import { componentCatalogMock } from "../../test/fixtures/componentCatalog"
 
 describe("calculateFootDemand", () => {
   it("calculates feet correctly", () => {
