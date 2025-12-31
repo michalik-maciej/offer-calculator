@@ -5,11 +5,11 @@ import { Component } from "@/schemas/Component"
 type FootCalculationContext = {
   depth: number
   numberOfLayouts: number
-  numberOfShelfUnits: number
+  numberOfUnits: number
 }
 
 export function calculateFootDemand(
-  { depth, numberOfLayouts, numberOfShelfUnits }: FootCalculationContext,
+  { depth, numberOfLayouts, numberOfUnits }: FootCalculationContext,
   catalog: Component[],
 ) {
   const availableFoot = find({ category: "foot", depth }, catalog)
@@ -21,7 +21,7 @@ export function calculateFootDemand(
   return [
     {
       id: availableFoot.id,
-      quantity: (numberOfShelfUnits + 1) * numberOfLayouts,
+      quantity: (numberOfUnits + 1) * numberOfLayouts,
     },
   ]
 }

@@ -1,14 +1,14 @@
 import { Component } from "@/schemas/Component"
 import { OfferInput } from "@/schemas/Offer"
 
-import { aggregateLinearWallDemand } from "../aggregateLinearWallDemand/aggregateLinearWallDemand"
+import { aggregateWallDemand } from "../aggregateWallDemand/aggregateWallDemand"
 
 export const aggregateOfferDemand = (
   layouts: OfferInput["layouts"],
   catalog: Component[],
 ) => {
   const rawDemand = layouts.flatMap((layout) =>
-    aggregateLinearWallDemand(layout, catalog),
+    aggregateWallDemand(layout, catalog),
   )
 
   const map = new Map<string, { id: string; quantity: number }>()

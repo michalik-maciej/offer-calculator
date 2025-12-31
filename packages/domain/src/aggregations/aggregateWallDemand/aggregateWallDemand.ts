@@ -1,5 +1,5 @@
 import { Component } from "@/schemas/Component"
-import { LayoutLinearWall } from "@/schemas/LayoutLinearWall"
+import { LayoutWall } from "@/schemas/LayoutWall"
 
 import { calculateBackPanelDemand } from "../../calculations/calculateBackPanelDemand/calculateBackPanelDemand"
 import { calculateBaseShelfDemand } from "../../calculations/calculateBaseShelfDemand/calculateBaseShelfDemand"
@@ -8,13 +8,13 @@ import { calculateLegDemand } from "../../calculations/calculateLegDemand/calcul
 import { calculateShelfDemand } from "../../calculations/calculateShelfDemand/calculateShelfDemand"
 import { countShelfUnitsByWidth } from "../../helpers/countShelfUnitsByWidth/countShelfUnitsByWidth"
 
-export function aggregateLinearWallDemand(
-  { depth, height, shelfUnits, numberOfLayouts }: LayoutLinearWall,
+export function aggregateWallDemand(
+  { depth, height, shelfUnits, numberOfLayouts }: LayoutWall,
   catalog: Component[],
 ) {
   const shelfUnitsByWidth = countShelfUnitsByWidth(shelfUnits, numberOfLayouts)
-  const numberOfShelfUnits = shelfUnits.reduce(
-    (sum, unit) => sum + unit.quantity,
+  const numberOfUnits = shelfUnits.reduce(
+    (sum, { numberOfShelfUnits }) => sum + numberOfShelfUnits,
     0,
   )
 
@@ -36,13 +36,13 @@ export function aggregateLinearWallDemand(
   const legContext = {
     height,
     numberOfLayouts,
-    numberOfShelfUnits,
+    numberOfUnits,
   }
 
   const footContext = {
     depth,
     numberOfLayouts,
-    numberOfShelfUnits,
+    numberOfUnits,
   }
 
   return [

@@ -3,7 +3,7 @@ import * as v from "valibot"
 import { ShelfSchema } from "./Shelf.js"
 
 export const ShelfUnitSchema = v.object({
-  quantity: v.pipe(v.number(), v.minValue(0)),
+  numberOfShelfUnits: v.pipe(v.number(), v.minValue(0)),
   shelves: v.array(ShelfSchema),
   width: v.number(),
 })

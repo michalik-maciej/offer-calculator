@@ -21,13 +21,13 @@ paths:
     post:
       tags: [Calculation]
       summary: Calculate BOM for linear wall shelving layout
-      operationId: calculateLinearWall
+      operationId: calculateWall
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/LayoutLinearWall"
+              $ref: "#/components/schemas/LayoutWall"
       responses:
         "200":
           description: BOM calculated successfully
@@ -113,7 +113,7 @@ components:
     # --------------------
     # Layout input
     # --------------------
-    LayoutLinearWall:
+    LayoutWall:
       type: object
       required: [height, quantity, shelfUnits]
       properties:
@@ -196,7 +196,7 @@ components:
           type: string
           enum: [LINEAR_WALL]
         layout:
-          $ref: "#/components/schemas/LayoutLinearWall"
+          $ref: "#/components/schemas/LayoutWall"
 
     ProjectResponse:
       type: object

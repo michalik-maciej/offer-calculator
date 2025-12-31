@@ -10,16 +10,16 @@ describe("calculateShelfDemand", () => {
       shelfUnits: [
         {
           width: 100,
-          quantity: 2,
+          numberOfShelfUnits: 2,
           shelves: [
-            { depth: 37, quantity: 4 },
-            { depth: 47, quantity: 2 },
+            { depth: 37, numberOfShelves: 4 },
+            { depth: 47, numberOfShelves: 2 },
           ],
         },
         {
           width: 80,
-          quantity: 1,
-          shelves: [{ depth: 37, quantity: 5 }],
+          numberOfShelfUnits: 1,
+          shelves: [{ depth: 37, numberOfShelves: 5 }],
         },
       ],
     }
@@ -44,8 +44,8 @@ describe("calculateShelfDemand", () => {
           shelfUnits: [
             {
               width: 80,
-              quantity: 1,
-              shelves: [{ depth: 39, quantity: 1 }],
+              numberOfShelfUnits: 1,
+              shelves: [{ depth: 39, numberOfShelves: 1 }],
             },
           ],
         },

@@ -25,31 +25,31 @@ export function calculateShelfDemand(
     demand.push({ id, quantity })
   }
 
-  for (const shelfUnit of shelfUnits) {
-    const unitInstances = shelfUnit.quantity * numberOfLayouts
+  for (const { numberOfShelfUnits, width, shelves } of shelfUnits) {
+    const unitInstances = numberOfShelfUnits * numberOfLayouts
 
-    for (const shelf of shelfUnit.shelves) {
-      const shelfInstances = shelf.quantity * unitInstances
+    for (const { numberOfShelves, depth } of shelves) {
+      const shelfInstances = numberOfShelves * unitInstances
       if (shelfInstances === 0) continue
 
       const availableShelf = find(
-        { category: "shelf", depth: shelf.depth, width: shelfUnit.width },
+        { category: "shelf", depth: depth, width: width },
         catalog,
       )
 
       if (!availableShelf) {
         throw new Error(
-          `No shelf found for width ${shelfUnit.width}cm and depth ${shelf.depth}cm`,
+          `No shelf found for width ${width}cm and depth ${depth}cm`,
         )
       }
 
       const availableSupport = find(
-        { category: "support", depth: shelf.depth },
+        { category: "support", depth: depth },
         catalog,
       )
 
       if (!availableSupport) {
-        throw new Error(`No support found for depth ${shelf.depth}cm`)
+        throw new Error(`No support found for depth ${depth}cm`)
       }
 
       addToDemand(availableShelf, shelfInstances)

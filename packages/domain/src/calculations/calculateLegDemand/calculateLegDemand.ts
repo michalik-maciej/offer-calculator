@@ -5,11 +5,11 @@ import { Component } from "@/schemas/Component"
 type LegCalculationContext = {
   height: number
   numberOfLayouts: number
-  numberOfShelfUnits: number
+  numberOfUnits: number
 }
 
 export function calculateLegDemand(
-  { height, numberOfLayouts, numberOfShelfUnits }: LegCalculationContext,
+  { height, numberOfLayouts, numberOfUnits }: LegCalculationContext,
   catalog: Component[],
 ) {
   const availableLeg = find({ category: "leg", height }, catalog)
@@ -21,7 +21,7 @@ export function calculateLegDemand(
   return [
     {
       id: availableLeg.id,
-      quantity: (numberOfShelfUnits + 1) * numberOfLayouts,
+      quantity: (numberOfUnits + 1) * numberOfLayouts,
     },
   ]
 }

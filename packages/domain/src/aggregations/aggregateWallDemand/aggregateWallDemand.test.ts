@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest"
 
-import { aggregateLinearWallDemand } from "./aggregateLinearWallDemand"
+import { aggregateWallDemand } from "./aggregateWallDemand"
 import { componentCatalogMock } from "../../test/fixtures/componentCatalog"
 
-describe("aggregateLinearWallDemand", () => {
+describe("aggregateWallDemand", () => {
   it("returns complete demand", () => {
-    const result = aggregateLinearWallDemand(
+    const result = aggregateWallDemand(
       {
         depth: 47,
         height: 130,
@@ -13,16 +13,16 @@ describe("aggregateLinearWallDemand", () => {
         shelfUnits: [
           {
             width: 100,
-            quantity: 1,
+            numberOfShelfUnits: 1,
             shelves: [
-              { depth: 37, quantity: 1 },
-              { depth: 47, quantity: 1 },
+              { depth: 37, numberOfShelves: 1 },
+              { depth: 47, numberOfShelves: 1 },
             ],
           },
           {
             width: 80,
-            quantity: 4,
-            shelves: [{ depth: 37, quantity: 5 }],
+            numberOfShelfUnits: 4,
+            shelves: [{ depth: 37, numberOfShelves: 5 }],
           },
         ],
       },

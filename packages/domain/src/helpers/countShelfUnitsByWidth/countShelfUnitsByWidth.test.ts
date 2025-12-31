@@ -6,9 +6,9 @@ describe("countShelfUnitsByWidth", () => {
   it("groups shelf units by width", () => {
     const result = countShelfUnitsByWidth(
       [
-        { width: 100, quantity: 2, shelves: [] },
-        { width: 80, quantity: 3, shelves: [] },
-        { width: 100, quantity: 1, shelves: [] },
+        { width: 100, numberOfShelfUnits: 2, shelves: [] },
+        { width: 80, numberOfShelfUnits: 3, shelves: [] },
+        { width: 100, numberOfShelfUnits: 1, shelves: [] },
       ],
       4,
     )

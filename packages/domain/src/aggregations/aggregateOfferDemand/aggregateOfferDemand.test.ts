@@ -14,7 +14,7 @@ describe("aggregateOfferDemand", () => {
           shelfUnits: [
             {
               width: 80,
-              quantity: 1,
+              numberOfShelfUnits: 1,
               shelves: [],
             },
           ],
@@ -26,7 +26,7 @@ describe("aggregateOfferDemand", () => {
           shelfUnits: [
             {
               width: 100,
-              quantity: 1,
+              numberOfShelfUnits: 1,
               shelves: [],
             },
           ],

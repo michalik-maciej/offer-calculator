@@ -18,7 +18,7 @@ describe("POST /api/calculate/offer", () => {
             shelfUnits: [
               {
                 width: 100,
-                quantity: 1,
+                numberOfShelfUnits: 1,
                 shelves: [],
               },
             ],

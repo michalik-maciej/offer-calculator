@@ -1,7 +1,7 @@
-import { LayoutLinearWall } from "@/schemas/LayoutLinearWall"
+import { LayoutWall } from "@/schemas/LayoutWall"
 
 export function countShelfUnitsByWidth(
-  shelfUnits: LayoutLinearWall["shelfUnits"],
+  shelfUnits: LayoutWall["shelfUnits"],
   numberOfLayouts: number,
 ): {
   quantity: number
@@ -9,9 +9,9 @@ export function countShelfUnitsByWidth(
 }[] {
   const map = new Map<number, number>()
 
-  for (const unit of shelfUnits) {
-    const current = map.get(unit.width) ?? 0
-    map.set(unit.width, current + unit.quantity * numberOfLayouts)
+  for (const { numberOfShelfUnits, width } of shelfUnits) {
+    const current = map.get(width) ?? 0
+    map.set(width, current + numberOfShelfUnits * numberOfLayouts)
   }
 
   return Array.from(map.entries()).map(([width, quantity]) => ({
