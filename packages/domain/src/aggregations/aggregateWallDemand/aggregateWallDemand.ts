@@ -9,7 +9,7 @@ import { calculateShelfDemand } from "../../calculations/calculateShelfDemand/ca
 import { countShelfUnitsByWidth } from "../../helpers/countShelfUnitsByWidth/countShelfUnitsByWidth"
 
 export function aggregateWallDemand(
-  { depth, height, shelfUnits, numberOfLayouts }: LayoutWall,
+  { depth, height, shelfUnits, numberOfLayouts, extras = [] }: LayoutWall,
   catalog: Component[],
 ) {
   const shelfUnitsByWidth = countShelfUnitsByWidth(shelfUnits, numberOfLayouts)
@@ -51,5 +51,6 @@ export function aggregateWallDemand(
     ...calculateShelfDemand(shelfContext, catalog),
     ...calculateLegDemand(legContext, catalog),
     ...calculateFootDemand(footContext, catalog),
+    ...extras,
   ]
 }

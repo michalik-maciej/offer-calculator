@@ -38,6 +38,7 @@ describe("aggregateGondolaDemand", () => {
             ],
           },
         ],
+        extras: [{ id: "extra-37", quantity: 2 }],
       },
       componentCatalogMock,
     )
@@ -53,9 +54,10 @@ describe("aggregateGondolaDemand", () => {
       { id: "shelf-100-37", quantity: 1 },
       { id: "leg-130-8-3", quantity: 2 },
       { id: "foot-37", quantity: 2 },
+      { id: "extra-37", quantity: 2 },
     ]
 
-    expect(result).toHaveLength(10)
+    expect(result).toHaveLength(11)
     expect(result).toEqual(expectedResult)
   })
 })

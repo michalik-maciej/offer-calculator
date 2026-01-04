@@ -26,7 +26,7 @@ export const OfferOutputSchema = v.object({
     ]),
     v.array(
       v.object({
-        componentId: v.string(),
+        id: v.string(),
         quantity: v.pipe(v.number(), v.minValue(0)),
       }),
     ),

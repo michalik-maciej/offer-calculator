@@ -4,18 +4,19 @@ import { LayoutGondola } from "@/schemas/LayoutGondola"
 import { aggregateWallDemand } from "../aggregateWallDemand/aggregateWallDemand"
 
 export function aggregateGondolaDemand(
-  { height, gondolaUnits, numberOfLayouts }: LayoutGondola,
+  { height, gondolaUnits, numberOfLayouts, extras = [] }: LayoutGondola,
   catalog: Component[],
 ) {
-  return gondolaUnits.flatMap(({ depth, numberOfGondolaUnits, shelfUnits }) =>
-    aggregateWallDemand(
-      {
+  return [
+    ...gondolaUnits.flatMap(({ depth, numberOfGondolaUnits, shelfUnits }) => {
+      const context = {
         depth,
         height,
         numberOfLayouts: numberOfLayouts * numberOfGondolaUnits,
         shelfUnits,
-      },
-      catalog,
-    ),
-  )
+      }
+      return aggregateWallDemand(context, catalog)
+    }),
+    ...extras,
+  ]
 }

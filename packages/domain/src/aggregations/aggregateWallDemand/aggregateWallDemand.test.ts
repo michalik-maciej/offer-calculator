@@ -25,6 +25,7 @@ describe("aggregateWallDemand", () => {
             shelves: [{ depth: 37, numberOfShelves: 5 }],
           },
         ],
+        extras: [{ id: "extra-37", quantity: 4 }],
       },
       componentCatalogMock,
     )
@@ -41,9 +42,10 @@ describe("aggregateWallDemand", () => {
       { id: "shelf-80-37", quantity: 40 },
       { id: "leg-130-8-3", quantity: 12 },
       { id: "foot-47", quantity: 12 },
+      { id: "extra-37", quantity: 4 },
     ]
 
-    expect(result).toHaveLength(11)
+    expect(result).toHaveLength(12)
     expect(result).toEqual(expectedResult)
   })
 })

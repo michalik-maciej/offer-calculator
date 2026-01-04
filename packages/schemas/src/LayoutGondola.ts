@@ -12,6 +12,14 @@ export const LayoutGondolaSchema = v.object({
       shelfUnits: v.array(ShelfUnitSchema),
     }),
   ),
+  extras: v.optional(
+    v.array(
+      v.object({
+        id: v.string(),
+        quantity: v.number(),
+      }),
+    ),
+  ),
 })
 
 export type LayoutGondola = v.InferOutput<typeof LayoutGondolaSchema>
