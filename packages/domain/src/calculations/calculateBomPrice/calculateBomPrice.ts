@@ -1,31 +1,38 @@
-import { describe, expect, it } from "vitest"
+import { find, reduce } from "lodash/fp"
 
-import { calculateBomPrice } from "./calculateBomPrice"
-import { componentCatalogMock } from "../../test/fixtures/componentCatalog"
+import { Component } from "@/schemas/Component"
 
-describe("calculateBomPrice", () => {
-  it("correctly sums the total price", () => {
-    const result = calculateBomPrice({
-      bom: [
-        { id: "shelf-100-47", quantity: 1 },
-        { id: "shelf-80-47", quantity: 3 },
-      ],
-      discountPercentage: 10,
-      catalog: componentCatalogMock,
-    })
+interface CalculateBomPriceParams {
+  bom: {
+    id: string
+    quantity: number
+  }[]
+  discountPercentage?: number
+  catalog: Component[]
+}
 
-    expect(result).toEqual({
-      basePrice: 258.07,
-      discountPrice: 232.26,
-    })
-  })
+export const calculateBomPrice = ({
+  bom,
+  discountPercentage = 0,
+  catalog,
+}: CalculateBomPriceParams) => {
+  const basePrice = reduce(
+    (total, { id, quantity }) => {
+      const component = find({ id }, catalog)
+      if (!component) {
+        throw new Error(`Component with id ${id} not found in catalog`)
+      }
 
-  it("throws if component not found", () => {
-    expect(() =>
-      calculateBomPrice({
-        bom: [{ id: "non-existent-id", quantity: 1 }],
-        catalog: componentCatalogMock,
-      }),
-    ).toThrow()
-  })
-})
+      return total + component.price * quantity
+    },
+    0,
+    bom,
+  )
+  const discountPrice =
+    Math.round(basePrice * (1 - discountPercentage / 100) * 100) / 100
+
+  return {
+    basePrice,
+    discountPrice,
+  }
+}
