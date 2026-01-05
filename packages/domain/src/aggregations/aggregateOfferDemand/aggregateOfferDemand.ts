@@ -5,8 +5,8 @@ import { isLayoutGondola } from "@/schemas/LayoutGondola"
 import { isLayoutWall } from "@/schemas/LayoutWall"
 import { OfferInput } from "@/schemas/Offer"
 
-import { aggregateGondolaDemand } from "../aggregateGondolaDemand/aggregateGondolaDemand"
-import { aggregateWallDemand } from "../aggregateWallDemand/aggregateWallDemand"
+import { aggregateGondolaLayoutDemand } from "../aggregateGondolaLayoutDemand/aggregateGondolaLayoutDemand"
+import { aggregateWallLayoutDemand } from "../aggregateWallLayoutDemand/aggregateWallLayoutDemand"
 
 export const aggregateOfferDemand = (
   layouts: OfferInput["layouts"],
@@ -16,9 +16,9 @@ export const aggregateOfferDemand = (
     layouts.flatMap((layout) => {
       switch (true) {
         case isLayoutWall(layout):
-          return aggregateWallDemand(layout, catalog)
+          return aggregateWallLayoutDemand(layout, catalog)
         case isLayoutGondola(layout):
-          return aggregateGondolaDemand(layout, catalog)
+          return aggregateGondolaLayoutDemand(layout, catalog)
       }
     }),
   )

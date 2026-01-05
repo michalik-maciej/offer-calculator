@@ -2,7 +2,7 @@ import { find, reduce } from "lodash/fp"
 
 import { Component } from "@/schemas/Component"
 
-interface OfferPriceParams {
+interface CalculateBomPriceParams {
   bom: {
     id: string
     quantity: number
@@ -11,11 +11,11 @@ interface OfferPriceParams {
   catalog: Component[]
 }
 
-export const aggregateOfferPrice = ({
+export const calculateBomPrice = ({
   bom,
   discountPercentage = 0,
   catalog,
-}: OfferPriceParams) => {
+}: CalculateBomPriceParams) => {
   const basePrice = reduce(
     (total, { id, quantity }) => {
       const component = find({ id }, catalog)

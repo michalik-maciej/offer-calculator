@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest"
 
-import { aggregateOfferPrice } from "./aggregateOfferPrice"
+import { calculateBomPrice } from "./calculateBomPrice"
 import { componentCatalogMock } from "../../test/fixtures/componentCatalog"
 
-describe("aggregateOfferPrice", () => {
+describe("calculateBomPrice", () => {
   it("correctly sums the total price", () => {
-    const result = aggregateOfferPrice({
+    const result = calculateBomPrice({
       bom: [
         { id: "shelf-100-47", quantity: 1 },
         { id: "shelf-80-47", quantity: 3 },
@@ -22,7 +22,7 @@ describe("aggregateOfferPrice", () => {
 
   it("throws if component not found", () => {
     expect(() =>
-      aggregateOfferPrice({
+      calculateBomPrice({
         bom: [{ id: "non-existent-id", quantity: 1 }],
         catalog: componentCatalogMock,
       }),

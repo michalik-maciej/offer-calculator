@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest"
 
-import { aggregateGondolaDemand } from "./aggregateGondolaDemand"
+import { aggregateGondolaLayoutDemand } from "./aggregateGondolaLayoutDemand"
 import { componentCatalogMock } from "../../test/fixtures/componentCatalog"
 
-describe("aggregateGondolaDemand", () => {
+describe("aggregateGondolaLayoutDemand", () => {
   it("returns complete demand", () => {
-    const result = aggregateGondolaDemand(
+    const result = aggregateGondolaLayoutDemand(
       {
         height: 130,
         numberOfLayouts: 1,

@@ -8,7 +8,7 @@ import { calculateLegDemand } from "../../calculations/calculateLegDemand/calcul
 import { calculateShelfDemand } from "../../calculations/calculateShelfDemand/calculateShelfDemand"
 import { countShelfUnitsByWidth } from "../../helpers/countShelfUnitsByWidth/countShelfUnitsByWidth"
 
-export function aggregateWallDemand(
+export function aggregateWallLayoutDemand(
   { depth, height, shelfUnits, numberOfLayouts, extras = [] }: LayoutWall,
   catalog: Component[],
 ) {
