@@ -28,11 +28,10 @@ export const calculateBomPrice = ({
     0,
     bom,
   )
-  const discountPrice =
-    Math.round(basePrice * (1 - discountPercentage / 100) * 100) / 100
+  const discountPrice = basePrice * (1 - discountPercentage / 100)
 
   return {
-    basePrice,
-    discountPrice,
+    basePrice: Number(basePrice.toFixed(2)),
+    discountPrice: Number(discountPrice.toFixed(2)),
   }
 }
