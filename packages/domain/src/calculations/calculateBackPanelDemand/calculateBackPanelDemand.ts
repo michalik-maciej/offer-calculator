@@ -1,6 +1,6 @@
 import { filter, orderBy } from "lodash/fp"
 
-import { Component } from "@/schemas/Component"
+import { Component } from "../../types"
 
 type BackPanelCalculationContext = {
   height: number

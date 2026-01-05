@@ -1,15 +1,15 @@
 import * as v from "valibot"
 
-import { ShelfUnitSchema } from "./ShelfUnit.js"
+import { ShelfUnitValue } from "./ShelfUnit"
 
-export const LayoutGondolaSchema = v.object({
+export const LayoutGondolaValue = v.object({
   height: v.number(),
   numberOfLayouts: v.pipe(v.number(), v.minValue(0)),
   gondolaUnits: v.array(
     v.object({
       depth: v.number(),
       numberOfGondolaUnits: v.pipe(v.number(), v.minValue(0)),
-      shelfUnits: v.array(ShelfUnitSchema),
+      shelfUnits: v.array(ShelfUnitValue),
     }),
   ),
   extras: v.optional(
@@ -22,7 +22,7 @@ export const LayoutGondolaSchema = v.object({
   ),
 })
 
-export type LayoutGondola = v.InferOutput<typeof LayoutGondolaSchema>
+export type LayoutGondola = v.InferOutput<typeof LayoutGondolaValue>
 
 export const isLayoutGondola = (layout: unknown): layout is LayoutGondola =>
-  v.safeParse(LayoutGondolaSchema, layout).success
+  v.safeParse(LayoutGondolaValue, layout).success

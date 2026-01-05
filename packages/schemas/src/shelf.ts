@@ -1,8 +1,8 @@
 import * as v from "valibot"
 
-export const ShelfSchema = v.object({
+export const ShelfValue = v.object({
   depth: v.number(),
   numberOfShelves: v.pipe(v.number(), v.minValue(0)),
 })
 
-export type Shelf = v.InferOutput<typeof ShelfSchema>
+export type Shelf = v.InferOutput<typeof ShelfValue>

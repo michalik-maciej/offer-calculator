@@ -1,6 +1,6 @@
 import { find, reduce } from "lodash/fp"
 
-import { Component, ComponentDemand } from "@/schemas/Component"
+import { Component, ComponentDemand } from "../../types"
 
 type BomPriceCalculationContext = {
   bom: ComponentDemand

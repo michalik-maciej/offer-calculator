@@ -1,6 +1,6 @@
 import { find, map } from "lodash/fp"
 
-import { Component } from "@/schemas/Component"
+import { Component } from "../../types"
 
 type BaseShelfCalculationContext = {
   depth: number

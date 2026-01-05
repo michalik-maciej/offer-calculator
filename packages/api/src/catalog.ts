@@ -1,4 +1,4 @@
-import { Component } from "@/schemas/Component"
+import { Component } from "@/domain/types"
 
 export const catalog: Component[] = [
   {

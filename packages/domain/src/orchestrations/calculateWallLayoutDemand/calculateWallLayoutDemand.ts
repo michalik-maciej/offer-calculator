@@ -1,4 +1,3 @@
-import { Component } from "@/schemas/Component"
 import { LayoutWall } from "@/schemas/LayoutWall"
 
 import { calculateBackPanelDemand } from "../../calculations/calculateBackPanelDemand/calculateBackPanelDemand"
@@ -7,6 +6,7 @@ import { calculateFootDemand } from "../../calculations/calculateFootDemand/calc
 import { calculateLegDemand } from "../../calculations/calculateLegDemand/calculateLegDemand"
 import { calculateShelfDemand } from "../../calculations/calculateShelfDemand/calculateShelfDemand"
 import { countShelfUnitsByWidth } from "../../helpers/countShelfUnitsByWidth/countShelfUnitsByWidth"
+import { Component } from "../../types"
 
 export function calculateWallLayoutDemand(
   { depth, height, shelfUnits, numberOfLayouts, extras = [] }: LayoutWall,

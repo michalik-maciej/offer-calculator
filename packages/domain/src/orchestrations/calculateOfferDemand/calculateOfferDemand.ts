@@ -1,10 +1,10 @@
 import { compact } from "lodash/fp"
 
-import { Component, ComponentDemand } from "@/schemas/Component"
 import { isLayoutGondola } from "@/schemas/LayoutGondola"
 import { isLayoutWall } from "@/schemas/LayoutWall"
 import { OfferInput } from "@/schemas/Offer"
 
+import { Component, ComponentDemand } from "../../types"
 import { calculateGondolaLayoutDemand } from "../calculateGondolaLayoutDemand/calculateGondolaLayoutDemand"
 import { calculateWallLayoutDemand } from "../calculateWallLayoutDemand/calculateWallLayoutDemand"
 

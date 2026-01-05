@@ -1,4 +1,4 @@
-import { Component } from "@/schemas/Component"
+import { Component } from "../types"
 
 export const componentCatalogMock: Component[] = [
   {

@@ -1,11 +1,11 @@
 import * as v from "valibot"
 
-import { LayoutGondolaSchema } from "./LayoutGondola"
-import { LayoutWallSchema } from "./LayoutWall"
+import { LayoutGondolaValue } from "./LayoutGondola"
+import { LayoutWallValue } from "./LayoutWall"
 
 export const OfferInputSchema = v.object({
   discountPercentage: v.pipe(v.number(), v.minValue(0), v.maxValue(100)),
-  layouts: v.array(v.union([LayoutGondolaSchema, LayoutWallSchema])),
+  layouts: v.array(v.union([LayoutGondolaValue, LayoutWallValue])),
   title: v.string(),
 })
 

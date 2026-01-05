@@ -1,11 +1,11 @@
 import * as v from "valibot"
 
-import { ShelfSchema } from "./Shelf.js"
+import { ShelfValue } from "./Shelf"
 
-export const ShelfUnitSchema = v.object({
+export const ShelfUnitValue = v.object({
   numberOfShelfUnits: v.pipe(v.number(), v.minValue(0)),
-  shelves: v.array(ShelfSchema),
+  shelves: v.array(ShelfValue),
   width: v.number(),
 })
 
-export type ShelfUnit = v.InferOutput<typeof ShelfUnitSchema>
+export type ShelfUnit = v.InferOutput<typeof ShelfUnitValue>
