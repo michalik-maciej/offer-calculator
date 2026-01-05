@@ -1,21 +1,16 @@
 import { find, reduce } from "lodash/fp"
 
-import { Component } from "@/schemas/Component"
+import { Component, ComponentDemand } from "@/schemas/Component"
 
-interface CalculateBomPriceParams {
-  bom: {
-    id: string
-    quantity: number
-  }[]
+type BomPriceCalculationContext = {
+  bom: ComponentDemand
   discountPercentage?: number
-  catalog: Component[]
 }
 
-export const calculateBomPrice = ({
-  bom,
-  discountPercentage = 0,
-  catalog,
-}: CalculateBomPriceParams) => {
+export const calculateBomPrice = (
+  { bom, discountPercentage = 0 }: BomPriceCalculationContext,
+  catalog: Component[],
+) => {
   const basePrice = reduce(
     (total, { id, quantity }) => {
       const component = find({ id }, catalog)

@@ -1,9 +1,9 @@
 import { Component } from "@/schemas/Component"
 import { LayoutGondola } from "@/schemas/LayoutGondola"
 
-import { aggregateWallLayoutDemand } from "../aggregateWallLayoutDemand/aggregateWallLayoutDemand"
+import { calculateWallLayoutDemand } from "../calculateWallLayoutDemand/calculateWallLayoutDemand"
 
-export function aggregateGondolaLayoutDemand(
+export function calculateGondolaLayoutDemand(
   { height, gondolaUnits, numberOfLayouts, extras = [] }: LayoutGondola,
   catalog: Component[],
 ) {
@@ -15,7 +15,7 @@ export function aggregateGondolaLayoutDemand(
         numberOfLayouts: numberOfLayouts * numberOfGondolaUnits,
         shelfUnits,
       }
-      return aggregateWallLayoutDemand(context, catalog)
+      return calculateWallLayoutDemand(context, catalog)
     }),
     ...extras,
   ]

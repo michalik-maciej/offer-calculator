@@ -19,3 +19,9 @@ export const ComponentSchema = v.object({
 })
 
 export type Component = v.InferOutput<typeof ComponentSchema>
+
+export const ComponentDemandSchema = v.array(
+  v.object({ id: v.string(), quantity: v.number() }),
+)
+
+export type ComponentDemand = v.InferOutput<typeof ComponentDemandSchema>

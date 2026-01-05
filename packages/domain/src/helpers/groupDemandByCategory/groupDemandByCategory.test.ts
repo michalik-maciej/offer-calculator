@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 
 import { groupDemandByCategory } from "./groupDemandByCategory"
-import { componentCatalogMock } from "../../test/fixtures/componentCatalog"
+import { componentCatalogMock } from "../../fixtures/componentCatalog"
 
 describe("groupDemandByCategory", () => {
   it("groups raw demand by product category", () => {

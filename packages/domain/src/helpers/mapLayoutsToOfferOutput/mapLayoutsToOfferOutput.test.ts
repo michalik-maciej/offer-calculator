@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 
 import { mapLayoutsToOfferOutput } from "./mapLayoutsToOfferOutput"
-import { componentCatalogMock } from "../../test/fixtures/componentCatalog"
+import { componentCatalogMock } from "../../fixtures/componentCatalog"
 
 describe("mapLayoutsToOfferOutput", () => {
   it("builds description of wall layout", () => {

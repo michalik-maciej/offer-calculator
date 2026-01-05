@@ -1,17 +1,19 @@
 import { find } from "lodash/fp"
 
-import { Component } from "@/schemas/Component"
+import { Component, ComponentDemand } from "@/schemas/Component"
 
-type DemandByCategory = Record<
-  Component["category"],
-  Array<{ id: string; quantity: number; label: string }>
+type DemandByCategory = Partial<
+  Record<
+    Component["category"],
+    Array<ComponentDemand[number] & { label: string }>
+  >
 >
 
 export function groupDemandByCategory(
-  rawDemand: { id: string; quantity: number }[],
+  rawDemand: ComponentDemand,
   catalog: Component[],
-): Partial<DemandByCategory> {
-  const result: Partial<DemandByCategory> = {}
+) {
+  const bom: DemandByCategory = {}
 
   for (const { id, quantity } of rawDemand) {
     const component = find({ id }, catalog)
@@ -19,7 +21,7 @@ export function groupDemandByCategory(
       throw new Error(`Component with id "${id}" not found in catalog`)
     }
 
-    const bucket = result[component.category] ?? []
+    const bucket = bom[component.category] ?? []
     const existing = find({ id }, bucket)
 
     if (existing) {
@@ -32,8 +34,8 @@ export function groupDemandByCategory(
       })
     }
 
-    result[component.category] = bucket
+    bom[component.category] = bucket
   }
 
-  return result
+  return bom
 }

@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest"
 
-import { componentCatalogMock } from "../../test/fixtures/componentCatalog"
-import { aggregateWallLayoutDemand } from "../aggregateWallLayoutDemand/aggregateWallLayoutDemand"
+import { calculateWallLayoutDemand } from "./calculateWallLayoutDemand"
+import { componentCatalogMock } from "../../fixtures/componentCatalog"
 
-describe("aggregateWallLayoutDemand", () => {
+describe("calculateWallLayoutDemand", () => {
   it("returns complete demand", () => {
-    const result = aggregateWallLayoutDemand(
+    const result = calculateWallLayoutDemand(
       {
         depth: 47,
         height: 130,

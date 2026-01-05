@@ -1,5 +1,6 @@
 import { find } from "lodash/fp"
 
+import { ComponentDemand } from "@/schemas/Component"
 import { Component } from "@/schemas/Component"
 import { ShelfUnit } from "@/schemas/ShelfUnit"
 
@@ -13,7 +14,7 @@ export function calculateShelfDemand(
   catalog: Component[],
 ) {
   const SUPPORTS_PER_SHELF = 2
-  const demand: { id: string; quantity: number }[] = []
+  const demand: ComponentDemand = []
 
   const addToDemand = ({ id }: Component, quantity: number) => {
     const existing = find({ id }, demand)

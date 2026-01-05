@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest"
 
-import { aggregateOfferDemand } from "./aggregateOfferDemand"
-import { componentCatalogMock } from "../../test/fixtures/componentCatalog"
+import { calculateOfferDemand } from "./calculateOfferDemand"
+import { componentCatalogMock } from "../../fixtures/componentCatalog"
 
-describe("aggregateOfferDemand", () => {
+describe("calculateOfferDemand", () => {
   it("returns complete demand", () => {
-    const result = aggregateOfferDemand(
+    const result = calculateOfferDemand(
       [
         {
           height: 130,

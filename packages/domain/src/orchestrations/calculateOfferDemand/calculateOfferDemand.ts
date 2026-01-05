@@ -1,14 +1,14 @@
 import { compact } from "lodash/fp"
 
-import { Component } from "@/schemas/Component"
+import { Component, ComponentDemand } from "@/schemas/Component"
 import { isLayoutGondola } from "@/schemas/LayoutGondola"
 import { isLayoutWall } from "@/schemas/LayoutWall"
 import { OfferInput } from "@/schemas/Offer"
 
-import { aggregateGondolaLayoutDemand } from "../aggregateGondolaLayoutDemand/aggregateGondolaLayoutDemand"
-import { aggregateWallLayoutDemand } from "../aggregateWallLayoutDemand/aggregateWallLayoutDemand"
+import { calculateGondolaLayoutDemand } from "../calculateGondolaLayoutDemand/calculateGondolaLayoutDemand"
+import { calculateWallLayoutDemand } from "../calculateWallLayoutDemand/calculateWallLayoutDemand"
 
-export const aggregateOfferDemand = (
+export const calculateOfferDemand = (
   layouts: OfferInput["layouts"],
   catalog: Component[],
 ) => {
@@ -16,14 +16,14 @@ export const aggregateOfferDemand = (
     layouts.flatMap((layout) => {
       switch (true) {
         case isLayoutWall(layout):
-          return aggregateWallLayoutDemand(layout, catalog)
+          return calculateWallLayoutDemand(layout, catalog)
         case isLayoutGondola(layout):
-          return aggregateGondolaLayoutDemand(layout, catalog)
+          return calculateGondolaLayoutDemand(layout, catalog)
       }
     }),
   )
 
-  const map = new Map<string, { id: string; quantity: number }>()
+  const map = new Map<string, ComponentDemand[number]>()
   for (const item of rawDemand) {
     const existing = map.get(item.id)
 
