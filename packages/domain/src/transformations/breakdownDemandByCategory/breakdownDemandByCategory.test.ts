@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest"
 
-import { groupDemandByCategory } from "./groupDemandByCategory"
+import { breakdownDemandByCategory } from "./breakdownDemandByCategory"
 import { componentCatalogMock } from "../../fixtures/componentCatalog"
 
-describe("groupDemandByCategory", () => {
+describe("breakdownDemandByCategory", () => {
   it("groups raw demand by product category", () => {
-    const result = groupDemandByCategory(
+    const result = breakdownDemandByCategory(
       [
         { id: "back-40-80", quantity: 3 },
         { id: "shelf-80-37", quantity: 1 },
@@ -39,7 +39,7 @@ describe("groupDemandByCategory", () => {
 
   it("throws an error when a component id is not found in the catalog", () => {
     expect(() =>
-      groupDemandByCategory(
+      breakdownDemandByCategory(
         [{ id: "unknown-component", quantity: 2 }],
         componentCatalogMock,
       ),

@@ -27,7 +27,7 @@ describe("createOfferPreview", () => {
       componentCatalogMock,
     )
 
-    expect(response).toHaveProperty("demandBreakdown")
+    expect(response).toHaveProperty("breakdown")
 
     expect(response).toHaveProperty("title")
     expect(response.title).toEqual("Test Offer")

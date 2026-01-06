@@ -2,7 +2,7 @@ import { OfferInput, OfferOutput } from "@/schemas/Offer.schema"
 
 import { calculateBomPrice } from "../../calculations/calculateBomPrice/calculateBomPrice"
 import { Component } from "../../models/component"
-import { groupDemandByCategory } from "../../transformations/groupDemandByCategory/groupDemandByCategory"
+import { breakdownDemandByCategory } from "../../transformations/breakdownDemandByCategory/breakdownDemandByCategory"
 import { mapLayoutsToOfferOutput } from "../../transformations/mapLayoutsToOfferOutput/mapLayoutsToOfferOutput"
 import { calculateOfferDemand } from "../calculateOfferDemand/calculateOfferDemand"
 
@@ -19,7 +19,7 @@ export function createOfferPreview(
   return {
     basePrice,
     discountPrice,
-    demandBreakdown: groupDemandByCategory(bom, catalog),
+    breakdown: breakdownDemandByCategory(bom, catalog),
     layouts: mapLayoutsToOfferOutput(layouts, catalog),
     title,
   }

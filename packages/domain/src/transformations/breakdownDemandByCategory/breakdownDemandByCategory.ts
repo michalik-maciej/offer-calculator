@@ -9,7 +9,7 @@ type DemandByCategory = Partial<
   >
 >
 
-export function groupDemandByCategory(
+export function breakdownDemandByCategory(
   rawDemand: ComponentDemand,
   catalog: Component[],
 ) {

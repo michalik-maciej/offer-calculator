@@ -6,6 +6,7 @@ import { calculateBomPrice } from "../../calculations/calculateBomPrice/calculat
 import { Component, ComponentDemand } from "../../models/component"
 import { calculateGondolaLayoutDemand } from "../../orchestrations/calculateGondolaLayoutDemand/calculateGondolaLayoutDemand"
 import { calculateWallLayoutDemand } from "../../orchestrations/calculateWallLayoutDemand/calculateWallLayoutDemand"
+import { breakdownDemandByCategory } from "../../transformations/breakdownDemandByCategory/breakdownDemandByCategory"
 import { buildLayoutDescription } from "../buildLayoutDescription/buildLayoutDescription"
 
 export const mapLayoutsToOfferOutput = (
@@ -24,6 +25,7 @@ export const mapLayoutsToOfferOutput = (
     }
     const { basePrice } = calculateBomPrice({ bom }, catalog)
     const description = buildLayoutDescription(layout)
+    const breakdown = breakdownDemandByCategory(bom, catalog)
 
-    return { basePrice, description }
+    return { basePrice, description, breakdown }
   })
