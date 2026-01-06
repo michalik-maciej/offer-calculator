@@ -28,5 +28,6 @@ export const calculateBomPrice = (
   return {
     basePrice: Number(basePrice.toFixed(2)),
     discountPrice: Number(discountPrice.toFixed(2)),
+    discountPercentage,
   }
 }

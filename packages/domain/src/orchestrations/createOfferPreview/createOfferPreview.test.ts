@@ -27,25 +27,40 @@ describe("createOfferPreview", () => {
       componentCatalogMock,
     )
 
-    expect(response).toHaveProperty("breakdown")
+    const expectedResult = {
+      breakdown: {
+        back: [
+          { id: "back-40-100", quantity: 4, label: "Plecy 40/100" },
+          { id: "back-10-100", quantity: 1, label: "Plecy 10/100" },
+        ],
+        shelf: [{ id: "shelf-100-47", quantity: 1, label: "Półka 100/47" }],
+        leg: [{ id: "leg-180-8-3", quantity: 2, label: "Noga 180/8/3" }],
+        foot: [{ id: "foot-47", quantity: 2, label: "Stopa 47" }],
+      },
+      layouts: [
+        {
+          basePrice: 553.85,
+          description:
+            "1 x ciąg regałów przyściennych / 1x100 / baza 47 / h-180",
+          breakdown: {
+            back: [
+              { id: "back-40-100", quantity: 4, label: "Plecy 40/100" },
+              { id: "back-10-100", quantity: 1, label: "Plecy 10/100" },
+            ],
+            shelf: [{ id: "shelf-100-47", quantity: 1, label: "Półka 100/47" }],
+            leg: [{ id: "leg-180-8-3", quantity: 2, label: "Noga 180/8/3" }],
+            foot: [{ id: "foot-47", quantity: 2, label: "Stopa 47" }],
+          },
+        },
+      ],
+      pricing: {
+        basePrice: 553.85,
+        discountPrice: 498.47,
+        discountPercentage: 10,
+      },
+      title: "Test Offer",
+    }
 
-    expect(response).toHaveProperty("title")
-    expect(response.title).toEqual("Test Offer")
-
-    expect(response).toHaveProperty("basePrice")
-    expect(response.basePrice).toBeTypeOf("number")
-
-    expect(response).toHaveProperty("discountPrice")
-    expect(response.discountPrice).toBeTypeOf("number")
-
-    expect(response).toHaveProperty("layouts")
-    expect(response.layouts).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          basePrice: expect.any(Number),
-          description: expect.any(String),
-        }),
-      ]),
-    )
+    expect(response).toEqual(expectedResult)
   })
 })

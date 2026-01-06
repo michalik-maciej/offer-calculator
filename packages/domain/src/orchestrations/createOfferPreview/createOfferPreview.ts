@@ -1,4 +1,4 @@
-import { OfferInput, OfferOutput } from "@/schemas/Offer.schema"
+import type { OfferInput, OfferOutput } from "@/schemas/Offer.schema"
 
 import { calculateBomPrice } from "../../calculations/calculateBomPrice/calculateBomPrice"
 import { Component } from "../../models/component"
@@ -11,16 +11,14 @@ export function createOfferPreview(
   catalog: Component[],
 ): OfferOutput {
   const bom = calculateOfferDemand(layouts, catalog)
-  const { basePrice, discountPrice } = calculateBomPrice(
-    { bom, discountPercentage },
-    catalog,
-  )
 
   return {
-    basePrice,
-    discountPrice,
     breakdown: breakdownDemandByCategory(bom, catalog),
     layouts: mapLayoutsToOfferOutput(layouts, catalog),
+    pricing: {
+      ...calculateBomPrice({ bom, discountPercentage }, catalog),
+      discountPercentage,
+    },
     title,
   }
 }

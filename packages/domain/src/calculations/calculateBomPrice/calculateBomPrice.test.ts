@@ -19,6 +19,7 @@ describe("calculateBomPrice", () => {
     expect(result).toEqual({
       basePrice: 258.07,
       discountPrice: 232.26,
+      discountPercentage: 10,
     })
   })
 
@@ -27,6 +28,7 @@ describe("calculateBomPrice", () => {
       calculateBomPrice(
         {
           bom: [{ id: "non-existent-id", quantity: 1 }],
+          discountPercentage: 10,
         },
         componentCatalogMock,
       ),
