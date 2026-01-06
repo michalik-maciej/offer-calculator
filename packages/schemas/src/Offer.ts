@@ -4,7 +4,9 @@ import { LayoutGondolaValue } from "./LayoutGondola"
 import { LayoutWallValue } from "./LayoutWall"
 
 export const OfferInputSchema = v.object({
-  discountPercentage: v.pipe(v.number(), v.minValue(0), v.maxValue(100)),
+  discountPercentage: v.optional(
+    v.pipe(v.number(), v.minValue(0), v.maxValue(100)),
+  ),
   layouts: v.array(v.union([LayoutGondolaValue, LayoutWallValue])),
   title: v.string(),
 })
