@@ -1,7 +1,7 @@
 import * as v from "valibot"
 
-import { LayoutGondolaValue } from "./LayoutGondola"
-import { LayoutWallValue } from "./LayoutWall"
+import { LayoutGondolaValue } from "./LayoutGondola.schema"
+import { LayoutWallValue } from "./LayoutWall.schema"
 
 export const OfferInputSchema = v.object({
   discountPercentage: v.optional(

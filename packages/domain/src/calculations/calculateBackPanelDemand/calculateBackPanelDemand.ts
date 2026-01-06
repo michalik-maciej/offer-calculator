@@ -1,13 +1,11 @@
 import { filter, orderBy } from "lodash/fp"
 
-import { Component } from "../../types"
+import { Component } from "../../models/component"
+import { ShelfUnit } from "../../models/shelfUnit"
 
 type BackPanelCalculationContext = {
   height: number
-  shelfUnitsByWidth: {
-    quantity: number
-    width: number
-  }[]
+  shelfUnitsByWidth: ShelfUnit[]
 }
 
 export function calculateBackPanelDemand(
@@ -17,7 +15,7 @@ export function calculateBackPanelDemand(
   const BACK_CLEARANCE_CM = 10
   const demand = []
 
-  for (const { width, quantity: unitQuantity } of shelfUnitsByWidth) {
+  for (const { width, numberOfShelfUnits } of shelfUnitsByWidth) {
     const availableBackPanels = orderBy(
       ["height"],
       ["desc"],
@@ -38,7 +36,7 @@ export function calculateBackPanelDemand(
 
       demand.push({
         id,
-        quantity: unitQuantity * countPerShelfUnit,
+        quantity: numberOfShelfUnits * countPerShelfUnit,
       })
 
       remainder %= panelHeight

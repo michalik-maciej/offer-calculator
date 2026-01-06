@@ -10,11 +10,11 @@ describe("calculateBaseShelfDemand", () => {
       shelfUnitsByWidth: [
         {
           width: 100,
-          quantity: 1,
+          numberOfShelfUnits: 1,
         },
         {
           width: 80,
-          quantity: 3,
+          numberOfShelfUnits: 3,
         },
       ],
     }
@@ -36,7 +36,7 @@ describe("calculateBaseShelfDemand", () => {
           shelfUnitsByWidth: [
             {
               width: 100,
-              quantity: 1,
+              numberOfShelfUnits: 1,
             },
           ],
         },

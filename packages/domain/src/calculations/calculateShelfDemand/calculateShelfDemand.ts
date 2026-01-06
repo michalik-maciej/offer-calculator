@@ -1,8 +1,7 @@
 import { find } from "lodash/fp"
 
-import { ShelfUnit } from "@/schemas/ShelfUnit"
-
-import { Component, ComponentDemand } from "../../types"
+import { Component, ComponentDemand } from "../../models/component"
+import { ShelfUnit } from "../../models/shelfUnit"
 
 type ShelfCalculationContext = {
   numberOfLayouts: number
@@ -26,7 +25,7 @@ export function calculateShelfDemand(
     demand.push({ id, quantity })
   }
 
-  for (const { numberOfShelfUnits, width, shelves } of shelfUnits) {
+  for (const { numberOfShelfUnits, width, shelves = [] } of shelfUnits) {
     const unitInstances = numberOfShelfUnits * numberOfLayouts
 
     for (const { numberOfShelves, depth } of shelves) {

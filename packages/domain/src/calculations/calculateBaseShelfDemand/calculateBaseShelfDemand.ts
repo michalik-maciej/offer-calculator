@@ -1,20 +1,19 @@
 import { find, map } from "lodash/fp"
 
-import { Component } from "../../types"
+import { ShelfUnit } from "@/domain/models/shelfUnit"
+
+import { Component } from "../../models/component"
 
 type BaseShelfCalculationContext = {
   depth: number
-  shelfUnitsByWidth: {
-    quantity: number
-    width: number
-  }[]
+  shelfUnitsByWidth: ShelfUnit[]
 }
 
 export function calculateBaseShelfDemand(
   { depth, shelfUnitsByWidth }: BaseShelfCalculationContext,
   catalog: Component[],
 ) {
-  return map(({ quantity, width }) => {
+  return map(({ numberOfShelfUnits, width }) => {
     const availableShelf = find({ category: "shelf", depth, width }, catalog)
 
     if (!availableShelf) {
@@ -23,7 +22,7 @@ export function calculateBaseShelfDemand(
 
     return {
       id: availableShelf.id,
-      quantity,
+      quantity: numberOfShelfUnits,
     }
   }, shelfUnitsByWidth)
 }

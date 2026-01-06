@@ -10,11 +10,11 @@ describe("calculateBackPanelDemand", () => {
       shelfUnitsByWidth: [
         {
           width: 100,
-          quantity: 1,
+          numberOfShelfUnits: 1,
         },
         {
           width: 80,
-          quantity: 3,
+          numberOfShelfUnits: 3,
         },
       ],
     }
@@ -38,7 +38,7 @@ describe("calculateBackPanelDemand", () => {
           shelfUnitsByWidth: [
             {
               width: 16,
-              quantity: 1,
+              numberOfShelfUnits: 1,
             },
           ],
         },

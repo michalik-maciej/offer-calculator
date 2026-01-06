@@ -14,8 +14,8 @@ describe("countShelfUnitsByWidth", () => {
     )
 
     expect(result).toEqual([
-      { width: 100, quantity: 12 },
-      { width: 80, quantity: 12 },
+      { width: 100, numberOfShelfUnits: 12 },
+      { width: 80, numberOfShelfUnits: 12 },
     ])
   })
 })

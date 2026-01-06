@@ -1,6 +1,6 @@
 import { find } from "lodash/fp"
 
-import { Component } from "../../types"
+import { Component } from "../../models/component"
 
 type FootCalculationContext = {
   depth: number

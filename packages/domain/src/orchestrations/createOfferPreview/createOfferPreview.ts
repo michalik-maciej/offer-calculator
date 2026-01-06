@@ -1,10 +1,10 @@
-import { groupDemandByCategory } from "@/domain/helpers/groupDemandByCategory/groupDemandByCategory"
-import { mapLayoutsToOfferOutput } from "@/domain/helpers/mapLayoutsToOfferOutput/mapLayoutsToOfferOutput"
-import { calculateOfferDemand } from "@/domain/orchestrations/calculateOfferDemand/calculateOfferDemand"
-import { Component } from "@/domain/types"
-import { OfferInput, OfferOutput } from "@/schemas/Offer"
+import { OfferInput, OfferOutput } from "@/schemas/Offer.schema"
 
 import { calculateBomPrice } from "../../calculations/calculateBomPrice/calculateBomPrice"
+import { Component } from "../../models/component"
+import { groupDemandByCategory } from "../../transformations/groupDemandByCategory/groupDemandByCategory"
+import { mapLayoutsToOfferOutput } from "../../transformations/mapLayoutsToOfferOutput/mapLayoutsToOfferOutput"
+import { calculateOfferDemand } from "../calculateOfferDemand/calculateOfferDemand"
 
 export function createOfferPreview(
   { discountPercentage, layouts, title }: OfferInput,

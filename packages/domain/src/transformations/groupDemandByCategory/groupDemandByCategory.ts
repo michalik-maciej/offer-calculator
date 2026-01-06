@@ -1,6 +1,6 @@
 import { find } from "lodash/fp"
 
-import { Component, ComponentDemand } from "../../types"
+import { Component, ComponentDemand } from "../../models/component"
 
 type DemandByCategory = Partial<
   Record<

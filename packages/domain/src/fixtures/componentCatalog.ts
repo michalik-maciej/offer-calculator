@@ -1,4 +1,4 @@
-import { Component } from "../types"
+import { Component } from "../models/component"
 
 export const componentCatalogMock: Component[] = [
   {

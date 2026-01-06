@@ -1,11 +1,11 @@
-import { isLayoutGondola } from "@/schemas/LayoutGondola"
-import { isLayoutWall } from "@/schemas/LayoutWall"
-import { OfferInput, OfferOutput } from "@/schemas/Offer"
+import { isLayoutGondola } from "@/schemas/LayoutGondola.schema"
+import { isLayoutWall } from "@/schemas/LayoutWall.schema"
+import { OfferInput, OfferOutput } from "@/schemas/Offer.schema"
 
 import { calculateBomPrice } from "../../calculations/calculateBomPrice/calculateBomPrice"
+import { Component, ComponentDemand } from "../../models/component"
 import { calculateGondolaLayoutDemand } from "../../orchestrations/calculateGondolaLayoutDemand/calculateGondolaLayoutDemand"
 import { calculateWallLayoutDemand } from "../../orchestrations/calculateWallLayoutDemand/calculateWallLayoutDemand"
-import { Component, ComponentDemand } from "../../types"
 import { buildLayoutDescription } from "../buildLayoutDescription/buildLayoutDescription"
 
 export const mapLayoutsToOfferOutput = (

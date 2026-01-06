@@ -2,7 +2,7 @@ import { Request, Response } from "express"
 import { safeParse } from "valibot"
 
 import { createOfferPreview } from "@/domain/orchestrations/createOfferPreview/createOfferPreview"
-import { OfferInputSchema, OfferOutput } from "@/schemas/Offer"
+import { OfferInputSchema, OfferOutput } from "@/schemas/Offer.schema"
 
 import { catalog } from "../catalog"
 
