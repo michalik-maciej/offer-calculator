@@ -1,12 +1,12 @@
 import express from "express"
 
-import { calculateOfferController } from "./controllers/calculateOffer.controller"
+import offersRoutes from "./routes/offers.routes"
 
 export const app = express()
 
 app.use(express.json())
 
-app.post("/api/calculate/offer", calculateOfferController)
+app.use("/api/offers", offersRoutes)
 app.get("/api/health", (_req, res) => {
   res.status(200).send("OK")
 })
