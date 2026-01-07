@@ -11,14 +11,14 @@ type DemandByCategory = Partial<
 
 export function breakdownDemandByCategory(
   rawDemand: ComponentDemand,
-  catalog: Component[],
+  inventory: Component[],
 ) {
   const bom: DemandByCategory = {}
 
   for (const { id, quantity } of rawDemand) {
-    const component = find({ id }, catalog)
+    const component = find({ id }, inventory)
     if (!component) {
-      throw new Error(`Component with id "${id}" not found in catalog`)
+      throw new Error(`Component with id "${id}" not found in inventory`)
     }
 
     const bucket = bom[component.category] ?? []

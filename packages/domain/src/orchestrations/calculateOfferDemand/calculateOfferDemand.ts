@@ -10,15 +10,15 @@ import { calculateWallLayoutDemand } from "../calculateWallLayoutDemand/calculat
 
 export const calculateOfferDemand = (
   layouts: OfferInput["layouts"],
-  catalog: Component[],
+  inventory: Component[],
 ) => {
   const rawDemand = compact(
     layouts.flatMap((layout) => {
       switch (true) {
         case isLayoutWall(layout):
-          return calculateWallLayoutDemand(layout, catalog)
+          return calculateWallLayoutDemand(layout, inventory)
         case isLayoutGondola(layout):
-          return calculateGondolaLayoutDemand(layout, catalog)
+          return calculateGondolaLayoutDemand(layout, inventory)
       }
     }),
   )

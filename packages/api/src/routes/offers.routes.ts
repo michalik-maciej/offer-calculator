@@ -5,4 +5,5 @@ import { calculateOfferController } from "../controllers/calculateOffer.controll
 const router = Router()
 
 router.post("/preview", calculateOfferController)
+
 export default router

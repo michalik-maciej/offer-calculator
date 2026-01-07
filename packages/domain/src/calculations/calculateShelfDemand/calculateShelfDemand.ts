@@ -10,7 +10,7 @@ type ShelfCalculationContext = {
 
 export function calculateShelfDemand(
   { numberOfLayouts, shelfUnits }: ShelfCalculationContext,
-  catalog: Component[],
+  inventory: Component[],
 ) {
   const SUPPORTS_PER_SHELF = 2
   const demand: ComponentDemand = []
@@ -34,7 +34,7 @@ export function calculateShelfDemand(
 
       const availableShelf = find(
         { category: "shelf", depth: depth, width: width },
-        catalog,
+        inventory,
       )
 
       if (!availableShelf) {
@@ -45,7 +45,7 @@ export function calculateShelfDemand(
 
       const availableSupport = find(
         { category: "support", depth: depth },
-        catalog,
+        inventory,
       )
 
       if (!availableSupport) {

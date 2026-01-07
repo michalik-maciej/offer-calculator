@@ -37,12 +37,14 @@ describe("breakdownDemandByCategory", () => {
     })
   })
 
-  it("throws an error when a component id is not found in the catalog", () => {
+  it("throws an error when a component id is not found in the inventory", () => {
     expect(() =>
       breakdownDemandByCategory(
         [{ id: "unknown-component", quantity: 2 }],
         componentCatalogMock,
       ),
-    ).toThrowError('Component with id "unknown-component" not found in catalog')
+    ).toThrowError(
+      'Component with id "unknown-component" not found in inventory',
+    )
   })
 })

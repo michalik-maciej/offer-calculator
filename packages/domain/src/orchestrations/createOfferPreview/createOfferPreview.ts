@@ -8,15 +8,15 @@ import { calculateOfferDemand } from "../calculateOfferDemand/calculateOfferDema
 
 export function createOfferPreview(
   { discountPercentage, layouts, title }: OfferInput,
-  catalog: Component[],
+  inventory: Component[],
 ): OfferOutput {
-  const bom = calculateOfferDemand(layouts, catalog)
+  const bom = calculateOfferDemand(layouts, inventory)
 
   return {
-    breakdown: breakdownDemandByCategory(bom, catalog),
-    layouts: mapLayoutsToOfferOutput(layouts, catalog),
+    breakdown: breakdownDemandByCategory(bom, inventory),
+    layouts: mapLayoutsToOfferOutput(layouts, inventory),
     pricing: {
-      ...calculateBomPrice({ bom, discountPercentage }, catalog),
+      ...calculateBomPrice({ bom, discountPercentage }, inventory),
       discountPercentage,
     },
     title,

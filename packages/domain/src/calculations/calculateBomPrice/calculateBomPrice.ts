@@ -9,13 +9,13 @@ type BomPriceCalculationContext = {
 
 export const calculateBomPrice = (
   { bom, discountPercentage = 0 }: BomPriceCalculationContext,
-  catalog: Component[],
+  inventory: Component[],
 ) => {
   const basePrice = reduce(
     (total, { id, quantity }) => {
-      const component = find({ id }, catalog)
+      const component = find({ id }, inventory)
       if (!component) {
-        throw new Error(`Component with id ${id} not found in catalog`)
+        throw new Error(`Component with id ${id} not found in inventory`)
       }
 
       return total + component.price * quantity

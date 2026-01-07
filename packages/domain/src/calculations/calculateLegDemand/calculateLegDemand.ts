@@ -10,9 +10,9 @@ type LegCalculationContext = {
 
 export function calculateLegDemand(
   { height, numberOfLayouts, numberOfUnits }: LegCalculationContext,
-  catalog: Component[],
+  inventory: Component[],
 ) {
-  const availableLeg = find({ category: "leg", height }, catalog)
+  const availableLeg = find({ category: "leg", height }, inventory)
 
   if (!availableLeg) {
     throw new Error(`No leg found for height ${height}cm`)

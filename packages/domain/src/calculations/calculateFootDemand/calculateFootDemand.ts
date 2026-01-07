@@ -10,9 +10,9 @@ type FootCalculationContext = {
 
 export function calculateFootDemand(
   { depth, numberOfLayouts, numberOfUnits }: FootCalculationContext,
-  catalog: Component[],
+  inventory: Component[],
 ) {
-  const availableFoot = find({ category: "foot", depth }, catalog)
+  const availableFoot = find({ category: "foot", depth }, inventory)
 
   if (!availableFoot) {
     throw new Error(`No foot found for depth ${depth}cm`)

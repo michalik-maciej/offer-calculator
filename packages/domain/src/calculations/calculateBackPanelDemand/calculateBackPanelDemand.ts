@@ -10,7 +10,7 @@ type BackPanelCalculationContext = {
 
 export function calculateBackPanelDemand(
   { height, shelfUnitsByWidth }: BackPanelCalculationContext,
-  catalog: Component[],
+  inventory: Component[],
 ) {
   const BACK_CLEARANCE_CM = 10
   const demand = []
@@ -19,7 +19,7 @@ export function calculateBackPanelDemand(
     const availableBackPanels = orderBy(
       ["height"],
       ["desc"],
-      filter({ category: "back", width }, catalog),
+      filter({ category: "back", width }, inventory),
     )
 
     if (availableBackPanels.length === 0) {

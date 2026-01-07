@@ -4,7 +4,7 @@ import * as v from "valibot"
 import { createOfferPreview } from "@/domain/orchestrations/createOfferPreview/createOfferPreview"
 import { OfferInputSchema, OfferOutput } from "@/schemas/Offer.schema"
 
-import { catalog } from "../catalog"
+import { inventory } from "../inventory"
 
 type ErrorResponse = {
   error: string
@@ -25,7 +25,7 @@ export function calculateOfferController(
   }
 
   try {
-    const result = createOfferPreview(parsed.output, catalog)
+    const result = createOfferPreview(parsed.output, inventory)
     return res.status(200).json(result)
   } catch {
     return res.status(500).json({ error: "Calculation failed" })

@@ -1,6 +1,6 @@
-import { Component } from "@/domain/models/component"
+import { Component } from "@/domain/models/Component"
 
-export const catalog: Component[] = [
+export const inventory: Component[] = [
   {
     category: "shelf",
     depth: 30,

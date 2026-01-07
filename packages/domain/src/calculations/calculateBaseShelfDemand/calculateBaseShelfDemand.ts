@@ -11,10 +11,10 @@ type BaseShelfCalculationContext = {
 
 export function calculateBaseShelfDemand(
   { depth, shelfUnitsByWidth }: BaseShelfCalculationContext,
-  catalog: Component[],
+  inventory: Component[],
 ) {
   return map(({ numberOfShelfUnits, width }) => {
-    const availableShelf = find({ category: "shelf", depth, width }, catalog)
+    const availableShelf = find({ category: "shelf", depth, width }, inventory)
 
     if (!availableShelf) {
       throw new Error(`No base shelf found for depth ${depth}cm`)

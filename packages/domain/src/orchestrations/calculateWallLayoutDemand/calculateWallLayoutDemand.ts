@@ -10,7 +10,7 @@ import { countShelfUnitsByWidth } from "../../transformations/countShelfUnitsByW
 
 export function calculateWallLayoutDemand(
   { depth, height, shelfUnits, numberOfLayouts, extras = [] }: LayoutWall,
-  catalog: Component[],
+  inventory: Component[],
 ) {
   const shelfUnitsByWidth = countShelfUnitsByWidth(shelfUnits, numberOfLayouts)
   const numberOfUnits = shelfUnits.reduce(
@@ -46,11 +46,11 @@ export function calculateWallLayoutDemand(
   }
 
   return [
-    ...calculateBackPanelDemand(backPanelContext, catalog),
-    ...calculateBaseShelfDemand(baseShelfContext, catalog),
-    ...calculateShelfDemand(shelfContext, catalog),
-    ...calculateLegDemand(legContext, catalog),
-    ...calculateFootDemand(footContext, catalog),
+    ...calculateBackPanelDemand(backPanelContext, inventory),
+    ...calculateBaseShelfDemand(baseShelfContext, inventory),
+    ...calculateShelfDemand(shelfContext, inventory),
+    ...calculateLegDemand(legContext, inventory),
+    ...calculateFootDemand(footContext, inventory),
     ...extras,
   ]
 }

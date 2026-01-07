@@ -5,7 +5,7 @@ import { calculateWallLayoutDemand } from "../calculateWallLayoutDemand/calculat
 
 export function calculateGondolaLayoutDemand(
   { height, gondolaUnits, numberOfLayouts, extras = [] }: LayoutGondola,
-  catalog: Component[],
+  inventory: Component[],
 ) {
   return [
     ...gondolaUnits.flatMap(({ depth, numberOfGondolaUnits, shelfUnits }) => {
@@ -15,7 +15,7 @@ export function calculateGondolaLayoutDemand(
         numberOfLayouts: numberOfLayouts * numberOfGondolaUnits,
         shelfUnits,
       }
-      return calculateWallLayoutDemand(context, catalog)
+      return calculateWallLayoutDemand(context, inventory)
     }),
     ...extras,
   ]

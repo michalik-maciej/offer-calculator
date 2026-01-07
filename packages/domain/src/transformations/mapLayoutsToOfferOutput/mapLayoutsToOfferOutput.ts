@@ -11,21 +11,21 @@ import { buildLayoutDescription } from "../buildLayoutDescription/buildLayoutDes
 
 export const mapLayoutsToOfferOutput = (
   layouts: OfferInput["layouts"],
-  catalog: Component[],
+  inventory: Component[],
 ): OfferOutput["layouts"] =>
   layouts.map((layout) => {
     let bom: ComponentDemand = []
 
     switch (true) {
       case isLayoutWall(layout):
-        bom = calculateWallLayoutDemand(layout, catalog)
+        bom = calculateWallLayoutDemand(layout, inventory)
         break
       case isLayoutGondola(layout):
-        bom = calculateGondolaLayoutDemand(layout, catalog)
+        bom = calculateGondolaLayoutDemand(layout, inventory)
     }
-    const { basePrice } = calculateBomPrice({ bom }, catalog)
+    const { basePrice } = calculateBomPrice({ bom }, inventory)
     const description = buildLayoutDescription(layout)
-    const breakdown = breakdownDemandByCategory(bom, catalog)
+    const breakdown = breakdownDemandByCategory(bom, inventory)
 
     return { basePrice, description, breakdown }
   })
