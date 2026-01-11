@@ -10,7 +10,9 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
-    "express": "^5.2.1"
+    "@prisma/client": "^5.22.0",
+    "express": "^5.2.1",
+    "prisma": "^5.22.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
@@ -20,5 +22,8 @@
     "cors": "^2.8.5",
     "supertest": "^7.1.4",
     "tsx": "^4.20.5"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   }
 }

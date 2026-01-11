@@ -1,13 +1,11 @@
-import { randomUUID } from "crypto"
 import { Request, Response } from "express"
 import * as v from "valibot"
 
-import { Component } from "@/domain/models/Component"
 import { CreateComponentSchema } from "@/schemas/inventory/ComponentCreate.schema"
 
-import { inventory } from "../../inventory"
+import { createComponent } from "../../db/inventory.repository"
 
-export function createComponentController(req: Request, res: Response) {
+export async function createComponentController(req: Request, res: Response) {
   const parsed = v.safeParse(CreateComponentSchema, req.body)
 
   if (!parsed.success) {
@@ -17,12 +15,7 @@ export function createComponentController(req: Request, res: Response) {
     })
   }
 
-  const component: Component = {
-    id: randomUUID(),
-    ...parsed.output,
-  }
-
-  inventory.push(component)
+  const component = await createComponent(parsed.output)
 
   return res.status(201).json(component)
 }

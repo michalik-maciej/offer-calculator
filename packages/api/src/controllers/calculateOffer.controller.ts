@@ -4,14 +4,14 @@ import * as v from "valibot"
 import { createOfferPreview } from "@/domain/orchestrations/createOfferPreview/createOfferPreview"
 import { OfferInputSchema, OfferOutput } from "@/schemas/Offer.schema"
 
-import { inventory } from "../inventory"
+import { getAllComponents } from "../db/inventory.repository"
 
 type ErrorResponse = {
   error: string
   issues?: ReturnType<typeof v.flatten<typeof OfferInputSchema>>
 }
 
-export function calculateOfferController(
+export async function calculateOfferController(
   req: Request,
   res: Response<OfferOutput | ErrorResponse>,
 ) {
@@ -25,6 +25,7 @@ export function calculateOfferController(
   }
 
   try {
+    const inventory = await getAllComponents()
     const result = createOfferPreview(parsed.output, inventory)
     return res.status(200).json(result)
   } catch {
