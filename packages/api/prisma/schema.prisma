@@ -32,3 +32,14 @@ enum ComponentCategory {
   shelf
   support
 }
+
+model Offer {
+  id                 String   @id @default(uuid())
+  title              String
+  discountPercentage Float?
+  input              Json
+  output             Json
+  createdAt          DateTime @default(now())
+
+  @@index([createdAt])
+}
