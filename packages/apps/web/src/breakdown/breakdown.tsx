@@ -1,4 +1,4 @@
-export default function BreakdownRoute() {
+export function BreakdownRoute() {
   return (
     <section>
       <h1>Breakdown</h1>

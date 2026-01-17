@@ -11,7 +11,8 @@
     "forceConsistentCasingInFileNames": true,
     "paths": {
       "@/*": ["src/*"],
-      "@/api/*": ["packages/api/src/*"],
+      "@/api/*": ["packages/apps/api/src/*"],
+      "@/web/*": ["packages/apps/web/src/*"],
       "@/domain/*": ["packages/domain/src/*"],
       "@/schemas/*": ["packages/schemas/src/*"]
     }

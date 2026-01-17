@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router"
+import { Link } from "react-router"
 
 type TopBarProps = {
   title?: string
@@ -18,9 +18,9 @@ export function TopBar({ title = "Senior Calculator" }: TopBarProps) {
     >
       <strong>{title}</strong>
       <nav style={{ display: "flex", gap: 12 }} aria-label="Primary">
-        <Link to="/offer">Offer</Link>
-        <Link to="/breakdown">Breakdown</Link>
-        <Link to="/inventory">Inventory</Link>
+        <Link to="/offer">Oferta</Link>
+        <Link to="/breakdown">Rozpiska</Link>
+        <Link to="/inventory">Katalog</Link>
       </nav>
     </header>
   )

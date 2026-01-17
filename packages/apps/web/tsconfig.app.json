@@ -1,4 +1,5 @@
 {
+  "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "target": "ES2022",
@@ -7,6 +8,14 @@
     "module": "ESNext",
     "types": ["vite/client"],
     "skipLibCheck": true,
+
+    "paths": {
+      "@/*": ["packages/apps/web/src/*"],
+      "@/api/*": ["packages/apps/api/src/*"],
+      "@/web/*": ["packages/apps/web/src/*"],
+      "@/domain/*": ["packages/domain/src/*"],
+      "@/schemas/*": ["packages/schemas/src/*"]
+    },
 
     /* Bundler mode */
     "moduleResolution": "bundler",

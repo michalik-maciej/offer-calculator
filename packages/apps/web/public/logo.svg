@@ -1,0 +1,29 @@
+<svg
+  width="64"
+  height="64"
+  viewBox="0 0 64 64"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <!-- Frame -->
+  <rect x="10" y="8" width="6" height="48" rx="2" fill="#5A5A5A" />
+  <rect x="48" y="8" width="6" height="48" rx="2" fill="#5A5A5A" />
+
+  <!-- Shelves -->
+  <rect x="16" y="18" width="32" height="4" rx="2" fill="#5A5A5A" />
+  <rect x="16" y="30" width="32" height="4" rx="2" fill="#5A5A5A" />
+  <rect x="16" y="42" width="32" height="4" rx="2" fill="#5A5A5A" />
+
+  <!-- Boxes (top) -->
+  <rect x="18" y="12" width="8" height="6" rx="1.5" fill="#8A8A8A" />
+  <rect x="28" y="12" width="8" height="6" rx="1.5" fill="#8A8A8A" />
+  <rect x="38" y="12" width="8" height="6" rx="1.5" fill="#8A8A8A" />
+
+  <!-- Boxes (middle) -->
+  <rect x="18" y="24" width="14" height="6" rx="1.5" fill="#8A8A8A" />
+  <rect x="34" y="24" width="6" height="6" rx="1.5" fill="#D1433B" />
+  <rect x="42" y="24" width="6" height="6" rx="1.5" fill="#6E6E6E" />
+
+  <!-- Box (bottom) -->
+  <rect x="20" y="36" width="24" height="6" rx="1.5" fill="#6E6E6E" />
+</svg>

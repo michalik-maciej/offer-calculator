@@ -1,4 +1,4 @@
-export default function OfferRoute() {
+export function OfferRoute() {
   return (
     <section>
       <h1>Offer</h1>

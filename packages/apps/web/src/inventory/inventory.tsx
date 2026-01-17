@@ -1,4 +1,4 @@
-export default function InventoryRoute() {
+export function InventoryRoute() {
   return (
     <section>
       <h1>Inventory</h1>
