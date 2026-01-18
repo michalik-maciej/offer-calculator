@@ -1,26 +1,20 @@
 import { Link } from "react-router"
 
-type TopBarProps = {
-  title?: string
-}
+import { Button } from "../shared/ui/button"
 
-export function TopBar({ title = "Senior Calculator" }: TopBarProps) {
+export function TopBar() {
   return (
-    <header
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        gap: 16,
-        padding: "12px 16px",
-        borderBottom: "1px solid rgba(0,0,0,0.1)",
-      }}
-    >
-      <strong>{title}</strong>
-      <nav style={{ display: "flex", gap: 12 }} aria-label="Primary">
-        <Link to="/offer">Oferta</Link>
-        <Link to="/breakdown">Rozpiska</Link>
-        <Link to="/inventory">Katalog</Link>
+    <header className="flex items-center justify-between gap-4 border-b border-b-slate-600 bg-slate-200 px-4 py-3">
+      <nav className="flex gap-3" aria-label="Primary">
+        <Button variant="outline" asChild>
+          <Link to="/offer">Oferta</Link>
+        </Button>
+        <Button variant="outline" asChild>
+          <Link to="/breakdown">Rozpiska</Link>
+        </Button>
+        <Button variant="outline" asChild>
+          <Link to="/inventory">Katalog</Link>
+        </Button>
       </nav>
     </header>
   )

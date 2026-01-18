@@ -2,17 +2,11 @@ import type { PropsWithChildren } from "react"
 
 import { TopBar } from "./TopBar"
 
-type AppLayoutProps = PropsWithChildren<{
-  title?: string
-}>
-
-export function AppLayout({ title, children }: AppLayoutProps) {
+export function AppLayout({ children }: PropsWithChildren) {
   return (
-    <div
-      style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
-    >
-      <TopBar title={title} />
-      <main style={{ flex: 1, padding: 16 }}>{children}</main>
+    <div className="min-h-screen flex flex-col">
+      <TopBar />
+      <main className="flex-1 p-4">{children}</main>
     </div>
   )
 }

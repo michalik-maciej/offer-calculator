@@ -8,11 +8,11 @@
     "module": "ESNext",
     "types": ["vite/client"],
     "skipLibCheck": true,
+    "baseUrl": ".",
 
     "paths": {
-      "@/*": ["packages/apps/web/src/*"],
+      "@/*": ["./src/*"],
       "@/api/*": ["packages/apps/api/src/*"],
-      "@/web/*": ["packages/apps/web/src/*"],
       "@/domain/*": ["packages/domain/src/*"],
       "@/schemas/*": ["packages/schemas/src/*"]
     },
