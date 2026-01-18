@@ -7,10 +7,8 @@ import { updateComponentController } from "../controllers/inventory/updateCompon
 
 const router = Router()
 
-router.get("/components", getComponentsController)
-
-router.post("/components", createComponentController)
-router.put("/components/:id", updateComponentController)
-router.delete("/components/:id", deleteComponentController)
-
+router.get("/items", getComponentsController)
+router.post("/items", createComponentController)
+router.put("/items/:id", updateComponentController)
+router.delete("/items/:id", deleteComponentController)
 export default router
