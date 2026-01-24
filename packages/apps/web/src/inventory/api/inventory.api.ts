@@ -1,6 +1,6 @@
 import * as v from "valibot"
 
-import { createApiMethod } from "@/shared/createMethod.api"
+import { createApiMethod } from "@/core/createMethod.api"
 
 const InventoryItemSchema = v.object({
   id: v.string(), // uuid

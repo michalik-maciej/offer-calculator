@@ -1,15 +1,15 @@
 import { useForm } from "react-hook-form"
 
-import { Button } from "../../shared/ui/button"
-import { Input } from "../../shared/ui/input"
-import { Label } from "../../shared/ui/label"
+import { Button } from "../../core/ui/button"
+import { Input } from "../../core/ui/input"
+import { Label } from "../../core/ui/label"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../shared/ui/select"
+} from "../../core/ui/select"
 
 export type InventoryItemFormValues = {
   label: string
@@ -45,7 +45,7 @@ export function InventoryItemForm({
     })
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex gap-4">
       {/* Label */}
       <div className="space-y-1">
         <Label>Nazwa</Label>
@@ -73,20 +73,10 @@ export function InventoryItemForm({
         </Select>
       </div>
 
-      {/* Price */}
-      <div className="space-y-1">
-        <Label>Cena</Label>
-        <Input
-          type="number"
-          step="0.01"
-          {...register("price", { valueAsNumber: true })}
-        />
-      </div>
-
       {/* Dimensions */}
       <div className="grid grid-cols-3 gap-2">
         <div className="space-y-1">
-          <Label>Szerokość</Label>
+          <Label className="w-16">Szerokość</Label>
           <Input
             type="number"
             {...register("width", { valueAsNumber: true })}
@@ -110,6 +100,16 @@ export function InventoryItemForm({
         </div>
       </div>
 
+      {/* Price */}
+      <div className="space-y-1">
+        <Label>Cena</Label>
+        <Input
+          type="number"
+          step="0.01"
+          {...register("price", { valueAsNumber: true })}
+        />
+      </div>
+
       {/* Actions */}
       <div className="flex justify-between gap-2 pt-4">
         {onDelete && (
@@ -118,7 +118,9 @@ export function InventoryItemForm({
           </Button>
         )}
 
-        <Button type="submit">Zapisz</Button>
+        <Button variant="secondary" type="submit">
+          Zapisz
+        </Button>
       </div>
     </form>
   )
