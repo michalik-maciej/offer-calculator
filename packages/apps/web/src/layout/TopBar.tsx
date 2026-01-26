@@ -1,6 +1,6 @@
 // src/components/theme-toggle.tsx
 import { Moon, Sun } from "lucide-react"
-import { Link } from "react-router"
+import { Link } from "@tanstack/react-router"
 
 import { useTheme } from "../core/hooks/useTheme"
 import { Button } from "../core/ui/button"

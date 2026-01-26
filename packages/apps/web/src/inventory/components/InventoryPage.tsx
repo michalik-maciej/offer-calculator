@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
+import { Link } from "@tanstack/react-router"
 
 import {
   Accordion,
@@ -28,7 +29,14 @@ export function InventoryPage() {
             <AccordionTrigger>{group.category}</AccordionTrigger>
             <AccordionContent>
               {group.items.map((item) => (
-                <div key={item.id}>{item.label}</div>
+                <Link
+                  key={item.id}
+                  to="/inventory/$componentId"
+                  params={{ componentId: item.id }}
+                  className="block py-1"
+                >
+                  {item.label}
+                </Link>
               ))}
             </AccordionContent>
           </AccordionItem>
