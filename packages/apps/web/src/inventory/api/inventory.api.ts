@@ -34,6 +34,7 @@ export const inventoryApi = {
     path: basePath,
     response: InventoryItemListSchema,
   }),
+
   grouped: createApiMethod({
     method: "GET",
     path: `${basePath}/grouped`,

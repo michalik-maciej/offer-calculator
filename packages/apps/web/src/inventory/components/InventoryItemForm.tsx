@@ -23,13 +23,13 @@ export type InventoryItemFormValues = {
 type Props = {
   defaultValues?: InventoryItemFormValues
   onSubmit: (values: InventoryItemFormValues) => void
-  onDelete?: () => void
+  onCancel: () => void
 }
 
 export function InventoryItemForm({
   defaultValues,
   onSubmit,
-  onDelete,
+  onCancel,
 }: Props) {
   const { register, handleSubmit, setValue, getValues } =
     useForm<InventoryItemFormValues>({
@@ -45,7 +45,7 @@ export function InventoryItemForm({
     })
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex gap-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8 p-4">
       {/* Label */}
       <div className="space-y-1">
         <Label>Nazwa</Label>
@@ -63,12 +63,12 @@ export function InventoryItemForm({
             <SelectValue placeholder="Wybierz kategorię" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="shelf">Shelf</SelectItem>
-            <SelectItem value="support">Support</SelectItem>
-            <SelectItem value="leg">Leg</SelectItem>
-            <SelectItem value="foot">Foot</SelectItem>
-            <SelectItem value="back">Back</SelectItem>
-            <SelectItem value="misc">Misc</SelectItem>
+            <SelectItem value="shelf">Półka</SelectItem>
+            <SelectItem value="support">Wspornik</SelectItem>
+            <SelectItem value="leg">Noga</SelectItem>
+            <SelectItem value="foot">Stopa</SelectItem>
+            <SelectItem value="back">Plecy</SelectItem>
+            <SelectItem value="misc">Inne</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -111,15 +111,12 @@ export function InventoryItemForm({
       </div>
 
       {/* Actions */}
-      <div className="flex justify-between gap-2 pt-4">
-        {onDelete && (
-          <Button type="button" variant="destructive" onClick={onDelete}>
-            Usuń
-          </Button>
-        )}
-
+      <div className="flex justify-end gap-4 pt-4">
         <Button variant="secondary" type="submit">
           Zapisz
+        </Button>
+        <Button variant="ghost" onClick={onCancel}>
+          Anuluj
         </Button>
       </div>
     </form>

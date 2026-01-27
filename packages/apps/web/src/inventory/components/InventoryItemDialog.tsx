@@ -1,29 +1,47 @@
+import { useQuery } from "@tanstack/react-query"
+import { useParams } from "@tanstack/react-router"
+
+import { inventoryQueries } from "@/inventory/api/inventory.api"
+
 import { InventoryItemForm } from "./InventoryItemForm"
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "../../core/ui/dialog"
 
 export function InventoryItemDialog({
-  isOpen,
   onOpenChange,
 }: {
-  isOpen: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const { componentId } = useParams({ from: "/inventory/$componentId" })
+  const { data, isPending } = useQuery({
+    ...inventoryQueries.list(),
+    select: (items) => items.find(({ id }) => id === componentId),
+  })
+
+  if (isPending) {
+    return null
+  }
+
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg">
+    <Dialog open onOpenChange={onOpenChange}>
+      <DialogContent
+        className="sm:max-w-lg"
+        onInteractOutside={(e) => e.preventDefault()}
+      >
         <DialogHeader>
-          <DialogTitle>Add Inventory Item</DialogTitle>
-          <DialogDescription>
-            Add a new item to your inventory to keep track of your stock.
-          </DialogDescription>
+          <DialogTitle className="p-2 text-foreground/60">
+            Edycja elementu
+          </DialogTitle>
         </DialogHeader>
-        <InventoryItemForm onSubmit={() => onOpenChange(false)} />
+        <InventoryItemForm
+          defaultValues={data ?? undefined}
+          onSubmit={() => onOpenChange(false)}
+          onCancel={() => onOpenChange(false)}
+        />
       </DialogContent>
     </Dialog>
   )

@@ -21,8 +21,8 @@ export function InventoryPage() {
   }
 
   return (
-    <section>
-      <h1>Inventory</h1>
+    <section className="m-4">
+      <h1 className="mb-6">Katalog części</h1>
       <Accordion type="single" collapsible className="max-w-lg">
         {data.map((group) => (
           <AccordionItem key={group.category} value={group.category}>
