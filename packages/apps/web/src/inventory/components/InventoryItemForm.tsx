@@ -1,4 +1,10 @@
+import { Trash2Icon } from "lucide-react"
 import { useForm } from "react-hook-form"
+import { useParams } from "@tanstack/react-router"
+
+import { useCreateInventoryItem } from "@/inventory/hooks/useCreateInventoryItem"
+import { useDeleteInventoryItem } from "@/inventory/hooks/useDeleteInventoryItem"
+import { useUpdateInventoryItem } from "@/inventory/hooks/useUpdateInventoryItem"
 
 import { Button } from "../../core/ui/button"
 import { Input } from "../../core/ui/input"
@@ -24,13 +30,25 @@ type Props = {
   defaultValues?: InventoryItemFormValues
   onSubmit: (values: InventoryItemFormValues) => void
   onCancel: () => void
+  onDelete?: () => void
 }
 
 export function InventoryItemForm({
   defaultValues,
   onSubmit,
   onCancel,
+  onDelete,
 }: Props) {
+  const { componentId } = useParams({ strict: false })
+  const createMutation = useCreateInventoryItem()
+  const updateMutation = useUpdateInventoryItem()
+  const deleteMutation = useDeleteInventoryItem()
+
+  const isPending =
+    createMutation.isPending ||
+    updateMutation.isPending ||
+    deleteMutation.isPending
+
   const { register, handleSubmit, setValue, getValues } =
     useForm<InventoryItemFormValues>({
       defaultValues: {
@@ -44,8 +62,28 @@ export function InventoryItemForm({
       },
     })
 
+  const submit = async (formValues: InventoryItemFormValues) => {
+    const normalizedValues: InventoryItemFormValues = {
+      ...formValues,
+      width: formValues.width ?? null,
+      height: formValues.height ?? null,
+      depth: formValues.depth ?? null,
+    }
+
+    if (componentId) {
+      await updateMutation.mutateAsync({
+        id: componentId,
+        data: normalizedValues,
+      })
+    } else {
+      await createMutation.mutateAsync(normalizedValues)
+    }
+
+    onSubmit(normalizedValues)
+  }
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8 p-4">
+    <form onSubmit={handleSubmit(submit)} className="flex flex-col gap-8 p-4">
       {/* Label */}
       <div className="space-y-1">
         <Label>Nazwa</Label>
@@ -111,13 +149,29 @@ export function InventoryItemForm({
       </div>
 
       {/* Actions */}
-      <div className="flex justify-end gap-4 pt-4">
-        <Button variant="secondary" type="submit">
-          Zapisz
+      <div className="flex justify-between gap-4 pt-4">
+        <Button
+          size="icon"
+          disabled={isPending}
+          variant="destructive"
+          onClick={() => {
+            if (componentId) {
+              deleteMutation.mutate(componentId)
+              onDelete?.()
+            }
+          }}
+          hidden={!componentId}
+        >
+          <Trash2Icon />
         </Button>
-        <Button variant="ghost" onClick={onCancel}>
-          Anuluj
-        </Button>
+        <div className="flex ml-auto gap-2">
+          <Button variant="secondary" type="submit">
+            Zapisz
+          </Button>
+          <Button variant="ghost" onClick={onCancel}>
+            Anuluj
+          </Button>
+        </div>
       </div>
     </form>
   )

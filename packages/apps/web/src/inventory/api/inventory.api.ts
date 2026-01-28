@@ -47,18 +47,16 @@ export const inventoryApi = {
     response: InventoryItemSchema,
   }),
 
-  update: (id: string) =>
-    createApiMethod({
-      method: "PUT",
-      path: `${basePath}/${id}`,
-      response: InventoryItemSchema,
-    }),
+  update: createApiMethod({
+    method: "PUT",
+    path: `${basePath}/:id`,
+    response: InventoryItemSchema,
+  }),
 
-  delete: (id: string) =>
-    createApiMethod({
-      method: "DELETE",
-      path: `${basePath}/${id}`,
-    }),
+  delete: createApiMethod({
+    method: "DELETE",
+    path: `${basePath}/:id`,
+  }),
 }
 
 export const inventoryQueries = {

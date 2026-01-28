@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query"
 import { Link } from "@tanstack/react-router"
 
+import { Button } from "@/core/ui/button"
+
 import {
   Accordion,
   AccordionContent,
@@ -23,6 +25,9 @@ export function InventoryPage() {
   return (
     <section className="m-4">
       <h1 className="mb-6">Katalog części</h1>
+      <Button className="mb-4" asChild>
+        <Link to="/inventory/new">Dodaj</Link>
+      </Button>
       <Accordion type="single" collapsible className="max-w-lg">
         {data.map((group) => (
           <AccordionItem key={group.category} value={group.category}>

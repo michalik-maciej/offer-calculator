@@ -2,18 +2,12 @@ import { createFileRoute } from "@tanstack/react-router"
 
 import { InventoryItemDialog } from "../../inventory/components/InventoryItemDialog"
 
-export const Route = createFileRoute("/inventory/$componentId")({
+export const Route = createFileRoute("/inventory/new")({
   component: RouteComponent,
 })
 
 function RouteComponent() {
   const navigate = Route.useNavigate()
-  const { componentId } = Route.useParams()
 
-  return (
-    <InventoryItemDialog
-      componentId={componentId}
-      onOpenChange={() => navigate({ to: ".." })}
-    />
-  )
+  return <InventoryItemDialog onOpenChange={() => navigate({ to: ".." })} />
 }

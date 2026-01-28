@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query"
-import { useParams } from "@tanstack/react-router"
 
 import { inventoryQueries } from "@/inventory/api/inventory.api"
 
@@ -12,17 +11,19 @@ import {
 } from "../../core/ui/dialog"
 
 export function InventoryItemDialog({
+  componentId,
   onOpenChange,
 }: {
+  componentId?: string
   onOpenChange: (open: boolean) => void
 }) {
-  const { componentId } = useParams({ from: "/inventory/$componentId" })
   const { data, isPending } = useQuery({
     ...inventoryQueries.list(),
+    enabled: !!componentId,
     select: (items) => items.find(({ id }) => id === componentId),
   })
 
-  if (isPending) {
+  if (componentId && isPending) {
     return null
   }
 
@@ -41,6 +42,7 @@ export function InventoryItemDialog({
           defaultValues={data ?? undefined}
           onSubmit={() => onOpenChange(false)}
           onCancel={() => onOpenChange(false)}
+          onDelete={() => console.log("deleting")}
         />
       </DialogContent>
     </Dialog>
