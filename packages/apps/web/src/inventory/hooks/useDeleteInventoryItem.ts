@@ -1,3 +1,4 @@
+import { toast } from "sonner"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 import { inventoryApi, inventoryQueries } from "../api/inventory.api"
@@ -8,8 +9,11 @@ export function useDeleteInventoryItem() {
   return useMutation({
     mutationFn: (id: string) => inventoryApi.delete({ params: { id } }),
     onSuccess: async () => {
+      toast.success("Element został usunięty.", {
+        position: "top-center",
+      })
       await queryClient.invalidateQueries({
-        queryKey: inventoryQueries.grouped().queryKey,
+        queryKey: inventoryQueries.list().queryKey,
       })
     },
   })

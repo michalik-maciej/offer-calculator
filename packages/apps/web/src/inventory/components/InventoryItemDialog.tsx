@@ -1,7 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
 
-import { inventoryQueries } from "@/inventory/api/inventory.api"
-
 import { InventoryItemForm } from "./InventoryItemForm"
 import {
   Dialog,
@@ -9,6 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../../core/ui/dialog"
+import { inventoryQueries } from "../../inventory/api/inventory.api"
 
 export function InventoryItemDialog({
   componentId,
@@ -40,9 +39,7 @@ export function InventoryItemDialog({
         </DialogHeader>
         <InventoryItemForm
           defaultValues={data ?? undefined}
-          onSubmit={() => onOpenChange(false)}
-          onCancel={() => onOpenChange(false)}
-          onDelete={() => console.log("deleting")}
+          onClose={() => onOpenChange(false)}
         />
       </DialogContent>
     </Dialog>

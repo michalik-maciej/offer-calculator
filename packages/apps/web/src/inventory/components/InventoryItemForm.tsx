@@ -1,10 +1,6 @@
-import { Trash2Icon } from "lucide-react"
-import { useForm } from "react-hook-form"
+import { Loader2, SaveIcon, Trash2Icon } from "lucide-react"
+import { Controller, useForm } from "react-hook-form"
 import { useParams } from "@tanstack/react-router"
-
-import { useCreateInventoryItem } from "@/inventory/hooks/useCreateInventoryItem"
-import { useDeleteInventoryItem } from "@/inventory/hooks/useDeleteInventoryItem"
-import { useUpdateInventoryItem } from "@/inventory/hooks/useUpdateInventoryItem"
 
 import { Button } from "../../core/ui/button"
 import { Input } from "../../core/ui/input"
@@ -16,40 +12,31 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../core/ui/select"
+import { useCreateInventoryItem } from "../../inventory/hooks/useCreateInventoryItem"
+import { useDeleteInventoryItem } from "../../inventory/hooks/useDeleteInventoryItem"
+import { useUpdateInventoryItem } from "../../inventory/hooks/useUpdateInventoryItem"
 
 export type InventoryItemFormValues = {
   label: string
   category: string
   price: number
-  width?: number | null
-  height?: number | null
-  depth?: number | null
+  width: number | null
+  height: number | null
+  depth: number | null
 }
 
 type Props = {
   defaultValues?: InventoryItemFormValues
-  onSubmit: (values: InventoryItemFormValues) => void
-  onCancel: () => void
-  onDelete?: () => void
+  onClose: () => void
 }
 
-export function InventoryItemForm({
-  defaultValues,
-  onSubmit,
-  onCancel,
-  onDelete,
-}: Props) {
+export function InventoryItemForm({ defaultValues, onClose }: Props) {
   const { componentId } = useParams({ strict: false })
   const createMutation = useCreateInventoryItem()
   const updateMutation = useUpdateInventoryItem()
   const deleteMutation = useDeleteInventoryItem()
 
-  const isPending =
-    createMutation.isPending ||
-    updateMutation.isPending ||
-    deleteMutation.isPending
-
-  const { register, handleSubmit, setValue, getValues } =
+  const { control, register, handleSubmit, formState } =
     useForm<InventoryItemFormValues>({
       defaultValues: {
         label: "",
@@ -61,7 +48,6 @@ export function InventoryItemForm({
         ...defaultValues,
       },
     })
-
   const submit = async (formValues: InventoryItemFormValues) => {
     const normalizedValues: InventoryItemFormValues = {
       ...formValues,
@@ -79,7 +65,13 @@ export function InventoryItemForm({
       await createMutation.mutateAsync(normalizedValues)
     }
 
-    onSubmit(normalizedValues)
+    onClose()
+  }
+
+  const handleDelete = async () => {
+    if (!componentId) return
+    await deleteMutation.mutateAsync(componentId)
+    onClose()
   }
 
   return (
@@ -93,22 +85,25 @@ export function InventoryItemForm({
       {/* Category */}
       <div className="space-y-1">
         <Label>Kategoria</Label>
-        <Select
-          value={getValues("category")}
-          onValueChange={(v) => setValue("category", v)}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Wybierz kategorię" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="shelf">Półka</SelectItem>
-            <SelectItem value="support">Wspornik</SelectItem>
-            <SelectItem value="leg">Noga</SelectItem>
-            <SelectItem value="foot">Stopa</SelectItem>
-            <SelectItem value="back">Plecy</SelectItem>
-            <SelectItem value="misc">Inne</SelectItem>
-          </SelectContent>
-        </Select>
+        <Controller
+          name="category"
+          control={control}
+          render={({ field }) => (
+            <Select value={field.value} onValueChange={field.onChange}>
+              <SelectTrigger>
+                <SelectValue placeholder="Wybierz kategorię" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="shelf">Półka</SelectItem>
+                <SelectItem value="support">Wspornik</SelectItem>
+                <SelectItem value="leg">Noga</SelectItem>
+                <SelectItem value="foot">Stopa</SelectItem>
+                <SelectItem value="back">Plecy</SelectItem>
+                <SelectItem value="misc">Inne</SelectItem>
+              </SelectContent>
+            </Select>
+          )}
+        />
       </div>
 
       {/* Dimensions */}
@@ -151,24 +146,33 @@ export function InventoryItemForm({
       {/* Actions */}
       <div className="flex justify-between gap-4 pt-4">
         <Button
+          type="button"
           size="icon"
-          disabled={isPending}
+          disabled={deleteMutation.isPending}
           variant="destructive"
-          onClick={() => {
-            if (componentId) {
-              deleteMutation.mutate(componentId)
-              onDelete?.()
-            }
-          }}
+          onClick={handleDelete}
           hidden={!componentId}
         >
-          <Trash2Icon />
+          {deleteMutation.isPending ? (
+            <Loader2 className="animate-spin" />
+          ) : (
+            <Trash2Icon />
+          )}
         </Button>
         <div className="flex ml-auto gap-2">
-          <Button variant="secondary" type="submit">
+          <Button
+            variant="secondary"
+            type="submit"
+            disabled={formState.isSubmitting}
+          >
+            {formState.isSubmitting ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              <SaveIcon />
+            )}
             Zapisz
           </Button>
-          <Button variant="ghost" onClick={onCancel}>
+          <Button type="button" variant="ghost" onClick={onClose}>
             Anuluj
           </Button>
         </div>

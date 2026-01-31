@@ -13,5 +13,5 @@ export async function deleteComponentController(req: Request, res: Response) {
   }
 
   await deleteComponent(parsed.output.id)
-  res.status(204)
+  return res.sendStatus(204)
 }

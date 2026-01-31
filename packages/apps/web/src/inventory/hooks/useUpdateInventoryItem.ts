@@ -1,3 +1,4 @@
+import { toast } from "sonner"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 import type { InventoryItemUpdateInput } from "../api/inventory.api"
@@ -15,8 +16,11 @@ export function useUpdateInventoryItem() {
     mutationFn: ({ id, data }: UpdateInput) =>
       inventoryApi.update({ params: { id }, data }),
     onSuccess: async () => {
+      toast.success("Element został zaktualizowany.", {
+        position: "top-center",
+      })
       await queryClient.invalidateQueries({
-        queryKey: inventoryQueries.grouped().queryKey,
+        queryKey: inventoryQueries.list().queryKey,
       })
     },
   })

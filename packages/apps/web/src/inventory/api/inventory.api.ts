@@ -1,6 +1,6 @@
 import * as v from "valibot"
 
-import { createApiMethod, type as apiType } from "@/core/createMethod.api"
+import { apiType, createApiMethod } from "../../core/createMethod.api"
 
 const InventoryItemBaseShape = {
   category: v.string(),
@@ -29,13 +29,6 @@ export type InventoryItemUpdateInput = v.InferOutput<
 
 const InventoryItemListSchema = v.array(InventoryItemSchema)
 
-const InventoryGroupedSchema = v.array(
-  v.object({
-    category: v.string(),
-    items: InventoryItemListSchema,
-  }),
-)
-
 const apiUrl = import.meta.env.VITE_APP_API_URL
 if (!apiUrl) {
   throw new Error("Missing VITE_API_URL (set it in packages/apps/web/.env)")
@@ -48,12 +41,6 @@ export const inventoryApi = {
     method: "GET",
     path: basePath,
     response: InventoryItemListSchema,
-  }),
-
-  grouped: createApiMethod({
-    method: "GET",
-    path: `${basePath}/grouped`,
-    response: InventoryGroupedSchema,
   }),
 
   create: createApiMethod({
@@ -80,9 +67,5 @@ export const inventoryQueries = {
   list: () => ({
     queryKey: ["inventory", "list"] as const,
     queryFn: () => inventoryApi.list(),
-  }),
-  grouped: () => ({
-    queryKey: ["inventory", "list", "grouped"] as const,
-    queryFn: () => inventoryApi.grouped(),
   }),
 }

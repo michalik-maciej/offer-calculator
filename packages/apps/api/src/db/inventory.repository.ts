@@ -6,14 +6,6 @@ export async function getAllComponents(): Promise<Component[]> {
   return prisma.component.findMany()
 }
 
-export async function getComponentById(
-  id: Component["id"],
-): Promise<Component | null> {
-  return prisma.component.findUnique({
-    where: { id },
-  })
-}
-
 export async function createComponent(
   data: Omit<Component, "id">,
 ): Promise<Component> {

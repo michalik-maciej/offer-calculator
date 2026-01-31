@@ -2,7 +2,7 @@ import { type GenericSchema, safeParse } from "valibot"
 
 type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE"
 
-export const type = <T>() => "" as unknown as T
+export const apiType = <T>() => "" as unknown as T
 
 type QueryParams = Record<string, unknown>
 

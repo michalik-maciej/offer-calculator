@@ -1,7 +1,6 @@
+import { CopyPlusIcon } from "lucide-react"
 import { useQuery } from "@tanstack/react-query"
 import { Link } from "@tanstack/react-router"
-
-import { Button } from "@/core/ui/button"
 
 import {
   Accordion,
@@ -9,10 +8,19 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../../core/ui/accordion"
+import { Button } from "../../core/ui/button"
 import { inventoryQueries } from "../api/inventory.api"
 
 export function InventoryPage() {
-  const { data, isPending, error } = useQuery(inventoryQueries.grouped())
+  const { data, isPending, error } = useQuery({
+    ...inventoryQueries.list(),
+    select: (components) =>
+      components.reduce<Record<string, typeof components>>((acc, component) => {
+        acc[component.category] ??= []
+        acc[component.category].push(component)
+        return acc
+      }, {}),
+  })
 
   if (error) {
     return <div>Error loading inventory components.</div>
@@ -23,17 +31,22 @@ export function InventoryPage() {
   }
 
   return (
-    <section className="m-4">
-      <h1 className="mb-6">Katalog części</h1>
-      <Button className="mb-4" asChild>
-        <Link to="/inventory/new">Dodaj</Link>
-      </Button>
+    <section className="m-8 w-md">
+      <div className="flex items-center justify-between mb-6">
+        <h1>Katalog części</h1>
+        <Button variant="secondary" size="sm" asChild>
+          <Link to="/inventory/new">
+            <CopyPlusIcon />
+            Dodaj
+          </Link>
+        </Button>
+      </div>
       <Accordion type="single" collapsible className="max-w-lg">
-        {data.map((group) => (
-          <AccordionItem key={group.category} value={group.category}>
-            <AccordionTrigger>{group.category}</AccordionTrigger>
+        {Object.entries(data).map(([category, items]) => (
+          <AccordionItem key={category} value={category}>
+            <AccordionTrigger>{category}</AccordionTrigger>
             <AccordionContent>
-              {group.items.map((item) => (
+              {items.map((item) => (
                 <Link
                   key={item.id}
                   to="/inventory/$componentId"
