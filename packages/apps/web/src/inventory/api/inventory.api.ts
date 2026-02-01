@@ -3,7 +3,15 @@ import * as v from "valibot"
 import { apiType, createApiMethod } from "../../core/createMethod.api"
 
 const InventoryItemBaseShape = {
-  category: v.string(),
+  category: v.picklist([
+    "back",
+    "baseCover",
+    "foot",
+    "leg",
+    "misc",
+    "shelf",
+    "support",
+  ]),
   width: v.nullable(v.number()),
   depth: v.nullable(v.number()),
   height: v.nullable(v.number()),

@@ -10,6 +10,7 @@ import {
 } from "../../core/ui/accordion"
 import { Button } from "../../core/ui/button"
 import { inventoryQueries } from "../api/inventory.api"
+import { CATEGORY_LABELS } from "../components/labels.inventory"
 
 export function InventoryPage() {
   const { data, isPending, error } = useQuery({
@@ -44,7 +45,9 @@ export function InventoryPage() {
       <Accordion type="single" collapsible className="max-w-lg">
         {Object.entries(data).map(([category, items]) => (
           <AccordionItem key={category} value={category}>
-            <AccordionTrigger>{category}</AccordionTrigger>
+            <AccordionTrigger>
+              {CATEGORY_LABELS[category as keyof typeof CATEGORY_LABELS]}
+            </AccordionTrigger>
             <AccordionContent>
               {items.map((item) => (
                 <Link

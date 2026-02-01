@@ -2,23 +2,25 @@ import { Loader2, SaveIcon, Trash2Icon } from "lucide-react"
 import { Controller, useForm } from "react-hook-form"
 import { useParams } from "@tanstack/react-router"
 
+import { CATEGORY_LABELS } from "./labels.inventory"
+import {
+  CATEGORY_REQUIREMENTS,
+  COMPONENT_CATEGORIES,
+  type ComponentCategory,
+} from "../../../../../domain/src/models/component"
+import { Badge } from "../../core/ui/badge"
 import { Button } from "../../core/ui/button"
 import { Input } from "../../core/ui/input"
 import { Label } from "../../core/ui/label"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../core/ui/select"
+import { RadioGroup, RadioGroupItem } from "../../core/ui/radio-group"
+import { SelectDimension } from "../../core/ui/selectDimension"
 import { useCreateInventoryItem } from "../../inventory/hooks/useCreateInventoryItem"
 import { useDeleteInventoryItem } from "../../inventory/hooks/useDeleteInventoryItem"
 import { useUpdateInventoryItem } from "../../inventory/hooks/useUpdateInventoryItem"
 
 export type InventoryItemFormValues = {
   label: string
-  category: string
+  category: ComponentCategory
   price: number
   width: number | null
   height: number | null
@@ -40,7 +42,7 @@ export function InventoryItemForm({ defaultValues, onClose }: Props) {
     useForm<InventoryItemFormValues>({
       defaultValues: {
         label: "",
-        category: "",
+        category: "" as ComponentCategory,
         price: 0,
         width: null,
         height: null,
@@ -48,6 +50,7 @@ export function InventoryItemForm({ defaultValues, onClose }: Props) {
         ...defaultValues,
       },
     })
+
   const submit = async (formValues: InventoryItemFormValues) => {
     const normalizedValues: InventoryItemFormValues = {
       ...formValues,
@@ -84,53 +87,63 @@ export function InventoryItemForm({ defaultValues, onClose }: Props) {
 
       {/* Category */}
       <div className="space-y-1">
-        <Label>Kategoria</Label>
+        <Label className="p-y-1">Kategoria</Label>
+
         <Controller
           name="category"
           control={control}
           render={({ field }) => (
-            <Select value={field.value} onValueChange={field.onChange}>
-              <SelectTrigger>
-                <SelectValue placeholder="Wybierz kategorię" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="shelf">Półka</SelectItem>
-                <SelectItem value="support">Wspornik</SelectItem>
-                <SelectItem value="leg">Noga</SelectItem>
-                <SelectItem value="foot">Stopa</SelectItem>
-                <SelectItem value="back">Plecy</SelectItem>
-                <SelectItem value="misc">Inne</SelectItem>
-              </SelectContent>
-            </Select>
+            <RadioGroup
+              value={field.value}
+              onValueChange={field.onChange}
+              className="flex flex-wrap gap-2 mt-2"
+            >
+              {COMPONENT_CATEGORIES.map((category) => {
+                const id = `category-${category}`
+                const isSelected = field.value === category
+
+                return (
+                  <div key={category} className="flex items-center">
+                    <RadioGroupItem
+                      id={id}
+                      value={category}
+                      className="hidden"
+                    />
+                    <Label htmlFor={id} className="cursor-pointer">
+                      <Badge variant={isSelected ? "selected" : "outline"}>
+                        {CATEGORY_LABELS[category]}
+                      </Badge>
+                    </Label>
+                  </div>
+                )
+              })}
+            </RadioGroup>
           )}
         />
       </div>
 
       {/* Dimensions */}
       <div className="grid grid-cols-3 gap-2">
-        <div className="space-y-1">
-          <Label className="w-16">Szerokość</Label>
-          <Input
-            type="number"
-            {...register("width", { valueAsNumber: true })}
-          />
-        </div>
+        <SelectDimension
+          control={control}
+          name="width"
+          label="Szerokość"
+          options={[]}
+        />
 
-        <div className="space-y-1">
-          <Label>Wysokość</Label>
-          <Input
-            type="number"
-            {...register("height", { valueAsNumber: true })}
-          />
-        </div>
+        <SelectDimension
+          control={control}
+          name="height"
+          label="Wysokość"
+          options={[]}
+        />
 
-        <div className="space-y-1">
-          <Label>Głębokość</Label>
-          <Input
-            type="number"
-            {...register("depth", { valueAsNumber: true })}
-          />
-        </div>
+        <SelectDimension
+          control={control}
+          name="depth"
+          label="Głębokość"
+          options={[]}
+        />
       </div>
 
       {/* Price */}

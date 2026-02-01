@@ -4,10 +4,10 @@ import {
   Select,
   SelectContent,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "./select"
+import { Label } from "../../core/ui/label"
 
 interface Props {
   control: ControllerProps["control"]
@@ -23,32 +23,34 @@ export const SelectDimension = ({
   name,
   options,
   required,
-}: Props) => (
-  <div className="space-y-1">
-    <Controller
-      name={name}
-      control={control}
-      rules={{
-        required: required ? "Pole wymagane" : false,
-      }}
-      render={({ field }) => (
-        <Select
-          value={field.value?.toString() ?? ""}
-          onValueChange={(v) => field.onChange(Number(v))}
-        >
-          <SelectLabel>{label}</SelectLabel>
-          <SelectTrigger>
-            <SelectValue placeholder="—" />
-          </SelectTrigger>
-          <SelectContent>
-            {options.map((value) => (
-              <SelectItem key={value} value={value.toString()}>
-                {value}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      )}
-    />
-  </div>
-)
+}: Props) => {
+  return (
+    <div className="space-y-1">
+      <Label>{label}</Label>
+      <Controller
+        name={name}
+        control={control}
+        rules={{
+          required: required ? "Pole wymagane" : false,
+        }}
+        render={({ field }) => (
+          <Select
+            value={field.value?.toString() ?? ""}
+            onValueChange={(v) => field.onChange(Number(v))}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="—" />
+            </SelectTrigger>
+            <SelectContent>
+              {options.map((value) => (
+                <SelectItem key={value} value={value.toString()}>
+                  {value}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+      />
+    </div>
+  )
+}
