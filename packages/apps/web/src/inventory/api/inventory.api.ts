@@ -1,17 +1,14 @@
 import * as v from "valibot"
 
+import type { ComponentCategory } from "@/domain/models/component"
+
 import { apiType, createApiMethod } from "../../core/createMethod.api"
 
 const InventoryItemBaseShape = {
-  category: v.picklist([
-    "back",
-    "baseCover",
-    "foot",
-    "leg",
-    "misc",
-    "shelf",
-    "support",
-  ]),
+  category: v.custom<ComponentCategory>(
+    (val) => typeof val === "string",
+    "Invalid category",
+  ),
   width: v.nullable(v.number()),
   depth: v.nullable(v.number()),
   height: v.nullable(v.number()),

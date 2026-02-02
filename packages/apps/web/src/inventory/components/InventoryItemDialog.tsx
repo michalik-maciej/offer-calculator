@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 
-import { InventoryItemForm } from "./InventoryItemForm"
+import { InventoryItem } from "./InventoryItem"
 import {
   Dialog,
   DialogContent,
@@ -37,7 +37,7 @@ export function InventoryItemDialog({
             Edycja elementu
           </DialogTitle>
         </DialogHeader>
-        <InventoryItemForm
+        <InventoryItem
           defaultValues={data ?? undefined}
           onClose={() => onOpenChange(false)}
         />
