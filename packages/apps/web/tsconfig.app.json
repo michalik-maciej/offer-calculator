@@ -8,14 +8,6 @@
     "module": "ESNext",
     "types": ["vite/client"],
     "skipLibCheck": true,
-    "baseUrl": ".",
-
-    "paths": {
-      "@/*": ["./src/*"],
-      "@/api/*": ["packages/apps/api/src/*"],
-      "@/domain/*": ["packages/domain/src/*"],
-      "@/schemas/*": ["packages/schemas/src/*"]
-    },
 
     /* Bundler mode */
     "moduleResolution": "bundler",
