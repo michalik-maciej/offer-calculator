@@ -1,20 +1,20 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "lib": ["ES2022"],
-    "baseUrl": ".",
-    "strict": true,
+    "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
+
+    "baseUrl": ".",
     "paths": {
-      "@/api/*": ["packages/apps/api/src/*"],
-      "@/domain/*": ["packages/domain/src/*"],
-      "@/schemas/*": ["packages/schemas/src/*"]
-    }
-  },
-  "include": ["src/**/*.ts", "tests/**/*.ts"],
-  "exclude": ["**/node_modules/**", "**/dist/**", "**/.turbo/**"]
+      "@domain/*": ["packages/domain/src/*"],
+      "@schemas/*": ["packages/schemas/src/*"],
+      "@api/*": ["packages/apps/api/src/*"]
+    },
+
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  }
 }
