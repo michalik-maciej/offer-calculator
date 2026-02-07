@@ -1,4 +1,4 @@
-import { LayoutGondola } from "@/schemas/LayoutGondola.schema"
+import { LayoutGondola } from "@schemas/LayoutGondola.schema"
 
 import { Component } from "../../models/component"
 import { calculateWallLayoutDemand } from "../calculateWallLayoutDemand/calculateWallLayoutDemand"

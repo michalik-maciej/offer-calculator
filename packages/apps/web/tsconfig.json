@@ -1,7 +1,13 @@
 {
-  "files": [],
+  "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "jsx": "react-jsx",
+    "types": ["vite/client"]
+  },
+  "include": ["src"],
   "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
+    { "path": "../../../packages/domain" },
+    { "path": "../../../packages/schemas" }
   ]
 }

@@ -1,5 +1,5 @@
-import { isLayoutGondola } from "@/schemas/LayoutGondola.schema"
-import { isLayoutWall } from "@/schemas/LayoutWall.schema"
+import { isLayoutGondola } from "@schemas/LayoutGondola.schema"
+import { isLayoutWall } from "@schemas/LayoutWall.schema"
 
 export function buildLayoutDescription(layout: unknown) {
   if (isLayoutWall(layout)) {

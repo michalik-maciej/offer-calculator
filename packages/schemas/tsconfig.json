@@ -1,9 +1,9 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "module": "nodenext",
+    "composite": true,
     "outDir": "dist",
-    "rootDir": ".."
+    "rootDir": "src"
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src"]
 }

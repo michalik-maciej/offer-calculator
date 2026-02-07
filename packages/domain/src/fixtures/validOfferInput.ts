@@ -1,4 +1,4 @@
-import { OfferInput } from "@/schemas/Offer.schema"
+import { OfferInput } from "@schemas/Offer.schema"
 
 export const validOfferInput: OfferInput = {
   title: "Offer test",

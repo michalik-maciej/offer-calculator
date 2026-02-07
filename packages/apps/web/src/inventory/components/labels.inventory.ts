@@ -1,4 +1,4 @@
-import type { ComponentCategory } from "@/domain/models/component"
+import type { ComponentCategory } from "@domain/models/component"
 
 export const CATEGORY_LABELS: Record<ComponentCategory, string> = {
   back: "Plecy",

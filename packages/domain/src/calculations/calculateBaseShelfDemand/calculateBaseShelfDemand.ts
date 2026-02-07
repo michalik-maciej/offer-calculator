@@ -1,6 +1,5 @@
 import { find, map } from "lodash/fp"
-
-import { ShelfUnit } from "@/domain/models/shelfUnit"
+import { ShelfUnit } from "@domain/models/shelfUnit"
 
 import { Component } from "../../models/component"
 

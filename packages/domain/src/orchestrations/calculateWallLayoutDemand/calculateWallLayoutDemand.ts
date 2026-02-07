@@ -1,4 +1,4 @@
-import { LayoutWall } from "@/schemas/LayoutWall.schema"
+import { LayoutWall } from "@schemas/LayoutWall.schema"
 
 import { calculateBackPanelDemand } from "../../calculations/calculateBackPanelDemand/calculateBackPanelDemand"
 import { calculateBaseShelfDemand } from "../../calculations/calculateBaseShelfDemand/calculateBaseShelfDemand"

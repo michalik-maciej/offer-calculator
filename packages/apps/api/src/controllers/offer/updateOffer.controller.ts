@@ -1,8 +1,7 @@
 import { Request, Response } from "express"
 import * as v from "valibot"
-
-import { createOfferPreview } from "@/domain/orchestrations/createOfferPreview/createOfferPreview"
-import { OfferInputSchema } from "@/schemas/Offer.schema"
+import { createOfferPreview } from "@domain/orchestrations/createOfferPreview/createOfferPreview"
+import { OfferInputSchema } from "@schemas/Offer.schema"
 
 import { getAllComponents } from "../../db/inventory.repository"
 import { getOfferById, updateOffer } from "../../db/offer.repository"

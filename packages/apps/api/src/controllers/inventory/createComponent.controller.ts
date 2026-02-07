@@ -1,7 +1,6 @@
 import { Request, Response } from "express"
 import * as v from "valibot"
-
-import { CreateComponentSchema } from "@/schemas/inventory/ComponentCreate.schema"
+import { CreateComponentSchema } from "@schemas/inventory/ComponentCreate.schema"
 
 import { createComponent } from "../../db/inventory.repository"
 

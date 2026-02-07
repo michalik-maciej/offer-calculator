@@ -1,8 +1,8 @@
 import request from "supertest"
 import { describe, expect, it } from "vitest"
+import { validOfferInput } from "@domain/fixtures/validOfferInput"
 
-import { validOfferInput } from "../../domain/src/fixtures/validOfferInput"
-import { app } from "../src/app"
+import { app } from "../app"
 
 describe("POST /api/offers/preview", () => {
   it("returns offer preview for valid input", async () => {
