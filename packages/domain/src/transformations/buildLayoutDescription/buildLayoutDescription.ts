@@ -1,5 +1,5 @@
-import { isLayoutGondola } from "@schemas/LayoutGondola.schema"
-import { isLayoutWall } from "@schemas/LayoutWall.schema"
+import { isLayoutGondola } from "@/schemas/LayoutGondola.schema"
+import { isLayoutWall } from "@/schemas/LayoutWall.schema"
 
 export function buildLayoutDescription(layout: unknown) {
   if (isLayoutWall(layout)) {
@@ -41,7 +41,7 @@ export function buildLayoutDescription(layout: unknown) {
 
     parts.push(`h-${layout.height}`)
 
-    const firstShelf = firstGondolaUnit.shelfUnits.find(
+    const firstShelf = firstGondolaUnit?.shelfUnits.find(
       (unit) => unit.shelves.length > 0,
     )?.shelves[0]
     if (firstShelf) {

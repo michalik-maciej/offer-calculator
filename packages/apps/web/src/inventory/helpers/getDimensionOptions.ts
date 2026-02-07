@@ -1,7 +1,7 @@
 import {
   COMPONENT_CATEGORIES,
   type ComponentCategory,
-} from "@domain/models/component"
+} from "@/domain/models/component"
 
 import type { InventoryItem } from "../api/inventory.api"
 

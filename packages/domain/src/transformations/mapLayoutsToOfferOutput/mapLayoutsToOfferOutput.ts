@@ -1,6 +1,6 @@
-import { isLayoutGondola } from "@schemas/LayoutGondola.schema"
-import { isLayoutWall } from "@schemas/LayoutWall.schema"
-import { OfferInput, OfferOutput } from "@schemas/Offer.schema"
+import { isLayoutGondola } from "@/schemas/LayoutGondola.schema"
+import { isLayoutWall } from "@/schemas/LayoutWall.schema"
+import { OfferInput, OfferOutput } from "@/schemas/Offer.schema"
 
 import { calculateBomPrice } from "../../calculations/calculateBomPrice/calculateBomPrice"
 import { Component, ComponentDemand } from "../../models/component"

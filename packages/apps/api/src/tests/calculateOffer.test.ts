@@ -1,6 +1,7 @@
 import request from "supertest"
 import { describe, expect, it } from "vitest"
-import { validOfferInput } from "@domain/fixtures/validOfferInput"
+
+import { validOfferInput } from "@/domain/fixtures/validOfferInput"
 
 import { app } from "../app"
 

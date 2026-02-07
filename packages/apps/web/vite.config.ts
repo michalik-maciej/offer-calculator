@@ -8,7 +8,7 @@ export default defineConfig({
   plugins: [
     TanStackRouterVite(),
     tsconfigPaths({
-      projects: ["./tsconfig.app.json"],
+      projects: ["./tsconfig.json"],
     }),
     react(),
     tailwindcss(),

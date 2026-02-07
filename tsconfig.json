@@ -3,7 +3,7 @@
   "references": [
     { "path": "./packages/domain" },
     { "path": "./packages/schemas" },
-    { "path": "./apps/api" },
-    { "path": "./apps/web" }
+    { "path": "./packages/apps/api" },
+    { "path": "./packages/apps/web" }
   ]
 }

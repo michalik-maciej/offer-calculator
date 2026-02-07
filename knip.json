@@ -2,59 +2,28 @@
   "$schema": "https://unpkg.com/knip@5/schema.json",
   "workspaces": {
     ".": {
-      "entry": [
-        "vitest.config.ts"
-      ],
-      "ignore": [
-        "**/*.gen.ts"
-      ]
+      "entry": ["vitest.config.ts"],
+      "ignore": ["**/*.gen.ts"]
     },
     "packages/apps/api": {
-      "entry": [
-        "src/server.ts",
-        "prisma/seed.ts"
-      ],
-      "project": [
-        "src/**/*.ts",
-        "prisma/**/*.ts"
-      ]
+      "entry": ["src/server.ts", "prisma/seed.ts"],
+      "project": ["src/**/*.ts", "prisma/**/*.ts"]
     },
     "packages/apps/web": {
-      "entry": [
-        "src/index.tsx",
-        "src/routes/**/*.tsx",
-        "vite.config.ts"
-      ],
-      "project": [
-        "src/**/*.{ts,tsx}"
-      ],
-      "ignore": [
-        "dist/**",
-        "**/*.gen.ts"
-      ]
+      "entry": ["src/index.tsx", "src/routes/**/*.tsx", "vite.config.ts"],
+      "project": ["src/**/*.{ts,tsx}"],
+      "ignore": ["dist/**", "**/*.gen.ts"]
     },
     "packages/domain": {
-      "entry": [
-        "src/index.ts!"
-      ],
-      "project": [
-        "src/**/*.ts"
-      ]
+      "entry": ["src/index.ts!"],
+      "project": ["src/**/*.ts"]
     },
     "packages/schemas": {
-      "entry": [
-        "src/index.ts!"
-      ],
-      "project": [
-        "src/**/*.ts"
-      ]
+      "entry": ["src/index.ts!"],
+      "project": ["src/**/*.ts"]
     }
   },
-  "ignore": [
-    "**/dist/**",
-    "**/node_modules/**",
-    "**/*.gen.ts"
-  ],
+  "ignore": ["**/dist/**", "**/node_modules/**", "**/*.gen.ts"],
   "ignoreDependencies": [
     "@tanstack/router-devtools",
     "@tanstack/react-query-devtools"

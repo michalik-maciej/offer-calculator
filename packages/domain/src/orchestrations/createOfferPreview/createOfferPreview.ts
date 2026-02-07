@@ -1,4 +1,4 @@
-import type { OfferInput, OfferOutput } from "@schemas/Offer.schema"
+import type { OfferInput, OfferOutput } from "@/schemas/Offer.schema"
 
 import { calculateBomPrice } from "../../calculations/calculateBomPrice/calculateBomPrice"
 import { Component } from "../../models/component"

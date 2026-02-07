@@ -1,7 +1,8 @@
 import { Request, Response } from "express"
 import * as v from "valibot"
-import { IdParamSchema } from "@schemas/IdParam.schema"
-import { UpdateComponentSchema } from "@schemas/inventory/ComponentUpdate.schema"
+
+import { IdParamSchema } from "@/schemas/IdParam.schema"
+import { UpdateComponentSchema } from "@/schemas/inventory/ComponentUpdate.schema"
 
 import { updateComponent } from "../../db/inventory.repository"
 

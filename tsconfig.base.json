@@ -6,8 +6,8 @@
 
     "baseUrl": ".",
     "paths": {
-      "@domain/*": ["packages/domain/src/*"],
-      "@schemas/*": ["packages/schemas/src/*"]
+      "@/domain/*": ["packages/domain/src/*"],
+      "@/schemas/*": ["packages/schemas/src/*"]
     },
 
     "strict": true,

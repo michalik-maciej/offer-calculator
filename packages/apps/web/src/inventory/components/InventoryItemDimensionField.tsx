@@ -1,6 +1,7 @@
 import { Controller, useFormContext } from "react-hook-form"
-import { CATEGORY_REQUIREMENTS } from "@domain/models/component"
 import { useQuery } from "@tanstack/react-query"
+
+import { CATEGORY_REQUIREMENTS } from "@/domain/models/component"
 
 import { type InventoryItemFormValues } from "./InventoryItem"
 import { Input } from "../../core/ui/input"

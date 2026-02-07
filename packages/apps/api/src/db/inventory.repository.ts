@@ -1,4 +1,4 @@
-import { Component } from "@domain/models/component"
+import { Component } from "@/domain/models/component"
 
 import { prisma } from "./prisma"
 
