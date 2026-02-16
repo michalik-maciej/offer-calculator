@@ -6,7 +6,7 @@
   "types": "./index.ts",
   "scripts": {
     "lint": "eslint \"**/*.{ts,tsx}\"",
-    "check-types": "tsc --noEmit"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "lodash": "^4.17.21"

@@ -22,7 +22,8 @@
     "@types/supertest": "^6.0.3",
     "cors": "^2.8.5",
     "supertest": "^7.1.4",
-    "tsx": "^4.20.5"
+    "tsx": "^4.20.5",
+    "typescript": "5.9.2"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

@@ -64,7 +64,7 @@ Tasks defined in `turbo.json` with dependency orchestration:
 
 - **`build`**: Respects `^build` (builds dependencies first), caches `.next/**` output
 - **`dev`**: No caching, runs persistently (for servers/watchers)
-- **`lint`, `check-types`**: Run after dependency checks complete
+- **`lint`, `typecheck`**: Run after dependency checks complete
 
 When adding new tasks, consider:
 
