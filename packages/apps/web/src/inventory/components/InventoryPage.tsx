@@ -18,7 +18,7 @@ export function InventoryPage() {
     select: (components) =>
       components.reduce<Record<string, typeof components>>((acc, component) => {
         acc[component.category] ??= []
-        acc[component.category].push(component)
+        acc[component.category]?.push(component)
         return acc
       }, {}),
   })

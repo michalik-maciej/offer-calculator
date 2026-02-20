@@ -1,55 +1,66 @@
-# syntax = docker/dockerfile:1
+# syntax=docker/dockerfile:1
 
-# Adjust NODE_VERSION as desired
-ARG NODE_VERSION=20.15.1
+ARG NODE_VERSION=20.19
 FROM node:${NODE_VERSION}-slim AS base
 
-LABEL fly_launch_runtime="Node.js/Prisma"
-
-# Node.js/Prisma app lives here
 WORKDIR /app
 
-# Set production environment
-ENV NODE_ENV="production"
+ENV NODE_ENV=production
+
+# Prisma needs OpenSSL
+RUN apt-get update -y \
+    && apt-get install -y --no-install-recommends openssl ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Enable pnpm
+RUN corepack enable
+RUN corepack prepare pnpm@9.0.0 --activate
 
 
-# Throw-away build stage to reduce size of final image
-FROM base AS build
+# =================================
+# 1️⃣ Dependencies (workspace install)
+# =================================
+FROM base AS deps
 
-# Install packages needed to build node modules
-RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential node-gyp openssl pkg-config python-is-python3
+ENV NODE_ENV=development
 
-# Install node modules
-COPY package-lock.json package.json ./
-RUN npm ci --include=dev
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json turbo.json tsconfig.base.json tsconfig.json ./
 
-# `tsc` is provided by the `typescript` package, which isn't installed in this standalone
-# app's package-lock (monorepo provides it at the root). Install it explicitly for Docker builds.
-RUN npm install -g typescript@5.9.2
+COPY packages ./packages
 
-# Generate Prisma Client
-COPY prisma .
-RUN npx prisma generate
+RUN pnpm install --frozen-lockfile
 
-# Copy application code
-COPY . .
+# =================================
+# 2️⃣ Build stage
+# =================================
+FROM deps AS build
 
-# Build application
-RUN npm run build
+# RUN pnpm --filter=@senior-calculator/api run prisma generate 
+RUN pnpm turbo run build --filter=@senior-calculator/api
 
+# =================================
+# 3️⃣ Production image
+# =================================
+FROM base AS runner
 
-# Final stage for app image
-FROM base
+WORKDIR /app
 
-# Install packages needed for deployment
-RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y openssl && \
-    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+ENV NODE_ENV=production
 
-# Copy built application
-COPY --from=build /app /app
+# Copy workspace files needed for install
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
+COPY packages/apps/api/package.json packages/apps/api/
+COPY packages/domain/package.json packages/domain/
+COPY packages/schemas/package.json packages/schemas/
 
-# Start the server by default, this can be overwritten at runtime
+# Install ONLY production deps for api and its workspace deps
+RUN pnpm install --prod --filter=@senior-calculator/api
+
+# Copy built output
+COPY --from=build /app/packages/apps/api/dist ./dist
+COPY --from=build /app/packages/domain/dist ./packages/domain/dist
+COPY --from=build /app/packages/schemas/dist ./packages/schemas/dist
+
 EXPOSE 3000
-CMD [ "npm", "run", "start" ]
+
+CMD ["node", "dist/server.js"]
