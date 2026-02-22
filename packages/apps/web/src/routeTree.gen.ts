@@ -8,95 +8,95 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as OfferRouteImport } from './routes/offer'
-import { Route as InventoryRouteImport } from './routes/inventory'
-import { Route as BreakdownRouteImport } from './routes/breakdown'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as InventoryNewRouteImport } from './routes/inventory/new'
-import { Route as InventoryComponentIdRouteImport } from './routes/inventory/$componentId'
+import { Route as rootRouteImport } from "./routes/__root"
+import { Route as OfferRouteImport } from "./routes/offer"
+import { Route as InventoryRouteImport } from "./routes/inventory"
+import { Route as BreakdownRouteImport } from "./routes/breakdown"
+import { Route as IndexRouteImport } from "./routes/index"
+import { Route as InventoryNewRouteImport } from "./routes/inventory/new"
+import { Route as InventoryComponentIdRouteImport } from "./routes/inventory/$componentId"
 
 const OfferRoute = OfferRouteImport.update({
-  id: '/offer',
-  path: '/offer',
+  id: "/offer",
+  path: "/offer",
   getParentRoute: () => rootRouteImport,
 } as any)
 const InventoryRoute = InventoryRouteImport.update({
-  id: '/inventory',
-  path: '/inventory',
+  id: "/inventory",
+  path: "/inventory",
   getParentRoute: () => rootRouteImport,
 } as any)
 const BreakdownRoute = BreakdownRouteImport.update({
-  id: '/breakdown',
-  path: '/breakdown',
+  id: "/breakdown",
+  path: "/breakdown",
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+  id: "/",
+  path: "/",
   getParentRoute: () => rootRouteImport,
 } as any)
 const InventoryNewRoute = InventoryNewRouteImport.update({
-  id: '/new',
-  path: '/new',
+  id: "/new",
+  path: "/new",
   getParentRoute: () => InventoryRoute,
 } as any)
 const InventoryComponentIdRoute = InventoryComponentIdRouteImport.update({
-  id: '/$componentId',
-  path: '/$componentId',
+  id: "/$componentId",
+  path: "/$componentId",
   getParentRoute: () => InventoryRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/breakdown': typeof BreakdownRoute
-  '/inventory': typeof InventoryRouteWithChildren
-  '/offer': typeof OfferRoute
-  '/inventory/$componentId': typeof InventoryComponentIdRoute
-  '/inventory/new': typeof InventoryNewRoute
+  "/": typeof IndexRoute
+  "/breakdown": typeof BreakdownRoute
+  "/inventory": typeof InventoryRouteWithChildren
+  "/offer": typeof OfferRoute
+  "/inventory/$componentId": typeof InventoryComponentIdRoute
+  "/inventory/new": typeof InventoryNewRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/breakdown': typeof BreakdownRoute
-  '/inventory': typeof InventoryRouteWithChildren
-  '/offer': typeof OfferRoute
-  '/inventory/$componentId': typeof InventoryComponentIdRoute
-  '/inventory/new': typeof InventoryNewRoute
+  "/": typeof IndexRoute
+  "/breakdown": typeof BreakdownRoute
+  "/inventory": typeof InventoryRouteWithChildren
+  "/offer": typeof OfferRoute
+  "/inventory/$componentId": typeof InventoryComponentIdRoute
+  "/inventory/new": typeof InventoryNewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/breakdown': typeof BreakdownRoute
-  '/inventory': typeof InventoryRouteWithChildren
-  '/offer': typeof OfferRoute
-  '/inventory/$componentId': typeof InventoryComponentIdRoute
-  '/inventory/new': typeof InventoryNewRoute
+  "/": typeof IndexRoute
+  "/breakdown": typeof BreakdownRoute
+  "/inventory": typeof InventoryRouteWithChildren
+  "/offer": typeof OfferRoute
+  "/inventory/$componentId": typeof InventoryComponentIdRoute
+  "/inventory/new": typeof InventoryNewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
-    | '/breakdown'
-    | '/inventory'
-    | '/offer'
-    | '/inventory/$componentId'
-    | '/inventory/new'
+    | "/"
+    | "/breakdown"
+    | "/inventory"
+    | "/offer"
+    | "/inventory/$componentId"
+    | "/inventory/new"
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
-    | '/breakdown'
-    | '/inventory'
-    | '/offer'
-    | '/inventory/$componentId'
-    | '/inventory/new'
+    | "/"
+    | "/breakdown"
+    | "/inventory"
+    | "/offer"
+    | "/inventory/$componentId"
+    | "/inventory/new"
   id:
-    | '__root__'
-    | '/'
-    | '/breakdown'
-    | '/inventory'
-    | '/offer'
-    | '/inventory/$componentId'
-    | '/inventory/new'
+    | "__root__"
+    | "/"
+    | "/breakdown"
+    | "/inventory"
+    | "/offer"
+    | "/inventory/$componentId"
+    | "/inventory/new"
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -106,47 +106,47 @@ export interface RootRouteChildren {
   OfferRoute: typeof OfferRoute
 }
 
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
-    '/offer': {
-      id: '/offer'
-      path: '/offer'
-      fullPath: '/offer'
+    "/offer": {
+      id: "/offer"
+      path: "/offer"
+      fullPath: "/offer"
       preLoaderRoute: typeof OfferRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/inventory': {
-      id: '/inventory'
-      path: '/inventory'
-      fullPath: '/inventory'
+    "/inventory": {
+      id: "/inventory"
+      path: "/inventory"
+      fullPath: "/inventory"
       preLoaderRoute: typeof InventoryRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/breakdown': {
-      id: '/breakdown'
-      path: '/breakdown'
-      fullPath: '/breakdown'
+    "/breakdown": {
+      id: "/breakdown"
+      path: "/breakdown"
+      fullPath: "/breakdown"
       preLoaderRoute: typeof BreakdownRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
+    "/": {
+      id: "/"
+      path: "/"
+      fullPath: "/"
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/inventory/new': {
-      id: '/inventory/new'
-      path: '/new'
-      fullPath: '/inventory/new'
+    "/inventory/new": {
+      id: "/inventory/new"
+      path: "/new"
+      fullPath: "/inventory/new"
       preLoaderRoute: typeof InventoryNewRouteImport
       parentRoute: typeof InventoryRoute
     }
-    '/inventory/$componentId': {
-      id: '/inventory/$componentId'
-      path: '/$componentId'
-      fullPath: '/inventory/$componentId'
+    "/inventory/$componentId": {
+      id: "/inventory/$componentId"
+      path: "/$componentId"
+      fullPath: "/inventory/$componentId"
       preLoaderRoute: typeof InventoryComponentIdRouteImport
       parentRoute: typeof InventoryRoute
     }
