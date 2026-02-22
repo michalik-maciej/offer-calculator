@@ -47,20 +47,11 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-# Copy workspace files needed for install
-COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
-COPY packages/apps/api/package.json packages/apps/api/
-COPY packages/domain/package.json packages/domain/
-COPY packages/schemas/package.json packages/schemas/
+COPY --from=build /app .
 
 # Install ONLY production deps for api and its workspace deps
 RUN pnpm install --prod --filter=@senior-calculator/api
 
-# Copy built output
-COPY --from=build /app/packages/apps/api/dist ./dist
-COPY --from=build /app/packages/domain/dist ./packages/domain/dist
-COPY --from=build /app/packages/schemas/dist ./packages/schemas/dist
-
 EXPOSE 3000
 
-CMD ["node", "dist/server.js"]
+CMD ["node", "packages/apps/api/dist/bootstrap.js"]

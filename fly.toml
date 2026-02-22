@@ -7,10 +7,11 @@ app = 'offer-calculator-api'
 primary_region = 'ams'
 
 [build]
+  dockerfile = "packages/apps/api/Dockerfile"
+  build-target = "runner"
 
 [deploy]
-  release_command = 'npx prisma migrate deploy'
-  seed_command = 'tsx prisma/seed.ts'
+  release_command = "pnpm --filter @senior-calculator/api run migrate:deploy"
 
 [http_service]
   internal_port = 3000

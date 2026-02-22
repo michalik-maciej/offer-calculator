@@ -1,0 +1,12 @@
+/.git
+.dockerignore
+.env
+Dockerfile
+
+**/.DS_Store
+**/node_modules
+**/dist
+**/.turbo
+
+fly.toml
+packages/apps/web

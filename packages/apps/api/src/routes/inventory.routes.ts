@@ -1,3 +1,4 @@
+import type { Router as ExpressRouter } from "express"
 import { Router } from "express"
 
 import { createComponentController } from "../controllers/inventory/createComponent.controller"
@@ -5,7 +6,7 @@ import { deleteComponentController } from "../controllers/inventory/deleteCompon
 import { getComponentsController } from "../controllers/inventory/getComponents.controller"
 import { updateComponentController } from "../controllers/inventory/updateComponent.controller"
 
-const router = Router()
+const router: ExpressRouter = Router()
 
 router.get("/items", getComponentsController)
 
