@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../../core/ui/dialog"
-import { inventoryQueries } from "../../inventory/api/inventory.api"
+import { inventoryQueries } from "../inventory.api"
 
 export function InventoryItemDialog({
   componentId,

@@ -1,3 +1,4 @@
+import cookieParser from "cookie-parser"
 import cors from "cors"
 import type { Express } from "express"
 import express from "express"
@@ -10,9 +11,10 @@ import offersRoutes from "./routes/offers.routes"
 export const app: Express = express()
 
 app.use(express.json())
+app.use(cookieParser())
 app.use(cors())
 
 app.use("/api/health", healthRoutes)
-app.use("/auth", authRoutes)
+app.use("/api/auth", authRoutes)
 app.use("/api/inventory", inventoryRoutes)
 app.use("/api/offers", offersRoutes)

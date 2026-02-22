@@ -1,8 +1,8 @@
 import { toast } from "sonner"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
-import type { InventoryItemUpdateInput } from "../api/inventory.api"
-import { inventoryApi, inventoryQueries } from "../api/inventory.api"
+import type { InventoryItemUpdateInput } from "../inventory.api"
+import { inventoryApi, inventoryQueries } from "../inventory.api"
 
 type UpdateInput = {
   id: string

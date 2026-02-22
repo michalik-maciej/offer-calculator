@@ -1,0 +1,6 @@
+import { Request, Response } from "express"
+
+export const logoutController = (_: Request, res: Response) => {
+  res.clearCookie("accessToken")
+  res.status(200).json({ message: "Logged out successfully" })
+}

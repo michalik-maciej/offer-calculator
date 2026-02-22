@@ -1,8 +1,8 @@
 import { toast } from "sonner"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
-import type { InventoryItemCreateInput } from "../api/inventory.api"
-import { inventoryApi, inventoryQueries } from "../api/inventory.api"
+import type { InventoryItemCreateInput } from "../inventory.api"
+import { inventoryApi, inventoryQueries } from "../inventory.api"
 
 export function useCreateInventoryItem() {
   const queryClient = useQueryClient()

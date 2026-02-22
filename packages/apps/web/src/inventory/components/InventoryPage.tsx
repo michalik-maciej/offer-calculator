@@ -9,8 +9,8 @@ import {
   AccordionTrigger,
 } from "../../core/ui/accordion"
 import { Button } from "../../core/ui/button"
-import { inventoryQueries } from "../api/inventory.api"
 import { CATEGORY_LABELS } from "../components/labels.inventory"
+import { inventoryQueries } from "../inventory.api"
 
 export function InventoryPage() {
   const { data, isPending, error } = useQuery({

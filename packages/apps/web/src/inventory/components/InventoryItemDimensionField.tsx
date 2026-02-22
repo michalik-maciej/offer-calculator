@@ -13,8 +13,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../core/ui/select"
-import { inventoryQueries } from "../../inventory/api/inventory.api"
 import { getDimensionOptions } from "../../inventory/helpers/getDimensionOptions"
+import { inventoryQueries } from "../inventory.api"
 
 interface Props {
   dimension: "width" | "height" | "depth"

@@ -8,7 +8,6 @@ import { LoginInputSchema } from "@/schemas/auth/Login.schema"
 import { getUserByEmail } from "../../db/user.repository"
 
 type LoginResponse = {
-  token: string
   user: {
     id: string
     email: string
@@ -44,9 +43,7 @@ export async function loginController(
     return res.status(401).json({ error: "Invalid credentials" })
   }
 
-  const hasPasswordMatch = user.password.startsWith("$2")
-    ? await bcrypt.compare(output.password, user.password)
-    : user.password === output.password
+  const hasPasswordMatch = await bcrypt.compare(output.password, user.password)
 
   if (!hasPasswordMatch) {
     return res.status(401).json({ error: "Invalid credentials" })
@@ -62,8 +59,13 @@ export async function loginController(
     { expiresIn: "7d" },
   )
 
+  res.cookie("accessToken", token, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "strict",
+  })
+
   return res.status(200).json({
-    token,
     user: {
       id: user.id,
       email: user.email,

@@ -11,7 +11,6 @@ const router: ExpressRouter = Router()
 
 router.get("/", getOffersController)
 router.get("/:id", getOfferController)
-
 router.post("/", createOfferController)
 router.put("/:id", updateOfferController)
 router.post("/preview", calculateOfferController)

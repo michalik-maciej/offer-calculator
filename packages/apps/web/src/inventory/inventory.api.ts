@@ -2,7 +2,7 @@ import * as v from "valibot"
 
 import type { ComponentCategory } from "@/domain/models/component"
 
-import { apiType, createApiMethod } from "../../core/createMethod.api"
+import { apiType, createApiMethod } from "../core/createMethod.api"
 
 const InventoryItemBaseShape = {
   category: v.custom<ComponentCategory>(
@@ -34,37 +34,35 @@ export type InventoryItemUpdateInput = v.InferOutput<
 
 const InventoryItemListSchema = v.array(InventoryItemSchema)
 
-const apiUrl = import.meta.env.VITE_APP_API_URL
+const apiUrl = import.meta.env.VITE_APP_API_URL_LOCAL
 if (!apiUrl) {
   throw new Error("Missing VITE_API_URL (set it in packages/apps/web/.env)")
 }
 
-const basePath = `${apiUrl}/inventory/items`
-
 export const inventoryApi = {
   list: createApiMethod({
     method: "GET",
-    path: basePath,
+    path: `${apiUrl}/inventory/items`,
     response: InventoryItemListSchema,
   }),
 
   create: createApiMethod({
     method: "POST",
-    path: basePath,
+    path: `${apiUrl}/inventory/items`,
     response: InventoryItemSchema,
     data: apiType<InventoryItemCreateInput>(),
   }),
 
   update: createApiMethod({
     method: "PUT",
-    path: `${basePath}/:id`,
+    path: `${`${apiUrl}/inventory/items`}/:id`,
     response: InventoryItemSchema,
     data: apiType<InventoryItemUpdateInput>(),
   }),
 
   delete: createApiMethod({
     method: "DELETE",
-    path: `${basePath}/:id`,
+    path: `${`${apiUrl}/inventory/items`}/:id`,
   }),
 }
 

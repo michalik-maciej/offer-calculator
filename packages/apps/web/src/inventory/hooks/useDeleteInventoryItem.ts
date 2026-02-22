@@ -1,7 +1,7 @@
 import { toast } from "sonner"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
-import { inventoryApi, inventoryQueries } from "../api/inventory.api"
+import { inventoryApi, inventoryQueries } from "../inventory.api"
 
 export function useDeleteInventoryItem() {
   const queryClient = useQueryClient()

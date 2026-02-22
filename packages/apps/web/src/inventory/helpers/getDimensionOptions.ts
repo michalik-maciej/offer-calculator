@@ -3,7 +3,7 @@ import {
   type ComponentCategory,
 } from "@/domain/models/component"
 
-import type { InventoryItem } from "../api/inventory.api"
+import type { InventoryItem } from "../inventory.api"
 
 function uniqueNumbers(values: Array<number | null | undefined>) {
   return Array.from(new Set(values.filter((v): v is number => v != null))).sort(
