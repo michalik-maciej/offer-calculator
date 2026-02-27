@@ -131,6 +131,7 @@ export function createApiMethod<
 
     const res = await fetch(finalUrl, {
       method: contract.method,
+      credentials: "include",
       headers: body ? { "Content-Type": "application/json" } : undefined,
       body,
     })
