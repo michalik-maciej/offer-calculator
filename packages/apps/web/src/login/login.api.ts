@@ -1,4 +1,4 @@
-import { LoginInput, LoginInputSchema } from "@/schemas/auth/Login.schema"
+import { LoginInput, LoginResponseSchema } from "@/schemas/auth/Login.schema"
 
 import { apiType, createApiMethod } from "../core/createMethod.api"
 
@@ -12,13 +12,11 @@ export const loginApi = {
   login: createApiMethod({
     method: "POST",
     path: `${apiUrl}/auth/login`,
-    response: LoginInputSchema,
+    response: LoginResponseSchema,
     data: apiType<LoginInput>(),
   }),
-  register: createApiMethod({
+  logout: createApiMethod({
     method: "POST",
-    path: `${apiUrl}/auth/register`,
-    response: LoginInputSchema,
-    data: apiType<LoginInput>(),
+    path: `${apiUrl}/auth/logout`,
   }),
 }

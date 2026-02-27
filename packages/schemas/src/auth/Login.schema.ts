@@ -5,4 +5,12 @@ export const LoginInputSchema = v.object({
   password: v.pipe(v.string(), v.minLength(8)),
 })
 
+export const LoginResponseSchema = v.object({
+  user: v.object({
+    id: v.string(),
+    email: v.string(),
+    role: v.string(),
+  }),
+})
+
 export type LoginInput = v.InferInput<typeof LoginInputSchema>

@@ -1,9 +1,24 @@
 // src/components/theme-toggle.tsx
-import { Moon, Sun } from "lucide-react"
+import { LogOut, Moon, Sun } from "lucide-react"
+import { useLogoutUser } from "packages/apps/web/src/login/hooks/useLogoutUser"
 import { Link } from "@tanstack/react-router"
 
 import { useTheme } from "../core/hooks/useTheme"
 import { Button } from "../core/ui/button"
+
+function UserButton() {
+  const { mutate: logout } = useLogoutUser()
+  return (
+    <Button
+      size="icon"
+      variant="outline"
+      className="rounded-xl"
+      onClick={() => logout()}
+    >
+      <LogOut className="h-5 w-5" />
+    </Button>
+  )
+}
 
 function ThemeToggle() {
   const { theme, toggleTheme } = useTheme()
@@ -40,7 +55,10 @@ export function TopBar() {
             <Link to="/inventory">Katalog</Link>
           </Button>
         </div>
-        <ThemeToggle />
+        <div className="flex items-center gap-4">
+          <ThemeToggle />
+          <UserButton />
+        </div>
       </nav>
     </header>
   )
