@@ -1,10 +1,10 @@
 // src/components/theme-toggle.tsx
 import { LogOut, Moon, Sun } from "lucide-react"
-import { useLogoutUser } from "packages/apps/web/src/login/hooks/useLogoutUser"
 import { Link } from "@tanstack/react-router"
 
 import { useTheme } from "../core/hooks/useTheme"
 import { Button } from "../core/ui/button"
+import { useLogoutUser } from "../user/hooks/useLogoutUser"
 
 function UserButton() {
   const { mutate: logout } = useLogoutUser()

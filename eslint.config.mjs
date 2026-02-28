@@ -10,6 +10,7 @@ export default [
       "**/dist/**",
       "**/.turbo/**",
       "**/coverage/**",
+      "**/*.d.ts",
     ],
   },
 

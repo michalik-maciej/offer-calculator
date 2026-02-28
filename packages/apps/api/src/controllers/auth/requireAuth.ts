@@ -6,10 +6,7 @@ function verifyToken(token: string) {
   if (!secret) {
     throw new Error("Missing JWT_SECRET")
   }
-  return jwt.verify(token, secret) as {
-    sub: string
-    role: string
-  }
+  return jwt.verify(token, secret)
 }
 
 export function requireAuth(req: Request, res: Response, next: NextFunction) {

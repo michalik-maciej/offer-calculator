@@ -6,12 +6,6 @@
   "types": "./index.ts",
   "scripts": {
     "lint": "eslint \"**/*.{ts,tsx}\"",
-    "typecheck": "tsc --noEmit"
-  },
-  "dependencies": {
-    "lodash": "^4.17.21"
-  },
-  "devDependencies": {
-    "@types/lodash": "^4.17.13"
+    "typecheck": "tsc -b --noEmit"
   }
 }

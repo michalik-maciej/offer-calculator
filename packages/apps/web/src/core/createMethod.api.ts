@@ -6,6 +6,32 @@ export const apiType = <T>() => "" as unknown as T
 
 type QueryParams = Record<string, unknown>
 
+export class ApiError extends Error {
+  name = "ApiError" as const
+  status: number
+  statusText: string
+  method: HttpMethod
+  url: string
+  bodyText?: string
+
+  constructor(args: {
+    status: number
+    statusText: string
+    method: HttpMethod
+    url: string
+    bodyText?: string
+  }) {
+    super(
+      `HTTP ${args.status} ${args.statusText}${args.bodyText ? `: ${args.bodyText}` : ""}`,
+    )
+    this.status = args.status
+    this.statusText = args.statusText
+    this.method = args.method
+    this.url = args.url
+    this.bodyText = args.bodyText
+  }
+}
+
 type ApiContract<
   TPath extends string,
   TData,
@@ -138,9 +164,13 @@ export function createApiMethod<
 
     if (!res.ok) {
       const errorBody = await res.text().catch(() => "")
-      throw new Error(
-        `HTTP ${res.status} ${res.statusText}${errorBody ? `: ${errorBody}` : ""}`,
-      )
+      throw new ApiError({
+        status: res.status,
+        statusText: res.statusText,
+        method: contract.method,
+        url: finalUrl,
+        bodyText: errorBody || undefined,
+      })
     }
 
     // 204 No Content

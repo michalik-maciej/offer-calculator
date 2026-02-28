@@ -1,3 +1,4 @@
+import { AuthUserResponseSchema } from "@/schemas/auth/AuthUser.schema"
 import { LoginInput, LoginResponseSchema } from "@/schemas/auth/Login.schema"
 
 import { apiType, createApiMethod } from "../core/createMethod.api"
@@ -8,7 +9,7 @@ if (!apiUrl) {
   throw new Error("Missing VITE_API_URL (set it in packages/apps/web/.env)")
 }
 
-export const loginApi = {
+export const authApi = {
   login: createApiMethod({
     method: "POST",
     path: `${apiUrl}/auth/login`,
@@ -18,5 +19,17 @@ export const loginApi = {
   logout: createApiMethod({
     method: "POST",
     path: `${apiUrl}/auth/logout`,
+  }),
+  user: createApiMethod({
+    method: "GET",
+    path: `${apiUrl}/auth/user`,
+    response: AuthUserResponseSchema,
+  }),
+}
+
+export const authQueries = {
+  user: () => ({
+    queryKey: ["auth", "user"] as const,
+    queryFn: () => authApi.user(),
   }),
 }

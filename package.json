@@ -19,6 +19,7 @@
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-simple-import-sort": "^12.1.1",
+    "@types/lodash": "^4.17.13",
     "knip": "^5.82.1",
     "prettier": "^3.7.4",
     "turbo": "^2.6.3",
@@ -31,6 +32,7 @@
     "node": ">=20"
   },
   "dependencies": {
+    "lodash": "^4.17.21",
     "valibot": "^1.2.0",
     "vitest": "^4.0.16"
   }
