@@ -9,19 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as OfferRouteImport } from './routes/offer'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as BreakdownRouteImport } from './routes/breakdown'
+import { Route as OfferRouteRouteImport } from './routes/offer/route'
 import { Route as InventoryRouteRouteImport } from './routes/inventory/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as OfferNewRouteImport } from './routes/offer/new'
+import { Route as OfferOfferIdRouteImport } from './routes/offer/$offerId'
 import { Route as InventoryNewRouteImport } from './routes/inventory/new'
 import { Route as InventoryComponentIdRouteImport } from './routes/inventory/$componentId'
 
-const OfferRoute = OfferRouteImport.update({
-  id: '/offer',
-  path: '/offer',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -30,6 +27,11 @@ const LoginRoute = LoginRouteImport.update({
 const BreakdownRoute = BreakdownRouteImport.update({
   id: '/breakdown',
   path: '/breakdown',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OfferRouteRoute = OfferRouteRouteImport.update({
+  id: '/offer',
+  path: '/offer',
   getParentRoute: () => rootRouteImport,
 } as any)
 const InventoryRouteRoute = InventoryRouteRouteImport.update({
@@ -41,6 +43,16 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const OfferNewRoute = OfferNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => OfferRouteRoute,
+} as any)
+const OfferOfferIdRoute = OfferOfferIdRouteImport.update({
+  id: '/$offerId',
+  path: '/$offerId',
+  getParentRoute: () => OfferRouteRoute,
 } as any)
 const InventoryNewRoute = InventoryNewRouteImport.update({
   id: '/new',
@@ -56,78 +68,83 @@ const InventoryComponentIdRoute = InventoryComponentIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/inventory': typeof InventoryRouteRouteWithChildren
+  '/offer': typeof OfferRouteRouteWithChildren
   '/breakdown': typeof BreakdownRoute
   '/login': typeof LoginRoute
-  '/offer': typeof OfferRoute
   '/inventory/$componentId': typeof InventoryComponentIdRoute
   '/inventory/new': typeof InventoryNewRoute
+  '/offer/$offerId': typeof OfferOfferIdRoute
+  '/offer/new': typeof OfferNewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/inventory': typeof InventoryRouteRouteWithChildren
+  '/offer': typeof OfferRouteRouteWithChildren
   '/breakdown': typeof BreakdownRoute
   '/login': typeof LoginRoute
-  '/offer': typeof OfferRoute
   '/inventory/$componentId': typeof InventoryComponentIdRoute
   '/inventory/new': typeof InventoryNewRoute
+  '/offer/$offerId': typeof OfferOfferIdRoute
+  '/offer/new': typeof OfferNewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/inventory': typeof InventoryRouteRouteWithChildren
+  '/offer': typeof OfferRouteRouteWithChildren
   '/breakdown': typeof BreakdownRoute
   '/login': typeof LoginRoute
-  '/offer': typeof OfferRoute
   '/inventory/$componentId': typeof InventoryComponentIdRoute
   '/inventory/new': typeof InventoryNewRoute
+  '/offer/$offerId': typeof OfferOfferIdRoute
+  '/offer/new': typeof OfferNewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/inventory'
+    | '/offer'
     | '/breakdown'
     | '/login'
-    | '/offer'
     | '/inventory/$componentId'
     | '/inventory/new'
+    | '/offer/$offerId'
+    | '/offer/new'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/inventory'
+    | '/offer'
     | '/breakdown'
     | '/login'
-    | '/offer'
     | '/inventory/$componentId'
     | '/inventory/new'
+    | '/offer/$offerId'
+    | '/offer/new'
   id:
     | '__root__'
     | '/'
     | '/inventory'
+    | '/offer'
     | '/breakdown'
     | '/login'
-    | '/offer'
     | '/inventory/$componentId'
     | '/inventory/new'
+    | '/offer/$offerId'
+    | '/offer/new'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   InventoryRouteRoute: typeof InventoryRouteRouteWithChildren
+  OfferRouteRoute: typeof OfferRouteRouteWithChildren
   BreakdownRoute: typeof BreakdownRoute
   LoginRoute: typeof LoginRoute
-  OfferRoute: typeof OfferRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/offer': {
-      id: '/offer'
-      path: '/offer'
-      fullPath: '/offer'
-      preLoaderRoute: typeof OfferRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -140,6 +157,13 @@ declare module '@tanstack/react-router' {
       path: '/breakdown'
       fullPath: '/breakdown'
       preLoaderRoute: typeof BreakdownRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/offer': {
+      id: '/offer'
+      path: '/offer'
+      fullPath: '/offer'
+      preLoaderRoute: typeof OfferRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/inventory': {
@@ -155,6 +179,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/offer/new': {
+      id: '/offer/new'
+      path: '/new'
+      fullPath: '/offer/new'
+      preLoaderRoute: typeof OfferNewRouteImport
+      parentRoute: typeof OfferRouteRoute
+    }
+    '/offer/$offerId': {
+      id: '/offer/$offerId'
+      path: '/$offerId'
+      fullPath: '/offer/$offerId'
+      preLoaderRoute: typeof OfferOfferIdRouteImport
+      parentRoute: typeof OfferRouteRoute
     }
     '/inventory/new': {
       id: '/inventory/new'
@@ -187,12 +225,26 @@ const InventoryRouteRouteWithChildren = InventoryRouteRoute._addFileChildren(
   InventoryRouteRouteChildren,
 )
 
+interface OfferRouteRouteChildren {
+  OfferOfferIdRoute: typeof OfferOfferIdRoute
+  OfferNewRoute: typeof OfferNewRoute
+}
+
+const OfferRouteRouteChildren: OfferRouteRouteChildren = {
+  OfferOfferIdRoute: OfferOfferIdRoute,
+  OfferNewRoute: OfferNewRoute,
+}
+
+const OfferRouteRouteWithChildren = OfferRouteRoute._addFileChildren(
+  OfferRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   InventoryRouteRoute: InventoryRouteRouteWithChildren,
+  OfferRouteRoute: OfferRouteRouteWithChildren,
   BreakdownRoute: BreakdownRoute,
   LoginRoute: LoginRoute,
-  OfferRoute: OfferRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
