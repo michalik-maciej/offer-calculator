@@ -24,7 +24,7 @@ export const LoginForm = () => {
   return (
     <Dialog open>
       <DialogContent
-        className="sm:max-w-sm flex flex-col justify-center items-center rounded-md border p-8 shadow-indigo-900 shadow-md"
+        className="sm:max-w-sm flex flex-col justify-center items-center rounded-md border border-l-transparent border-t-4 border-t-indigo-500 p-8 shadow-indigo-900 shadow-md"
         showCloseButton={false}
       >
         <DialogHeader>
@@ -53,7 +53,7 @@ export const LoginForm = () => {
             />
           </div>
           <Button
-            className="self-end mt-8"
+            className="self-end mt-8 rounded-b-xl outline-none border-2 border-indigo-400 bg-cyan-200 hover:bg-indigo-400 focus:ring-2 focus:ring-indigo-900 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
             onClick={() => login(form.getValues())}
             disabled={isPending}
           >

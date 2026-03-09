@@ -5,6 +5,9 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
+    "dev:api": "turbo run dev --filter=@senior-calculator/api",
+    "dev:web": "turbo run dev --filter=web",
+    "dev:local": "turbo run dev --filter=@senior-calculator/api --filter=web",
     "lint": "turbo run lint",
     "format": "prettier --write . && eslint --fix .",
     "format:check": "prettier --check .",
