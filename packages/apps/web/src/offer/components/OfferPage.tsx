@@ -1,17 +1,13 @@
-import { validOfferInput } from "@/domain/fixtures/validOfferInput"
-
-import { Button } from "../../core/ui/button"
-import { usePreviewOffer } from "../hooks/usePreviewOffer"
+import { FormCalculation } from "packages/apps/web/src/offer/components/FormCalculation"
+import { OfferPreview } from "packages/apps/web/src/offer/components/OfferPreview"
 
 export function OfferPage() {
-  const previewOffer = usePreviewOffer()
-
   return (
     <section>
-      <h1>Offer</h1>
-      <Button onClick={() => previewOffer.mutate(validOfferInput)}>
-        Preview offer
-      </Button>
+      <h1>Oferta</h1>
+      <FormCalculation>
+        <OfferPreview />
+      </FormCalculation>
     </section>
   )
 }
