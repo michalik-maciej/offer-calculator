@@ -6,6 +6,6 @@
   "types": "./index.ts",
   "scripts": {
     "lint": "eslint \"**/*.{ts,tsx}\"",
-    "typecheck": "tsc -b --noEmit"
+    "typecheck": "tsc -p tsconfig.json --noEmit"
   }
 }

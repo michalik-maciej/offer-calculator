@@ -8,7 +8,7 @@
     "start": "node dist/bootstrap.js",
     "migrate:deploy": "prisma migrate deploy",
     "lint": "eslint \"**/*.{ts,tsx}\"",
-    "typecheck": "prisma generate && tsc -b --noEmit"
+    "typecheck": "prisma generate && tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
