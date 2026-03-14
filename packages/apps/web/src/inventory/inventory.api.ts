@@ -34,7 +34,7 @@ export type InventoryItemUpdateInput = v.InferOutput<
 
 const InventoryItemListSchema = v.array(InventoryItemSchema)
 
-const apiUrl = import.meta.env.VITE_APP_API_URL_LOCAL
+const apiUrl = import.meta.env.VITE_APP_API_URL
 if (!apiUrl) {
   throw new Error("Missing VITE_API_URL (set it in packages/apps/web/.env)")
 }
