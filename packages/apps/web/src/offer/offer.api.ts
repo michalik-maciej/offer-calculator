@@ -6,9 +6,9 @@ import { apiType, createApiMethod } from "../core/createMethod.api"
 
 const OfferListSchema = v.array(OfferOutputSchema)
 
-const apiUrl = import.meta.env.VITE_APP_API_URL
+const apiUrl = import.meta.env.VITE_API_URL
 if (!apiUrl) {
-  throw new Error("Missing VITE_API_URL (set it in packages/apps/web/.env)")
+  throw new Error("Missing VITE_API_URL")
 }
 
 export const offerApi = {

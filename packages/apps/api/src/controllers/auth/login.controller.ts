@@ -61,8 +61,10 @@ export async function loginController(
 
   res.cookie("accessToken", token, {
     httpOnly: true,
+    domain: "offer-calculator-api.fly.dev",
+    path: "/",
     secure: true,
-    sameSite: "strict",
+    sameSite: "none",
   })
 
   return res.status(200).json({
