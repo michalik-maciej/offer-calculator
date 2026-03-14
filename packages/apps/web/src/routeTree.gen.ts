@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
-import { Route as BreakdownRouteImport } from './routes/breakdown'
 import { Route as OfferRouteRouteImport } from './routes/offer/route'
 import { Route as InventoryRouteRouteImport } from './routes/inventory/route'
 import { Route as IndexRouteImport } from './routes/index'
@@ -22,11 +21,6 @@ import { Route as InventoryComponentIdRouteImport } from './routes/inventory/$co
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BreakdownRoute = BreakdownRouteImport.update({
-  id: '/breakdown',
-  path: '/breakdown',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OfferRouteRoute = OfferRouteRouteImport.update({
@@ -69,7 +63,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/inventory': typeof InventoryRouteRouteWithChildren
   '/offer': typeof OfferRouteRouteWithChildren
-  '/breakdown': typeof BreakdownRoute
   '/login': typeof LoginRoute
   '/inventory/$componentId': typeof InventoryComponentIdRoute
   '/inventory/new': typeof InventoryNewRoute
@@ -80,7 +73,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/inventory': typeof InventoryRouteRouteWithChildren
   '/offer': typeof OfferRouteRouteWithChildren
-  '/breakdown': typeof BreakdownRoute
   '/login': typeof LoginRoute
   '/inventory/$componentId': typeof InventoryComponentIdRoute
   '/inventory/new': typeof InventoryNewRoute
@@ -92,7 +84,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/inventory': typeof InventoryRouteRouteWithChildren
   '/offer': typeof OfferRouteRouteWithChildren
-  '/breakdown': typeof BreakdownRoute
   '/login': typeof LoginRoute
   '/inventory/$componentId': typeof InventoryComponentIdRoute
   '/inventory/new': typeof InventoryNewRoute
@@ -105,7 +96,6 @@ export interface FileRouteTypes {
     | '/'
     | '/inventory'
     | '/offer'
-    | '/breakdown'
     | '/login'
     | '/inventory/$componentId'
     | '/inventory/new'
@@ -116,7 +106,6 @@ export interface FileRouteTypes {
     | '/'
     | '/inventory'
     | '/offer'
-    | '/breakdown'
     | '/login'
     | '/inventory/$componentId'
     | '/inventory/new'
@@ -127,7 +116,6 @@ export interface FileRouteTypes {
     | '/'
     | '/inventory'
     | '/offer'
-    | '/breakdown'
     | '/login'
     | '/inventory/$componentId'
     | '/inventory/new'
@@ -139,7 +127,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   InventoryRouteRoute: typeof InventoryRouteRouteWithChildren
   OfferRouteRoute: typeof OfferRouteRouteWithChildren
-  BreakdownRoute: typeof BreakdownRoute
   LoginRoute: typeof LoginRoute
 }
 
@@ -150,13 +137,6 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/breakdown': {
-      id: '/breakdown'
-      path: '/breakdown'
-      fullPath: '/breakdown'
-      preLoaderRoute: typeof BreakdownRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/offer': {
@@ -243,7 +223,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   InventoryRouteRoute: InventoryRouteRouteWithChildren,
   OfferRouteRoute: OfferRouteRouteWithChildren,
-  BreakdownRoute: BreakdownRoute,
   LoginRoute: LoginRoute,
 }
 export const routeTree = rootRouteImport

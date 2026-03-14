@@ -49,9 +49,6 @@ export function TopBar() {
             <Link to="/offer">Oferta</Link>
           </Button>
           <Button variant="outline" asChild>
-            <Link to="/breakdown">Rozpiska</Link>
-          </Button>
-          <Button variant="outline" asChild>
             <Link to="/inventory">Katalog</Link>
           </Button>
         </div>
