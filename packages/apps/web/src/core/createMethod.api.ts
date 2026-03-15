@@ -1,4 +1,4 @@
-import { type GenericSchema, safeParse } from "valibot"
+import { type GenericSchema } from "valibot"
 
 type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE"
 
@@ -158,37 +158,18 @@ export function createApiMethod<
     const res = await fetch(finalUrl, {
       method: contract.method,
       credentials: "include",
-      headers: body ? { "Content-Type": "application/json" } : undefined,
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
       body,
     })
 
     if (!res.ok) {
-      const errorBody = await res.text().catch(() => "")
-      throw new ApiError({
-        status: res.status,
-        statusText: res.statusText,
-        method: contract.method,
-        url: finalUrl,
-        bodyText: errorBody || undefined,
-      })
+      const text = await res.text()
+      throw new Error(`HTTP ${res.status}: ${text}`)
     }
 
-    // 204 No Content
-    if (res.status === 204) {
-      return undefined as TOutput
-    }
-
-    const text = await res.text()
-    const json = text ? (JSON.parse(text) as unknown) : undefined
-
-    if (!contract.response) {
-      return json as TOutput
-    }
-
-    const parsed = safeParse(contract.response, json)
-    if (!parsed.success) {
-      throw new Error("Invalid API response")
-    }
-    return parsed.output
+    return res.json()
   }
 }
