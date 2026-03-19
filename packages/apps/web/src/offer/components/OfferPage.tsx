@@ -1,6 +1,6 @@
-import { FormCalculation } from "packages/apps/web/src/offer/components/FormCalculation"
-import { OfferList } from "packages/apps/web/src/offer/components/OfferList"
-import { OfferPreview } from "packages/apps/web/src/offer/components/OfferPreview"
+import { FormCalculation } from "./FormCalculation"
+import { OfferList } from "./OfferList"
+import { OfferPreview } from "./OfferPreview"
 
 export function OfferPage() {
   return (
@@ -8,7 +8,6 @@ export function OfferPage() {
       <h1>Oferta</h1>
       <FormCalculation>
         <OfferPreview />
-        <OfferList />
       </FormCalculation>
     </section>
   )

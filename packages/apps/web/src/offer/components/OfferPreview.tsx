@@ -4,7 +4,6 @@ import { Drawer, DrawerContent, DrawerTrigger } from "../../core/ui/drawer"
 
 export const OfferPreview = () => {
   const formContext = useFormContext()
-  console.log("Preview data:")
 
   return (
     <Drawer direction="right">

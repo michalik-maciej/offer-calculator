@@ -12,14 +12,14 @@ import {
 import { offerQueries } from "../offer.api"
 
 export const OfferList = () => {
-  const [isOpen, setIsisOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
   const { data, isPending } = useQuery({
     ...offerQueries.list(),
     enabled: isOpen,
   })
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsisOpen}>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger>
         <Button className="mx-6">
           Oferty
@@ -28,14 +28,14 @@ export const OfferList = () => {
       </DialogTrigger>
       <DialogContent>
         <DialogTitle>Katalog ofert</DialogTitle>
-        {!isPending && <Loader2 className="animate-spin" />}
+        {isPending && <Loader2 className="animate-spin" />}
         {!isPending && (
           <ul className="grid gap-4 py-4 min-h-100">
             {data?.length === 0 && <p>Brak ofert</p>}
             {data?.map((offer) => (
               <li
                 key={offer.title}
-                className="flex items-center space-between gap-2"
+                className="flex items-center justify-between gap-2"
               >
                 <FolderOpen />
                 {offer.title}

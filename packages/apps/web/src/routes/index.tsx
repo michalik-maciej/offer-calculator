@@ -7,7 +7,7 @@ export const Route = createFileRoute("/")({
     try {
       const { user } = await queryClient.ensureQueryData(authQueries.user())
       if (user) {
-        throw redirect({ to: "/offer/new" })
+        throw redirect({ to: "/offer" })
       }
     } catch (error) {
       let is401 = false

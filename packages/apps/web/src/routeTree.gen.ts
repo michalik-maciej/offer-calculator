@@ -13,8 +13,6 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as OfferRouteRouteImport } from './routes/offer/route'
 import { Route as InventoryRouteRouteImport } from './routes/inventory/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as OfferNewRouteImport } from './routes/offer/new'
-import { Route as OfferOfferIdRouteImport } from './routes/offer/$offerId'
 import { Route as InventoryNewRouteImport } from './routes/inventory/new'
 import { Route as InventoryComponentIdRouteImport } from './routes/inventory/$componentId'
 
@@ -38,16 +36,6 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const OfferNewRoute = OfferNewRouteImport.update({
-  id: '/new',
-  path: '/new',
-  getParentRoute: () => OfferRouteRoute,
-} as any)
-const OfferOfferIdRoute = OfferOfferIdRouteImport.update({
-  id: '/$offerId',
-  path: '/$offerId',
-  getParentRoute: () => OfferRouteRoute,
-} as any)
 const InventoryNewRoute = InventoryNewRouteImport.update({
   id: '/new',
   path: '/new',
@@ -62,33 +50,27 @@ const InventoryComponentIdRoute = InventoryComponentIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/inventory': typeof InventoryRouteRouteWithChildren
-  '/offer': typeof OfferRouteRouteWithChildren
+  '/offer': typeof OfferRouteRoute
   '/login': typeof LoginRoute
   '/inventory/$componentId': typeof InventoryComponentIdRoute
   '/inventory/new': typeof InventoryNewRoute
-  '/offer/$offerId': typeof OfferOfferIdRoute
-  '/offer/new': typeof OfferNewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/inventory': typeof InventoryRouteRouteWithChildren
-  '/offer': typeof OfferRouteRouteWithChildren
+  '/offer': typeof OfferRouteRoute
   '/login': typeof LoginRoute
   '/inventory/$componentId': typeof InventoryComponentIdRoute
   '/inventory/new': typeof InventoryNewRoute
-  '/offer/$offerId': typeof OfferOfferIdRoute
-  '/offer/new': typeof OfferNewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/inventory': typeof InventoryRouteRouteWithChildren
-  '/offer': typeof OfferRouteRouteWithChildren
+  '/offer': typeof OfferRouteRoute
   '/login': typeof LoginRoute
   '/inventory/$componentId': typeof InventoryComponentIdRoute
   '/inventory/new': typeof InventoryNewRoute
-  '/offer/$offerId': typeof OfferOfferIdRoute
-  '/offer/new': typeof OfferNewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -99,8 +81,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/inventory/$componentId'
     | '/inventory/new'
-    | '/offer/$offerId'
-    | '/offer/new'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -109,8 +89,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/inventory/$componentId'
     | '/inventory/new'
-    | '/offer/$offerId'
-    | '/offer/new'
   id:
     | '__root__'
     | '/'
@@ -119,14 +97,12 @@ export interface FileRouteTypes {
     | '/login'
     | '/inventory/$componentId'
     | '/inventory/new'
-    | '/offer/$offerId'
-    | '/offer/new'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   InventoryRouteRoute: typeof InventoryRouteRouteWithChildren
-  OfferRouteRoute: typeof OfferRouteRouteWithChildren
+  OfferRouteRoute: typeof OfferRouteRoute
   LoginRoute: typeof LoginRoute
 }
 
@@ -160,20 +136,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/offer/new': {
-      id: '/offer/new'
-      path: '/new'
-      fullPath: '/offer/new'
-      preLoaderRoute: typeof OfferNewRouteImport
-      parentRoute: typeof OfferRouteRoute
-    }
-    '/offer/$offerId': {
-      id: '/offer/$offerId'
-      path: '/$offerId'
-      fullPath: '/offer/$offerId'
-      preLoaderRoute: typeof OfferOfferIdRouteImport
-      parentRoute: typeof OfferRouteRoute
-    }
     '/inventory/new': {
       id: '/inventory/new'
       path: '/new'
@@ -205,24 +167,10 @@ const InventoryRouteRouteWithChildren = InventoryRouteRoute._addFileChildren(
   InventoryRouteRouteChildren,
 )
 
-interface OfferRouteRouteChildren {
-  OfferOfferIdRoute: typeof OfferOfferIdRoute
-  OfferNewRoute: typeof OfferNewRoute
-}
-
-const OfferRouteRouteChildren: OfferRouteRouteChildren = {
-  OfferOfferIdRoute: OfferOfferIdRoute,
-  OfferNewRoute: OfferNewRoute,
-}
-
-const OfferRouteRouteWithChildren = OfferRouteRoute._addFileChildren(
-  OfferRouteRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   InventoryRouteRoute: InventoryRouteRouteWithChildren,
-  OfferRouteRoute: OfferRouteRouteWithChildren,
+  OfferRouteRoute: OfferRouteRoute,
   LoginRoute: LoginRoute,
 }
 export const routeTree = rootRouteImport
