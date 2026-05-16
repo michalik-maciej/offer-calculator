@@ -72,7 +72,7 @@ export const FormCalculation = ({
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div id="drawer">{children}</div>
         <div className="flex flex-col gap-2 p-24 max-w-8/12">
-          <Label>Discount Percentage</Label>
+          <Label>Rabat (%)</Label>
           <Input
             {...register("discountPercentage", {
               setValueAs: (value) => {
@@ -82,13 +82,13 @@ export const FormCalculation = ({
                 return Number(value)
               },
               validate: (value) => {
-                if (!Number.isFinite(value)) return "Must be a number"
-                if (value < 0) return "Must be at least 0"
-                if (value > 100) return "Must be at most 100"
+                if (!Number.isFinite(value)) return "Musi być liczbą"
+                if (value < 0) return "Minimum 0"
+                if (value > 100) return "Maksimum 100"
                 return true
               },
             })}
-            placeholder="Discount Percentage"
+            placeholder="Rabat"
             type="number"
             inputMode="numeric"
           />
@@ -100,14 +100,14 @@ export const FormCalculation = ({
             {errors.discountPercentage?.message}
           </p>
           <div className="flex flex-col gap-2">
-            <Label>Description</Label>
+            <Label>Opis oferty</Label>
             <Input
               {...register("title", {
-                required: "Description is required",
+                required: "Opis jest wymagany",
                 validate: (value) =>
-                  value.trim().length > 0 || "Description cannot be empty",
+                  value.trim().length > 0 || "Opis nie może być pusty",
               })}
-              placeholder="Description"
+              placeholder="Opis"
             />
             <p
               className={`text-xs text-destructive min-h-5 ${
@@ -122,7 +122,7 @@ export const FormCalculation = ({
             disabled={!form.formState.isValid || previewOffer.isPending}
             className="bg-blue-500 text-slate-200 px-4 py-2 rounded-xl w-1/4 self-end mt-2 mx-4 hover:bg-blue-600 focus:ring-2 focus:ring-blue-900 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
           >
-            Calculate
+            Oblicz
           </Button>
         </div>
       </form>

@@ -24,11 +24,11 @@ export function InventoryPage() {
   })
 
   if (error) {
-    return <div>Error loading inventory components.</div>
+    return <div>Błąd ładowania katalogu.</div>
   }
 
   if (isPending) {
-    return <div>Loading...</div>
+    return <div>Ładowanie...</div>
   }
 
   return (
