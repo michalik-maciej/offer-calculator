@@ -32,10 +32,7 @@
   },
   "packageManager": "pnpm@9.0.0",
   "engines": {
-    "node": ">=20.19.0"
-  },
-  "prisma": {
-    "schema": "packages/apps/api/prisma/schema.prisma"
+    "node": ">=20"
   },
   "dependencies": {
     "lodash": "^4.17.21",
