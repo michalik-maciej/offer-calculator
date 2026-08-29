@@ -514,6 +514,15 @@ Types follow Conventional Commits:
 Project tasks are tracked at: https://trello.com/b/kgMgLeH1/kalkulator-metalu
 Card IDs use the `KM-` prefix in this repo's conventions.
 
+### Development Workflow
+
+When starting work on a task, always follow this order:
+
+1. **Ask before creating a branch** — propose the branch name based on the convention and wait for confirmation before running `git checkout -b`
+2. **Implement the code** — make the changes required by the task
+3. **Ask before each commit** — propose the commit message based on the convention and wait for confirmation before running `git commit`
+4. **Never create branches or commits autonomously** — always pause and ask the user first, even if the convention is clear
+
 ### Definition of Done
 
 A task is complete when:
