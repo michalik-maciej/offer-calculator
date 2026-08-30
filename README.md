@@ -75,7 +75,7 @@ layout cannot drift between client and server, because there is only one shape.
 | Auth       | JWT, stateless, httpOnly cookies, bcrypt                         |
 | Monorepo   | pnpm workspaces + Turborepo                                      |
 | Tests      | Vitest                                                           |
-| Quality    | ESLint 9, Prettier, knip (dead-code detection)                   |
+| Quality    | ESLint 9, Prettier                                               |
 | Hosting    | Vercel (web), Fly.io (API, Docker)                               |
 
 The reasoning behind several of these is recorded in [`docs/decisions.md`](docs/decisions.md).
