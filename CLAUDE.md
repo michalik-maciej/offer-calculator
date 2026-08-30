@@ -31,11 +31,11 @@ These are **not** pnpm workspace dependencies. None of the packages lists the ot
 `package.json`. The wiring is done through path aliases, resolved separately at each stage, and all
 three mechanisms have to agree:
 
-| Stage           | Mechanism                                                             |
-| --------------- | --------------------------------------------------------------------- |
-| Type checking   | `paths` in `tsconfig.base.json` plus `references` for the build order  |
-| Web bundle      | `vite-tsconfig-paths` in `packages/apps/web/vite.config.ts`           |
-| API at runtime  | `module-alias` in `packages/apps/api/src/bootstrap.ts`                 |
+| Stage          | Mechanism                                                             |
+| -------------- | --------------------------------------------------------------------- |
+| Type checking  | `paths` in `tsconfig.base.json` plus `references` for the build order |
+| Web bundle     | `vite-tsconfig-paths` in `packages/apps/web/vite.config.ts`           |
+| API at runtime | `module-alias` in `packages/apps/api/src/bootstrap.ts`                |
 
 `bootstrap.ts` is the production entry point (`node dist/bootstrap.js`). It maps `@/domain` and
 `@/schemas` onto the compiled `dist` folders and only then dynamically imports `./server`, because
@@ -593,6 +593,6 @@ That step is never Claude's to take on its own.
 
 ## Resources & References
 
-- **Tech Stack Decision Log**: `docs/decisions.md`
-- **Copilot Instructions**: `.github/copilot-instructions.md`
+- **Decision Log**: `docs/decisions.md` (why the architecture is what it is; read it before
+  changing package wiring, auth or how offers are persisted)
 - **Trello Board**: https://trello.com/b/kgMgLeH1/kalkulator-metalu
