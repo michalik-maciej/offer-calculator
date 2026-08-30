@@ -1,3 +1,4 @@
 node_modules
 coverage
 .turbo
+packages/apps/web/src/routeTree.gen.ts

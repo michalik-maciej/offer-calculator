@@ -29,22 +29,22 @@ packages/
 
 ## Tech Stack
 
-| Component | Technology |
-|-----------|-----------|
-| Frontend | React 19 + Vite + TypeScript |
-| Backend | Express + TypeScript + Prisma ORM |
-| Database | PostgreSQL (Neon) |
-| Validation | Valibot (runtime + static types) |
-| Styling | Tailwind CSS v4 |
-| Routing | TanStack Router v1 |
-| State Management | TanStack Query (React Query) |
-| Auth | JWT (stateless, cookies) |
-| Monorepo | pnpm v9.0.0 + Turborepo v2.6.3 |
+| Component        | Technology                                       |
+| ---------------- | ------------------------------------------------ |
+| Frontend         | React 19 + Vite + TypeScript                     |
+| Backend          | Express + TypeScript + Prisma ORM                |
+| Database         | PostgreSQL (Neon)                                |
+| Validation       | Valibot (runtime + static types)                 |
+| Styling          | Tailwind CSS v4                                  |
+| Routing          | TanStack Router v1                               |
+| State Management | TanStack Query (React Query)                     |
+| Auth             | JWT (stateless, cookies)                         |
+| Monorepo         | pnpm v9.0.0 + Turborepo v2.6.3                   |
 | Build/Type Check | TypeScript v5.9.2 (composite project references) |
-| Linting | ESLint v9 + TypeScript ESLint |
-| Formatting | Prettier (80 char line width, 2-space tabs) |
-| Testing | Vitest (Node.js environment) |
-| Deployment | Fly.io (API, Docker), Vercel (Frontend) |
+| Linting          | ESLint v9 + TypeScript ESLint                    |
+| Formatting       | Prettier (80 char line width, 2-space tabs)      |
+| Testing          | Vitest (Node.js environment)                     |
+| Deployment       | Fly.io (API, Docker), Vercel (Frontend)          |
 
 ## Development Commands
 
@@ -115,10 +115,12 @@ pnpm --filter @senior-calculator/api run build
 #### `packages/schemas/` (Valibot Schemas)
 
 Runtime validation schemas shared between frontend and backend. Each schema exports:
+
 - Valibot schema object (`v.object()`, `v.array()`, etc.)
 - TypeScript type via `v.InferOutput<typeof Schema>`
 
 Key schemas:
+
 - `Offer.schema.ts`: Input/output structure for offers
 - `auth/`: Login, JWT payload, authenticated user
 - `inventory/`: Component CRUD operations
@@ -148,6 +150,7 @@ src/
 ```
 
 **Key Abstraction**:
+
 - **Orchestrations** (public API): Accept user input, call domain functions, return `OfferOutput`
 - **Transformations**: Pure data mapping (e.g., group demand by category, format descriptions)
 - **Calculations**: Specific mathematical formulas (back panel area, foot quantity, etc.)
@@ -172,11 +175,13 @@ src/
 ```
 
 **Database** (Prisma):
+
 - `User`: Email, hashed password, role (ADMIN/USER)
 - `Component`: Catalog inventory (category, dimensions, price)
 - `Offer`: Offer records (input JSON, output JSON, discount)
 
 **API Endpoints**:
+
 - `POST /api/auth/login`: Authenticate, return JWT cookie
 - `GET /api/inventory`: List components
 - `POST /api/inventory`: Add component
@@ -202,6 +207,7 @@ src/
 ```
 
 **Key Libraries**:
+
 - **TanStack Router**: Type-safe file-based routing with auto-generated `routeTree.gen.ts`
 - **TanStack Query**: Server state management, caching, refetching
 - **React Hook Form**: Form state and validation
@@ -232,6 +238,7 @@ pnpm build              # Builds all: domain → schemas → api → web
 ```
 
 **Output**:
+
 - `packages/domain/dist/`: CommonJS modules
 - `packages/schemas/dist/`: CommonJS modules
 - `packages/apps/api/dist/`: Node.js binary (Node.js entry: `dist/bootstrap.js`)
@@ -254,6 +261,7 @@ pnpm build              # Builds all: domain → schemas → api → web
 ### Frontend Deployment (Vercel)
 
 Configure Vercel to:
+
 - Build command: `pnpm run build` (from root)
 - Output directory: `packages/apps/web/dist`
 - Install command: `pnpm install --frozen-lockfile`
@@ -263,6 +271,7 @@ Configure Vercel to:
 ### Composite Projects
 
 Root `tsconfig.json` references all packages:
+
 ```json
 {
   "files": [],
@@ -278,6 +287,7 @@ Root `tsconfig.json` references all packages:
 ### Base Config (`tsconfig.base.json`)
 
 Extended by all packages. Key settings:
+
 - **Target**: ES2022
 - **Module**: ESNext (bundler resolution)
 - **Strict**: true (strict null checks, explicit any, etc.)
@@ -286,6 +296,7 @@ Extended by all packages. Key settings:
   - `@/schemas/*` → `packages/schemas/src/*`
 
 Use these aliases for imports across packages:
+
 ```typescript
 import { createOfferPreview } from "@/domain/orchestrations/createOfferPreview"
 import { OfferInput } from "@/schemas/Offer.schema"
@@ -311,9 +322,9 @@ Enforced across all packages:
 
 - **Import sorting**: 3-tier groups (3rd-party → internal aliases → relative)
   ```typescript
-  import express from "express"              // 3rd-party
-  import { createOfferPreview } from "@/domain"  // @/ aliases
-  import { helper } from "./utils"           // Relative
+  import express from "express" // 3rd-party
+  import { createOfferPreview } from "@/domain" // @/ aliases
+  import { helper } from "./utils" // Relative
   ```
 - **Unused variables**: Error unless prefixed with `_`
 - **No relative imports outside package**: Error (use aliases instead)
@@ -337,6 +348,7 @@ pnpm format:check        # Verify formatting
 ### TypeScript Strict Mode
 
 All packages compile with strict mode enabled. Checks enforced:
+
 - Explicit types required (no implicit `any`)
 - Null/undefined checks
 - Property existence validation
@@ -347,6 +359,7 @@ All packages compile with strict mode enabled. Checks enforced:
 ### Vitest Configuration
 
 Defined in `vitest.config.ts` (workspace root):
+
 - **Environment**: Node.js (no JSDOM)
 - **Test files**: `packages/**/**/*.test.ts`, `tests/**/*.test.ts`
 - **Coverage**: Collected from `packages/domain/**/*.ts` only
@@ -362,6 +375,7 @@ pnpm test:coverage      # Generate coverage report (html output)
 ### Test Location & Naming
 
 Place tests next to source:
+
 ```
 src/calculations/calculateBomPrice/
 ├── calculateBomPrice.ts
@@ -384,10 +398,11 @@ const offerOutput = createOfferPreview(parsedInput, componentInventory)
 ### Frontend → Backend
 
 Use TanStack Query hooks:
+
 ```typescript
 const { data, isLoading } = useQuery({
   queryKey: ["offers"],
-  queryFn: () => fetch("/api/offers").then(r => r.json())
+  queryFn: () => fetch("/api/offers").then((r) => r.json()),
 })
 ```
 
@@ -406,6 +421,7 @@ Key Turbo settings in `turbo.json`:
 - **`dev`**: `cache: false, persistent: true` (no caching, runs indefinitely)
 
 When adding tasks, consider:
+
 - Include `.env*` in `inputs` if tasks read env vars (for cache invalidation)
 - Set `cache: false` for persistent processes (dev servers)
 - Use `^taskName` dependency for tasks needing upstream completion
@@ -431,6 +447,7 @@ When adding tasks, consider:
 ### Updating Domain Models
 
 Models live in `packages/domain/src/models/`. Changes:
+
 1. Update TypeScript type
 2. Update dependent tests
 3. Update downstream transformations/orchestrations
@@ -441,6 +458,7 @@ Models live in `packages/domain/src/models/`. Changes:
 ### Backend (.env for Fly.io)
 
 Required:
+
 - `DATABASE_URL`: PostgreSQL connection string (Neon)
 - `JWT_SECRET`: Secret for signing JWTs
 - `WEBAPP_DOMAIN`: Frontend origin (CORS policy)
@@ -448,6 +466,7 @@ Required:
 ### Frontend
 
 Frontend reads from environment at build time (Vite). Set in Vercel dashboard or `.env.local`:
+
 - `VITE_API_URL`: Backend API endpoint
 
 ## Gotchas & Important Notes
@@ -461,6 +480,7 @@ Frontend reads from environment at build time (Vite). Set in Vercel dashboard or
 4. **Schemas are the contract**: All frontend-backend communication must be validated against Valibot schemas. Add new schemas to `packages/schemas/` before API changes.
 
 5. **Prisma codegen**: Running `prisma generate` is required before building the API. This is included in the build script, but if you modify `schema.prisma`, run manually:
+
    ```bash
    pnpm --filter @senior-calculator/api run prisma generate
    ```
@@ -489,6 +509,7 @@ KM-3/refactor-offer-preview
 Format: `[KM-{number}] {type}: {short description}`
 
 Types follow Conventional Commits:
+
 - `feat` — new feature
 - `fix` — bug fix
 - `refactor` — code change without behavior change
@@ -526,6 +547,7 @@ When starting work on a task, always follow this order:
 ### Definition of Done
 
 A task is complete when:
+
 1. Code implements the Trello card requirement
 2. `pnpm validate` passes (no TS errors, no lint errors, formatted)
 3. Tests added or updated if calculation/domain logic changed
