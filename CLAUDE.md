@@ -23,9 +23,27 @@ packages/
 
 ### Package Dependencies
 
-- **web** and **api** both depend on `@senior-calculator/domain` and `@senior-calculator/schemas`
-- **domain** depends on **schemas**
-- **schemas** has no internal dependencies
+- **web** and **api** both consume **domain** and **schemas**
+- **domain** consumes **schemas**
+- **schemas** consumes nothing internal
+
+These are **not** pnpm workspace dependencies. None of the packages lists the others in its
+`package.json`. The wiring is done through path aliases, resolved separately at each stage, and all
+three mechanisms have to agree:
+
+| Stage           | Mechanism                                                             |
+| --------------- | --------------------------------------------------------------------- |
+| Type checking   | `paths` in `tsconfig.base.json` plus `references` for the build order  |
+| Web bundle      | `vite-tsconfig-paths` in `packages/apps/web/vite.config.ts`           |
+| API at runtime  | `module-alias` in `packages/apps/api/src/bootstrap.ts`                 |
+
+`bootstrap.ts` is the production entry point (`node dist/bootstrap.js`). It maps `@/domain` and
+`@/schemas` onto the compiled `dist` folders and only then dynamically imports `./server`, because
+the aliases must be registered before any module that uses them is loaded. Do not "simplify" that
+file into a static import: it will break at runtime, and only in the built API, not in `tsx` dev.
+
+Consequence: adding a shared package means touching `tsconfig.base.json`, the relevant
+`references` and `bootstrap.ts`, not just running `pnpm add`.
 
 ## Tech Stack
 
@@ -537,21 +555,41 @@ Card IDs use the `KM-` prefix in this repo's conventions.
 
 ### Development Workflow
 
-When starting work on a task, always follow this order:
+**Work in small steps.** One concern per step: implement it, verify it, report, stop and wait
+for the next instruction. Do not batch several unrelated fixes into one pass.
 
-1. **Ask before creating a branch** — propose the branch name based on the convention and wait for confirmation before running `git checkout -b`
-2. **Implement the code** — make the changes required by the task
-3. **Ask before each commit** — propose the commit message based on the convention and wait for confirmation before running `git commit`
-4. **Never create branches or commits autonomously** — always pause and ask the user first, even if the convention is clear
+**Staging and committing belong to the user.** The workflow is:
+
+1. **Leave changes in the working tree.** Do not run `git add`. The user reviews the diff file by
+   file and stages what they accept.
+2. **Never create branches, commits or pushes on your own.** Do it only when the user says so
+   explicitly, in that message, for that action. Consent to one commit does not carry over to the
+   next one, nor from a commit to a push.
+3. **Propose, do not act.** When a branch or a commit is due, propose the name or the message
+   following the conventions above, then wait.
+4. **Verify every step** with `pnpm validate` and `pnpm vitest run`, and report plainly what passed
+   and what did not. Say explicitly when something was checked statically only and not exercised in
+   a running app.
+
+**Problems noticed along the way**: list them at the end of the chat message, briefly and without
+hedging. Do not fix them in the same step. Anything outside the current task becomes its own step,
+and only after the user agrees to it.
 
 ### Definition of Done
 
-A task is complete when:
+This is a single-maintainer repository and work lands directly on `main`. There is no PR review
+step and no second pair of eyes, so the checks below are the only gate.
 
-1. Code implements the Trello card requirement
+A step is done, from Claude's side, when:
+
+1. The code does what the task asked, and nothing beyond it
 2. `pnpm validate` passes (no TS errors, no lint errors, formatted)
-3. Tests added or updated if calculation/domain logic changed
-4. PR opened and merged to `main`
+3. `pnpm vitest run` passes
+4. Tests were added or updated if domain logic changed
+5. The changes sit unstaged in the working tree, and what was verified (and how) was reported
+
+The task itself is done when the maintainer has reviewed the diff, staged it and committed it.
+That step is never Claude's to take on its own.
 
 ## Resources & References
 
