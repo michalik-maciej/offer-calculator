@@ -20,7 +20,7 @@ const InventoryItemCreateSchema = v.object(InventoryItemBaseShape)
 const _InventoryItemUpdateSchema = v.partial(InventoryItemCreateSchema)
 
 const InventoryItemSchema = v.object({
-  id: v.string(), // uuid
+  id: v.string(),
   ...InventoryItemBaseShape,
 })
 

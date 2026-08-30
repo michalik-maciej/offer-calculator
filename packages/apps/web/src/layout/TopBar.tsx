@@ -1,4 +1,3 @@
-// src/components/theme-toggle.tsx
 import { LogOut, Moon, Sun } from "lucide-react"
 import { Link } from "@tanstack/react-router"
 

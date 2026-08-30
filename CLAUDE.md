@@ -351,6 +351,20 @@ Enforced across all packages:
   // ✅ Good: import { Component } from "@/domain/models"
   ```
 
+### Comments
+
+**Do not write inline comments.** Name things well and let the code say what it does. An inline
+comment is justified only when the code cannot be understood without it: a non-obvious constraint, a
+reason a line must stay exactly as it is, or a required directive such as `@ts-expect-error`.
+
+When one is genuinely needed, keep it to **two lines at most**, and make it say _why_, never _what_.
+No section banners, no restating the signature, no commented-out code.
+
+**JSDoc is the exception.** A `/** ... */` block documenting an exported function, type or module is
+not bound by the two-line limit and may take the room it needs, including `@param`, `@returns` and
+an example. It still has to earn its place: document the contract, the assumptions and the surprises
+of a public surface, not the mechanics of the body underneath it.
+
 ### Prettier Configuration
 
 - Line width: 80 characters

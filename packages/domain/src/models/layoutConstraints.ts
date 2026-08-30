@@ -1,8 +1,7 @@
 import type { ComponentCategory } from "./component"
 
-// Maps each wall layout dimension to the component category that governs valid values.
-// Derived from calculation logic: calculateLegDemand (height), calculateFootDemand (depth),
-// calculateBaseShelfDemand / calculateShelfDemand (width, shelf depth).
+// Derived from the calculations consuming each dimension: calculateLegDemand
+// (height), calculateFootDemand (depth), calculateShelfDemand (width, depth).
 export const WALL_LAYOUT_CONSTRAINTS = {
   height: "leg",
   depth: "foot",
