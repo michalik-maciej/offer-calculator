@@ -1,4 +1,5 @@
 node_modules
 coverage
 .turbo
+pnpm-lock.yaml
 packages/apps/web/src/routeTree.gen.ts

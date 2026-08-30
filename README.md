@@ -1,5 +1,7 @@
 # Offer Calculator
 
+[![CI](https://github.com/michalik-maciej/offer-calculator/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/michalik-maciej/offer-calculator/actions/workflows/ci.yml)
+
 A quotation tool for retail shop fittings. You describe a store layout in terms of wall runs and
 gondola units, and the app derives the bill of materials, groups it by component category and turns
 it into a priced offer with a discount.
@@ -82,7 +84,7 @@ The reasoning behind several of these is recorded in [`docs/decisions.md`](docs/
 
 ## Running locally
 
-Requires Node 20+, pnpm 9+ and a PostgreSQL connection string.
+Requires Node 24+, pnpm 9+ and a PostgreSQL connection string.
 
 ```bash
 pnpm install
@@ -104,15 +106,20 @@ Other entry points: `pnpm dev:web`, `pnpm dev:api`, `pnpm build`.
 
 ```bash
 pnpm test           # 26 tests across 15 files
-pnpm test:coverage
+pnpm test:coverage  # collected from the domain package
 pnpm typecheck
 pnpm lint
-pnpm validate       # lint + typecheck + format check, everything at once
+pnpm validate       # typecheck + lint + format check, everything at once
 ```
 
 Tests concentrate on the domain package, where the logic that can actually be wrong lives, plus one
 integration test that exercises the offer endpoint end to end. UI components are deliberately not
 unit-tested: they are thin, and the interesting behaviour sits below them.
+
+**The suite needs no database.** The preview endpoint receives its component inventory as an
+injected dependency, wired in `createApp`, so the integration test builds an app around a fixture
+catalogue and the whole suite runs offline in about a second. Every command above, and the CI
+workflow, runs on a clean clone with nothing installed but dependencies.
 
 ## Project history
 
@@ -130,5 +137,6 @@ for keeping those rules in a package that depends on nothing.
 
 ## Status
 
-Feature-complete for its user's needs and in active use. There is no CI pipeline yet and no public
-demo account; both are on the list.
+Feature-complete for its user's needs and in active use. Every push to `main` runs typecheck, lint,
+formatting and the test suite (see the badge at the top). There is no public demo account yet, so
+the live link shows a sign-in form; running it locally is the way to see the calculator itself.

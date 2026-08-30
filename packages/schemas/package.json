@@ -2,10 +2,8 @@
   "name": "@senior-calculator/schemas",
   "version": "0.0.1",
   "private": true,
-  "main": "./index.ts",
-  "types": "./index.ts",
   "scripts": {
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "typecheck": "tsc -b"
   }
 }
