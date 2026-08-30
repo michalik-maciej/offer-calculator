@@ -6,7 +6,15 @@ import { LoginInputSchema } from "@/schemas/auth/Login.schema"
 
 import { createUser } from "../../db/user.repository"
 
-export async function registerController(req: Request, res: Response) {
+type ErrorResponse = {
+  error: string
+  issues?: ReturnType<typeof v.flatten<typeof LoginInputSchema>>
+}
+
+export async function registerController(
+  req: Request,
+  res: Response<ErrorResponse | void>,
+) {
   const { success, output, issues } = v.safeParse(LoginInputSchema, req.body)
 
   if (!success) {
@@ -19,9 +27,8 @@ export async function registerController(req: Request, res: Response) {
   try {
     await createUser(email, await bcrypt.hash(password, 10))
   } catch (error) {
-    return res
-      .status(500)
-      .json({ error: "Failed to create user", details: error })
+    console.error("Failed to create user:", error)
+    return res.status(500).json({ error: "Failed to create user" })
   }
   res.sendStatus(201)
 }

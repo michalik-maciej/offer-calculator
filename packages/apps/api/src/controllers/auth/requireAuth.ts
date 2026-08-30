@@ -12,7 +12,7 @@ function verifyToken(token: string) {
 export function requireAuth(req: Request, res: Response, next: NextFunction) {
   const token = req.cookies?.accessToken
   if (!token) {
-    return res.status(401).json({ message: "Unauthorized" })
+    return res.status(401).json({ error: "Unauthorized" })
   }
 
   try {
@@ -21,6 +21,6 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
     req.user = payload
     next()
   } catch {
-    return res.status(401).json({ message: "Invalid token" })
+    return res.status(401).json({ error: "Invalid token" })
   }
 }

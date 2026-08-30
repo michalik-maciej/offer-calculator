@@ -1,5 +1,6 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router"
 
+import { ApiError } from "../core/createMethod.api"
 import { authQueries } from "../user/auth.api"
 
 export const Route = createFileRoute("/")({
@@ -10,14 +11,7 @@ export const Route = createFileRoute("/")({
         throw redirect({ to: "/offer" })
       }
     } catch (error) {
-      let is401 = false
-      try {
-        // @ts-expect-error xxx
-        is401 = "message" in error && error.message.includes("Unauthorized")
-      } catch {
-        // ignore
-      }
-      if (is401) {
+      if (error instanceof ApiError && error.status === 401) {
         throw redirect({ to: "/login" })
       }
       throw error

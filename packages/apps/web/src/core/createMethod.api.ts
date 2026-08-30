@@ -166,8 +166,13 @@ export function createApiMethod<
     })
 
     if (!res.ok) {
-      const text = await res.text()
-      throw new Error(`HTTP ${res.status}: ${text}`)
+      throw new ApiError({
+        status: res.status,
+        statusText: res.statusText,
+        method: contract.method,
+        url: finalUrl,
+        bodyText: await res.text(),
+      })
     }
 
     return res.json()
