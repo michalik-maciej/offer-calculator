@@ -22,9 +22,7 @@ export function InventoryItemDialog({
     select: (items) => items.find(({ id }) => id === componentId),
   })
 
-  if (componentId && isPending) {
-    return null
-  }
+  if (componentId && isPending) return null
 
   return (
     <Dialog open onOpenChange={onOpenChange}>

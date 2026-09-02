@@ -21,15 +21,11 @@ export function createDefaultWallLayout({
   const depth = layoutDepths[0]
   const width = shelfUnitWidths[0]
 
-  if (height == null || depth == null || width == null) {
-    return null
-  }
+  if (height == null || depth == null || width == null) return null
 
   const shelfDepth = shelfDepths.includes(depth) ? depth : shelfDepths[0]
 
-  if (shelfDepth == null) {
-    return null
-  }
+  if (shelfDepth == null) return null
 
   return {
     depth,

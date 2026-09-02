@@ -1,16 +1,18 @@
 import { Copy, Trash2 } from "lucide-react"
 import { useState } from "react"
-import { useFormContext, useWatch } from "react-hook-form"
+import { useFieldArray, useFormContext, useWatch } from "react-hook-form"
 
 import { LayoutWall } from "@/schemas/LayoutWall.schema"
 import { OfferOutput } from "@/schemas/Offer.schema"
 
 import { Badge } from "../../../core/ui/badge"
 import { Button } from "../../../core/ui/button"
+import { Drawer, DrawerContent, DrawerTitle } from "../../../core/ui/drawer"
 import { Input } from "../../../core/ui/input"
 import { Label } from "../../../core/ui/label"
 import { formatPrice } from "../../helpers/formatPrice"
 import { WallOfferInput } from "../../offer.types"
+import { ShelfUnitEditor } from "../editor/ShelfUnitEditor"
 
 const SCALE_PX_PER_CM = 1.6
 
@@ -39,15 +41,37 @@ export function WallLayoutPlan({
   onRemove: () => void
   preview: LayoutPreview | undefined
 }) {
-  const { control, register } = useFormContext<WallOfferInput>()
+  const { control, getValues, register } = useFormContext<WallOfferInput>()
   const layout = useWatch({ control, name: `layouts.${layoutIndex}` })
   const [selectedUnitIndex, setSelectedUnitIndex] = useState<number | null>(
     null,
   )
 
-  if (!layout) {
-    return null
+  const shelfUnits = useFieldArray({
+    control,
+    name: `layouts.${layoutIndex}.shelfUnits`,
+  })
+
+  const canRemoveUnit = shelfUnits.fields.length > 1
+  const selectedUnit =
+    selectedUnitIndex === null ? null : shelfUnits.fields[selectedUnitIndex]
+
+  const handleDuplicateUnit = (unitIndex: number) =>
+    shelfUnits.insert(
+      unitIndex + 1,
+      structuredClone(
+        getValues(`layouts.${layoutIndex}.shelfUnits.${unitIndex}`),
+      ),
+    )
+
+  const handleRemoveUnit = (unitIndex: number) => {
+    const wasLast = unitIndex === shelfUnits.fields.length - 1
+
+    shelfUnits.remove(unitIndex)
+    setSelectedUnitIndex(wasLast ? unitIndex - 1 : unitIndex)
   }
+
+  if (!layout) return null
 
   return (
     <article className="flex flex-col gap-3">
@@ -95,8 +119,12 @@ export function WallLayoutPlan({
 
       <div className="overflow-x-auto pb-2">
         <div className="flex w-max border border-foreground/40">
-          {layout.shelfUnits.map((unit, unitIndex) =>
-            Array.from(
+          {shelfUnits.fields.map((unitField, unitIndex) => {
+            const unit = layout.shelfUnits[unitIndex]
+
+            if (!unit) return null
+
+            return Array.from(
               { length: Math.max(unit.numberOfShelfUnits, 0) },
               (_, copyIndex) => (
                 <button
@@ -105,7 +133,7 @@ export function WallLayoutPlan({
                       ? "border-primary bg-accent"
                       : ""
                   }`}
-                  key={`${unitIndex}-${copyIndex}`}
+                  key={`${unitField.id}-${copyIndex}`}
                   onClick={() => setSelectedUnitIndex(unitIndex)}
                   style={{
                     height: layout.depth * SCALE_PX_PER_CM,
@@ -121,10 +149,33 @@ export function WallLayoutPlan({
                   </span>
                 </button>
               ),
-            ),
-          )}
+            )
+          })}
         </div>
       </div>
+      <Drawer
+        direction="right"
+        onOpenChange={(isOpen) => !isOpen && setSelectedUnitIndex(null)}
+        open={selectedUnitIndex !== null}
+      >
+        <DrawerContent className="p-6">
+          <DrawerTitle className="mb-4">
+            Ciąg {layoutIndex + 1}, regał{" "}
+            {selectedUnitIndex === null ? "" : selectedUnitIndex + 1}
+          </DrawerTitle>
+          {selectedUnitIndex !== null && selectedUnit && (
+            <ShelfUnitEditor
+              key={selectedUnit.id}
+              layoutIndex={layoutIndex}
+              onDuplicateUnit={() => handleDuplicateUnit(selectedUnitIndex)}
+              {...(canRemoveUnit && {
+                onRemoveUnit: () => handleRemoveUnit(selectedUnitIndex),
+              })}
+              unitIndex={selectedUnitIndex}
+            />
+          )}
+        </DrawerContent>
+      </Drawer>
     </article>
   )
 }
