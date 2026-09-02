@@ -1,6 +1,10 @@
 import * as v from "valibot"
 
-import { OfferInput, OfferOutputSchema } from "@/schemas/Offer.schema"
+import {
+  OfferInput,
+  OfferOutput,
+  OfferOutputSchema,
+} from "@/schemas/Offer.schema"
 
 import { apiType, createApiMethod } from "../core/createMethod.api"
 
@@ -56,5 +60,11 @@ export const offerQueries = {
   details: (id: string) => ({
     queryKey: ["offer", "details", id] as const,
     queryFn: () => offerApi.details({ params: { id } }),
+  }),
+  preview: (draft: OfferInput | null) => ({
+    queryKey: ["offer", "preview", draft] as const,
+    queryFn: () => offerApi.preview({ data: draft! }),
+    enabled: !!draft?.layouts.length,
+    placeholderData: (previous: OfferOutput | undefined) => previous,
   }),
 }

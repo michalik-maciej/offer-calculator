@@ -1,12 +1,12 @@
 import { FormCalculation } from "./FormCalculation"
-import { OfferPreview } from "./OfferPreview"
+import { OfferLayouts } from "./OfferLayouts"
 
 export function OfferPage() {
   return (
     <section>
-      <h1>Oferta</h1>
+      <h1 className="px-8 pt-8 text-xl font-semibold">Oferta</h1>
       <FormCalculation>
-        <OfferPreview />
+        <OfferLayouts />
       </FormCalculation>
     </section>
   )
