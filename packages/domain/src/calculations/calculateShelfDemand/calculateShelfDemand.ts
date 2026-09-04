@@ -1,6 +1,7 @@
 import { find } from "lodash/fp"
 
 import { Component, ComponentDemand } from "../../models/component"
+import { MissingComponentError } from "../../models/missingComponentError"
 import { ShelfUnit } from "../../models/shelfUnit"
 
 type ShelfCalculationContext = {
@@ -38,8 +39,9 @@ export function calculateShelfDemand(
       )
 
       if (!availableShelf) {
-        throw new Error(
+        throw new MissingComponentError(
           `No shelf found for width ${width}cm and depth ${depth}cm`,
+          { category: "shelf", depth, width },
         )
       }
 
@@ -49,7 +51,10 @@ export function calculateShelfDemand(
       )
 
       if (!availableSupport) {
-        throw new Error(`No support found for depth ${depth}cm`)
+        throw new MissingComponentError(
+          `No support found for depth ${depth}cm`,
+          { category: "support", depth },
+        )
       }
 
       addToDemand(availableShelf, shelfInstances)

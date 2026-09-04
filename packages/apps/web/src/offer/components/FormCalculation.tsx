@@ -1,14 +1,18 @@
-import { FormProvider, useForm } from "react-hook-form"
+import { useEffect, useState } from "react"
+import { FormProvider, useForm, useWatch } from "react-hook-form"
+import { useQuery } from "@tanstack/react-query"
 
+import { OfferLayouts } from "./OfferLayouts"
+import { PreviewErrorBanner } from "./PreviewErrorBanner"
 import { Input } from "../../core/ui/input"
 import { Label } from "../../core/ui/label"
+import { describePreviewError } from "../helpers/describePreviewError"
+import { offerQueries } from "../offer.api"
 import { WallOfferInput } from "../offer.types"
 
-export const FormCalculation = ({
-  children,
-}: {
-  children: React.ReactNode
-}) => {
+const PREVIEW_DEBOUNCE_MS = 500
+
+export const FormCalculation = () => {
   const form = useForm<WallOfferInput>({
     defaultValues: {
       title: "",
@@ -20,13 +24,44 @@ export const FormCalculation = ({
   })
 
   const {
+    control,
+    getValues,
     register,
     formState: { errors },
   } = form
 
+  const watchedValues = useWatch({
+    control,
+    name: ["layouts", "discountPercentage"],
+  })
+  const [draft, setDraft] = useState<WallOfferInput | null>(null)
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(
+      () => setDraft(getValues()),
+      PREVIEW_DEBOUNCE_MS,
+    )
+
+    return () => window.clearTimeout(timeoutId)
+  }, [watchedValues, getValues])
+
+  const { data: preview, error } = useQuery(offerQueries.preview(draft))
+
+  const errorMessage = describePreviewError(error)
+  const [dismissedMessage, setDismissedMessage] = useState<string | null>(null)
+  const visibleErrorMessage =
+    errorMessage && errorMessage !== dismissedMessage ? errorMessage : null
+
   return (
     <FormProvider {...form}>
       <form onSubmit={(event) => event.preventDefault()}>
+        {visibleErrorMessage && (
+          <PreviewErrorBanner
+            message={visibleErrorMessage}
+            onDismiss={() => setDismissedMessage(visibleErrorMessage)}
+          />
+        )}
+
         <div className="flex flex-col gap-2 p-8 max-w-2xl">
           <Label>Opis oferty</Label>
           <Input
@@ -73,7 +108,8 @@ export const FormCalculation = ({
             {errors.discountPercentage?.message}
           </p>
         </div>
-        {children}
+
+        <OfferLayouts preview={preview} />
       </form>
     </FormProvider>
   )

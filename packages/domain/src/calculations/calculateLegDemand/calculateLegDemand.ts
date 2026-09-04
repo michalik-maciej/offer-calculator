@@ -1,6 +1,7 @@
 import { find } from "lodash/fp"
 
 import { Component } from "../../models/component"
+import { MissingComponentError } from "../../models/missingComponentError"
 
 type LegCalculationContext = {
   height: number
@@ -15,7 +16,10 @@ export function calculateLegDemand(
   const availableLeg = find({ category: "leg", height }, inventory)
 
   if (!availableLeg) {
-    throw new Error(`No leg found for height ${height}cm`)
+    throw new MissingComponentError(`No leg found for height ${height}cm`, {
+      category: "leg",
+      height,
+    })
   }
 
   return [

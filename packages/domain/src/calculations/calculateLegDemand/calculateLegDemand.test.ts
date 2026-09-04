@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest"
 
 import { calculateLegDemand } from "./calculateLegDemand"
 import { componentCatalogMock } from "../../fixtures/componentCatalog"
+import { isMissingComponentError } from "../../models/missingComponentError"
 
 describe("calculateLegDemand", () => {
   it("calculates legs correctly", () => {
@@ -12,12 +13,19 @@ describe("calculateLegDemand", () => {
     expect(result).toEqual([{ id: "leg-180-8-3", quantity: 12 }])
   })
 
-  it("throws if leg not found", () => {
-    expect(() =>
+  it("throws a missing component error carrying the failed lookup", () => {
+    let thrown: unknown
+
+    try {
       calculateLegDemand(
         { height: 50, numberOfLayouts: 1, numberOfUnits: 1 },
         componentCatalogMock,
-      ),
-    ).toThrow()
+      )
+    } catch (error) {
+      thrown = error
+    }
+
+    expect(isMissingComponentError(thrown)).toBe(true)
+    expect(thrown).toMatchObject({ query: { category: "leg", height: 50 } })
   })
 })

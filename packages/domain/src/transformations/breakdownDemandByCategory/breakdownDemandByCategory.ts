@@ -1,6 +1,7 @@
 import { find } from "lodash/fp"
 
 import { Component, ComponentDemand } from "../../models/component"
+import { MissingComponentError } from "../../models/missingComponentError"
 
 type DemandByCategory = Partial<
   Record<
@@ -18,7 +19,10 @@ export function breakdownDemandByCategory(
   for (const { id, quantity } of rawDemand) {
     const component = find({ id }, inventory)
     if (!component) {
-      throw new Error(`Component with id "${id}" not found in inventory`)
+      throw new MissingComponentError(
+        `Component with id "${id}" not found in inventory`,
+        { id },
+      )
     }
 
     const bucket = bom[component.category] ?? []

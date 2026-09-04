@@ -39,8 +39,8 @@ describe("POST /api/offers/preview", () => {
     })
   })
 
-  it("returns 500 when calculation fails", async () => {
-    const invalidCatalogInput = {
+  it("returns 422 when the layout asks for a component the inventory lacks", async () => {
+    const unstockedHeightInput = {
       ...validOfferInput,
       layouts: [
         {
@@ -52,11 +52,12 @@ describe("POST /api/offers/preview", () => {
 
     const res = await request(app)
       .post("/api/offers/preview")
-      .send(invalidCatalogInput)
+      .send(unstockedHeightInput)
 
-    expect(res.status).toBe(500)
-    expect(res.body).toEqual({
-      error: "Calculation failed",
+    expect(res.status).toBe(422)
+    expect(res.body).toMatchObject({
+      error: "No leg found for height 9999cm",
+      missingComponent: { category: "leg", height: 9999 },
     })
   })
 })

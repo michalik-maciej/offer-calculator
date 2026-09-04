@@ -1,6 +1,7 @@
 import { find, reduce } from "lodash/fp"
 
 import { Component, ComponentDemand } from "../../models/component"
+import { MissingComponentError } from "../../models/missingComponentError"
 
 type BomPriceCalculationContext = {
   bom: ComponentDemand
@@ -15,7 +16,10 @@ export const calculateBomPrice = (
     (total, { id, quantity }) => {
       const component = find({ id }, inventory)
       if (!component) {
-        throw new Error(`Component with id ${id} not found in inventory`)
+        throw new MissingComponentError(
+          `Component with id ${id} not found in inventory`,
+          { id },
+        )
       }
 
       return total + component.price * quantity

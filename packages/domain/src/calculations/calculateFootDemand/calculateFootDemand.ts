@@ -1,6 +1,7 @@
 import { find } from "lodash/fp"
 
 import { Component } from "../../models/component"
+import { MissingComponentError } from "../../models/missingComponentError"
 
 type FootCalculationContext = {
   depth: number
@@ -15,7 +16,10 @@ export function calculateFootDemand(
   const availableFoot = find({ category: "foot", depth }, inventory)
 
   if (!availableFoot) {
-    throw new Error(`No foot found for depth ${depth}cm`)
+    throw new MissingComponentError(`No foot found for depth ${depth}cm`, {
+      category: "foot",
+      depth,
+    })
   }
 
   return [

@@ -1,6 +1,7 @@
 import { filter, orderBy } from "lodash/fp"
 
 import { Component } from "../../models/component"
+import { MissingComponentError } from "../../models/missingComponentError"
 import { ShelfUnit } from "../../models/shelfUnit"
 
 type BackPanelCalculationContext = {
@@ -23,7 +24,10 @@ export function calculateBackPanelDemand(
     )
 
     if (availableBackPanels.length === 0) {
-      throw new Error(`No back panels found for width ${width}cm`)
+      throw new MissingComponentError(
+        `No back panels found for width ${width}cm`,
+        { category: "back", width },
+      )
     }
 
     let remainder = height - BACK_CLEARANCE_CM
