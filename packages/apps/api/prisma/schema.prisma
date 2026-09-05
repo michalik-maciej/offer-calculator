@@ -51,7 +51,7 @@ model Offer {
   title              String
   discountPercentage Float?
   input              Json
-  output             Json
+  output             Json?
   createdAt          DateTime @default(now())
 
   @@index([createdAt])

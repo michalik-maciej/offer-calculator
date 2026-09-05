@@ -1,10 +1,11 @@
 import { Request, Response } from "express"
 import * as v from "valibot"
+import { Prisma } from "@prisma/client"
 
-import { createOfferPreview } from "@/domain/orchestrations/createOfferPreview/createOfferPreview"
 import { IdParamSchema } from "@/schemas/IdParam.schema"
 import { OfferInputSchema } from "@/schemas/Offer.schema"
 
+import { priceOffer } from "./priceOffer"
 import { getAllComponents } from "../../db/inventory.repository"
 import { getOfferById, updateOffer } from "../../db/offer.repository"
 
@@ -31,15 +32,16 @@ export async function updateOfferController(req: Request, res: Response) {
 
   try {
     const inventory = await getAllComponents()
+    const { missingComponent, output } = priceOffer(parsed.output, inventory)
     const updated = await updateOffer({
       id: params.output.id,
       title: parsed.output.title,
       discountPercentage: parsed.output.discountPercentage,
       input: parsed.output,
-      output: createOfferPreview(parsed.output, inventory),
+      output: output ?? Prisma.DbNull,
     })
 
-    return res.status(200).json(updated)
+    return res.status(200).json({ ...updated, missingComponent })
   } catch (error) {
     console.error("Offer update failed:", error)
     return res.status(500).json({ error: "Offer update failed" })

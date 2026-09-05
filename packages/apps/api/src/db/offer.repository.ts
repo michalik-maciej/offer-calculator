@@ -6,7 +6,7 @@ export type CreateOfferInput = {
   title: string
   discountPercentage?: number
   input: Prisma.InputJsonValue
-  output: Prisma.InputJsonValue
+  output?: Prisma.InputJsonValue | Prisma.NullTypes.DbNull
 }
 
 export type UpdateOfferInput = Partial<CreateOfferInput> & {

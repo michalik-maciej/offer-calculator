@@ -1,9 +1,9 @@
 import { Request, Response } from "express"
 import * as v from "valibot"
 
-import { createOfferPreview } from "@/domain/orchestrations/createOfferPreview/createOfferPreview"
 import { OfferInputSchema } from "@/schemas/Offer.schema"
 
+import { priceOffer } from "./priceOffer"
 import { getAllComponents } from "../../db/inventory.repository"
 import { createOffer } from "../../db/offer.repository"
 
@@ -19,15 +19,17 @@ export async function createOfferController(req: Request, res: Response) {
 
   try {
     const inventory = await getAllComponents()
+    const { missingComponent, output } = priceOffer(parsed.output, inventory)
     const offer = await createOffer({
       title: parsed.output.title,
       discountPercentage: parsed.output.discountPercentage,
       input: parsed.output,
-      output: createOfferPreview(parsed.output, inventory),
+      output: output ?? undefined,
     })
 
-    return res.status(201).json(offer)
-  } catch {
+    return res.status(201).json({ ...offer, missingComponent })
+  } catch (error) {
+    console.error("Offer creation failed:", error)
     return res.status(500).json({ error: "Offer creation failed" })
   }
 }

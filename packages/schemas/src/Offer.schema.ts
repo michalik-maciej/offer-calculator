@@ -2,6 +2,7 @@ import * as v from "valibot"
 
 import { LayoutGondolaValue } from "./LayoutGondola.schema"
 import { LayoutWallValue } from "./LayoutWall.schema"
+import { MissingComponentSchema } from "./OfferError.schema"
 
 export const OfferInputSchema = v.object({
   discountPercentage: v.pipe(v.number(), v.minValue(0), v.maxValue(100)),
@@ -63,3 +64,21 @@ export const OfferOutputSchema = v.object({
 })
 
 export type OfferOutput = v.InferOutput<typeof OfferOutputSchema>
+
+export const OfferSummarySchema = v.object({
+  createdAt: v.string(),
+  id: v.string(),
+  title: v.string(),
+})
+
+export const SavedOfferSchema = v.object({
+  createdAt: v.string(),
+  id: v.string(),
+  input: OfferInputSchema,
+  missingComponent: v.optional(MissingComponentSchema),
+  output: v.nullable(OfferOutputSchema),
+  title: v.string(),
+})
+
+export type OfferSummary = v.InferOutput<typeof OfferSummarySchema>
+export type SavedOffer = v.InferOutput<typeof SavedOfferSchema>
