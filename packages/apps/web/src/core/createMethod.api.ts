@@ -175,6 +175,10 @@ export function createApiMethod<
       })
     }
 
+    if (res.status === 204) {
+      return null as TOutput
+    }
+
     return res.json()
   }
 }
