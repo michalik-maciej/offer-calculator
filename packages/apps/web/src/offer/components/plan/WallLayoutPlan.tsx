@@ -1,5 +1,5 @@
 import { Copy, Trash2 } from "lucide-react"
-import { useState } from "react"
+import { Fragment, useState } from "react"
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form"
 
 import { LayoutWall } from "@/schemas/LayoutWall.schema"
@@ -18,16 +18,29 @@ const SCALE_PX_PER_CM = 1.6
 
 type LayoutPreview = OfferOutput["layouts"][number]
 
-function summariseShelves(
-  shelves: LayoutWall["shelfUnits"][number]["shelves"],
-) {
+function ShelvesSummary({
+  highlightedIndex,
+  shelves,
+}: {
+  highlightedIndex: number | null
+  shelves: LayoutWall["shelfUnits"][number]["shelves"]
+}) {
   if (shelves.length === 0) {
     return "bez półek"
   }
 
-  return shelves
-    .map(({ depth, numberOfShelves }) => `${numberOfShelves}x${depth}`)
-    .join(" + ")
+  return shelves.map(({ depth, numberOfShelves }, shelfIndex) => (
+    <Fragment key={shelfIndex}>
+      {shelfIndex > 0 && " + "}
+      <span
+        className={
+          shelfIndex === highlightedIndex ? "font-semibold text-green-500" : ""
+        }
+      >
+        {numberOfShelves}x{depth}
+      </span>
+    </Fragment>
+  ))
 }
 
 export function WallLayoutPlan({
@@ -46,6 +59,12 @@ export function WallLayoutPlan({
   const [selectedUnitIndex, setSelectedUnitIndex] = useState<number | null>(
     null,
   )
+  const [selectedShelfIndex, setSelectedShelfIndex] = useState(0)
+
+  const selectUnit = (unitIndex: number | null) => {
+    setSelectedUnitIndex(unitIndex)
+    setSelectedShelfIndex(0)
+  }
 
   const shelfUnits = useFieldArray({
     control,
@@ -68,7 +87,7 @@ export function WallLayoutPlan({
     const wasLast = unitIndex === shelfUnits.fields.length - 1
 
     shelfUnits.remove(unitIndex)
-    setSelectedUnitIndex(wasLast ? unitIndex - 1 : unitIndex)
+    selectUnit(wasLast ? unitIndex - 1 : unitIndex)
   }
 
   if (!layout) return null
@@ -83,7 +102,7 @@ export function WallLayoutPlan({
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <Label className="text-sm text-muted-foreground">Ilość ciągów</Label>
+          <Label className="text-sm text-muted-foreground">Liczba ciągów</Label>
           <Input
             {...register(`layouts.${layoutIndex}.numberOfLayouts`, {
               valueAsNumber: true,
@@ -134,7 +153,7 @@ export function WallLayoutPlan({
                       : ""
                   }`}
                   key={`${unitField.id}-${copyIndex}`}
-                  onClick={() => setSelectedUnitIndex(unitIndex)}
+                  onClick={() => selectUnit(unitIndex)}
                   style={{
                     height: layout.depth * SCALE_PX_PER_CM,
                     width: unit.width * SCALE_PX_PER_CM,
@@ -145,7 +164,14 @@ export function WallLayoutPlan({
                     {[unit.width, layout.depth, layout.height].join("/")}
                   </span>
                   <span className="text-muted-foreground">
-                    {summariseShelves(unit.shelves)}
+                    <ShelvesSummary
+                      highlightedIndex={
+                        selectedUnitIndex === unitIndex
+                          ? selectedShelfIndex
+                          : null
+                      }
+                      shelves={unit.shelves}
+                    />
                   </span>
                 </button>
               ),
@@ -155,24 +181,32 @@ export function WallLayoutPlan({
       </div>
       <Drawer
         direction="right"
-        onOpenChange={(isOpen) => !isOpen && setSelectedUnitIndex(null)}
+        onOpenChange={(isOpen) => !isOpen && selectUnit(null)}
         open={selectedUnitIndex !== null}
       >
-        <DrawerContent className="p-6">
-          <DrawerTitle className="mb-4">
-            Ciąg {layoutIndex + 1}, regał{" "}
-            {selectedUnitIndex === null ? "" : selectedUnitIndex + 1}
-          </DrawerTitle>
+        <DrawerContent className="py-6 pl-6">
           {selectedUnitIndex !== null && selectedUnit && (
-            <ShelfUnitEditor
-              key={selectedUnit.id}
-              layoutIndex={layoutIndex}
-              onDuplicateUnit={() => handleDuplicateUnit(selectedUnitIndex)}
-              {...(canRemoveUnit && {
-                onRemoveUnit: () => handleRemoveUnit(selectedUnitIndex),
-              })}
-              unitIndex={selectedUnitIndex}
-            />
+            <>
+              <DrawerTitle className="mb-4 pr-6">
+                Ciąg {layoutIndex + 1}
+              </DrawerTitle>
+
+              <div className="min-h-0 flex-1 overflow-y-auto pr-6">
+                <ShelfUnitEditor
+                  key={selectedUnit.id}
+                  layoutIndex={layoutIndex}
+                  onDuplicateUnit={() => handleDuplicateUnit(selectedUnitIndex)}
+                  {...(canRemoveUnit && {
+                    onRemoveUnit: () => handleRemoveUnit(selectedUnitIndex),
+                  })}
+                  onSelectShelf={setSelectedShelfIndex}
+                  onSelectUnit={selectUnit}
+                  selectedShelfIndex={selectedShelfIndex}
+                  unitCount={shelfUnits.fields.length}
+                  unitIndex={selectedUnitIndex}
+                />
+              </div>
+            </>
           )}
         </DrawerContent>
       </Drawer>

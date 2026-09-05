@@ -29,6 +29,7 @@ export function createDefaultWallLayout({
 
   return {
     depth,
+    extras: [],
     height,
     numberOfLayouts: 1,
     shelfUnits: [

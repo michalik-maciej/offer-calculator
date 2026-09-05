@@ -2,17 +2,8 @@ import * as v from "valibot"
 
 import { MissingComponent, OfferErrorSchema } from "@/schemas/OfferError.schema"
 
+import { CATEGORY_LABELS_GENITIVE } from "./categoryLabels"
 import { ApiError } from "../../core/createMethod.api"
-
-const CATEGORY_LABELS: Record<string, string> = {
-  back: "pleców",
-  baseCover: "osłony dolnej",
-  foot: "stopy",
-  leg: "nogi",
-  misc: "elementu",
-  shelf: "półki",
-  support: "wspornika",
-}
 
 const DIMENSION_LABELS = [
   ["width", "szer."],
@@ -34,7 +25,7 @@ function describeMissingComponent(missing: MissingComponent): string {
   }
 
   const what = missing.category
-    ? (CATEGORY_LABELS[missing.category] ?? "elementu")
+    ? (CATEGORY_LABELS_GENITIVE[missing.category] ?? "elementu")
     : "elementu"
 
   const dimensions = DIMENSION_LABELS.flatMap(([key, label]) => {

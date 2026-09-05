@@ -1,4 +1,4 @@
-import { Minus, Plus, Trash2 } from "lucide-react"
+import { ChevronLeft, ChevronRight, Minus, Plus, Trash2 } from "lucide-react"
 import {
   Controller,
   FieldPathByValue,
@@ -9,6 +9,7 @@ import {
 
 import { DEFAULT_SHELF_COUNT_BY_HEIGHT } from "@/domain/models/shelfDefaults"
 
+import { ExtrasFields } from "./ExtrasFields"
 import { Button } from "../../../core/ui/button"
 import { useInventoryDimensions } from "../../hooks/useInventoryDimensions"
 import { WallOfferInput } from "../../offer.types"
@@ -25,6 +26,42 @@ const ValueDisplay = ({ value }: { value: number | null | undefined }) => (
   <span className="flex h-8 w-16 shrink-0 items-center justify-center rounded-md border border-input text-sm tabular-nums">
     {value != null ? value : "—"}
   </span>
+)
+
+const SectionNavigator = ({
+  count,
+  index,
+  onSelect,
+}: {
+  count: number
+  index: number
+  onSelect: (index: number) => void
+}) => (
+  <div className="flex items-center gap-1">
+    <Button
+      className="h-7 w-7"
+      disabled={index <= 0}
+      onClick={() => onSelect(index - 1)}
+      size="icon"
+      type="button"
+      variant="outline"
+    >
+      <ChevronLeft className="h-3 w-3" />
+    </Button>
+    <span className="w-12 text-center text-xs tabular-nums text-muted-foreground">
+      {index + 1} z {count}
+    </span>
+    <Button
+      className="h-7 w-7"
+      disabled={index >= count - 1}
+      onClick={() => onSelect(index + 1)}
+      size="icon"
+      type="button"
+      variant="outline"
+    >
+      <ChevronRight className="h-3 w-3" />
+    </Button>
+  </div>
 )
 
 const OptionStepper = ({
@@ -155,10 +192,14 @@ const CountStepper = ({
 
 const ShelvesFields = ({
   layoutIndex,
+  onSelectShelf,
+  selectedShelfIndex,
   shelfDepthOptions,
   unitIndex,
 }: {
   layoutIndex: number
+  onSelectShelf: (shelfIndex: number) => void
+  selectedShelfIndex: number
   shelfDepthOptions: number[]
   unitIndex: number
 }) => {
@@ -169,44 +210,67 @@ const ShelvesFields = ({
     name: `layouts.${layoutIndex}.shelfUnits.${unitIndex}.shelves`,
   })
 
-  const defaultShelfCount = DEFAULT_SHELF_COUNT_BY_HEIGHT[height] ?? 1
+  const shelfCount = shelves.fields.length
+  const shelfIndex = Math.min(selectedShelfIndex, Math.max(shelfCount - 1, 0))
+  const shelfPath =
+    `layouts.${layoutIndex}.shelfUnits.${unitIndex}.shelves.${shelfIndex}` as const
+
+  const handleAppend = () => {
+    shelves.append({
+      depth: shelfDepthOptions[0] ?? 0,
+      numberOfShelves: DEFAULT_SHELF_COUNT_BY_HEIGHT[height] ?? 1,
+    })
+    onSelectShelf(shelfCount)
+  }
+
+  const handleRemove = () => {
+    const wasLast = shelfIndex === shelfCount - 1
+
+    shelves.remove(shelfIndex)
+    onSelectShelf(wasLast ? Math.max(shelfIndex - 1, 0) : shelfIndex)
+  }
 
   return (
-    <div className="flex flex-col gap-1.5">
-      <div className="flex items-center justify-between">
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center justify-between gap-2">
         <SectionLabel>Półki</SectionLabel>
-        <Button
-          disabled={shelfDepthOptions.length === 0}
-          onClick={() =>
-            shelves.append({
-              depth: shelfDepthOptions[0] ?? 0,
-              numberOfShelves: defaultShelfCount,
-            })
-          }
-          size="sm"
-          type="button"
-          variant="ghost"
-        >
-          + Dodaj półkę
-        </Button>
+        {shelfCount > 0 && (
+          <SectionNavigator
+            count={shelfCount}
+            index={shelfIndex}
+            onSelect={onSelectShelf}
+          />
+        )}
       </div>
-      {shelves.fields.map((field, shelfIndex) => (
-        <div
-          className="flex flex-col gap-1 border-l-2 border-border pl-3"
-          key={field.id}
-        >
+
+      {shelfCount === 0 ? (
+        <p className="text-sm text-muted-foreground">Ten regał nie ma półek.</p>
+      ) : (
+        <>
           <OptionStepper
             label="Głębokość"
-            name={`layouts.${layoutIndex}.shelfUnits.${unitIndex}.shelves.${shelfIndex}.depth`}
+            name={`${shelfPath}.depth`}
             options={shelfDepthOptions}
           />
           <CountStepper
             label="Liczba półek"
-            name={`layouts.${layoutIndex}.shelfUnits.${unitIndex}.shelves.${shelfIndex}.numberOfShelves`}
-            onRemove={() => shelves.remove(shelfIndex)}
+            name={`${shelfPath}.numberOfShelves`}
+            onRemove={handleRemove}
           />
-        </div>
-      ))}
+        </>
+      )}
+
+      <Button
+        className="self-start"
+        disabled={shelfDepthOptions.length === 0}
+        onClick={handleAppend}
+        size="sm"
+        type="button"
+        variant="ghost"
+      >
+        <Plus className="h-3 w-3" />
+        Dodaj półki
+      </Button>
     </div>
   )
 }
@@ -215,11 +279,19 @@ export function ShelfUnitEditor({
   layoutIndex,
   onDuplicateUnit,
   onRemoveUnit,
+  onSelectShelf,
+  onSelectUnit,
+  selectedShelfIndex,
+  unitCount,
   unitIndex,
 }: {
   layoutIndex: number
   onDuplicateUnit: () => void
   onRemoveUnit?: () => void
+  onSelectShelf: (shelfIndex: number) => void
+  onSelectUnit: (unitIndex: number) => void
+  selectedShelfIndex: number
+  unitCount: number
   unitIndex: number
 }) {
   const { control } = useFormContext<WallOfferInput>()
@@ -249,16 +321,13 @@ export function ShelfUnitEditor({
         />
       </div>
       <div className="flex flex-col gap-2">
-        <div className="flex items-center justify-between">
-          <SectionLabel>Regał</SectionLabel>
-          <Button
-            onClick={onDuplicateUnit}
-            size="sm"
-            type="button"
-            variant="ghost"
-          >
-            + Powiel regał
-          </Button>
+        <div className="flex items-center justify-between gap-2">
+          <SectionLabel>Regały</SectionLabel>
+          <SectionNavigator
+            count={unitCount}
+            index={unitIndex}
+            onSelect={onSelectUnit}
+          />
         </div>
         <OptionStepper
           label="Szerokość"
@@ -270,12 +339,25 @@ export function ShelfUnitEditor({
           name={`layouts.${layoutIndex}.shelfUnits.${unitIndex}.numberOfShelfUnits`}
           onRemove={onRemoveUnit}
         />
+        <Button
+          className="self-start"
+          onClick={onDuplicateUnit}
+          size="sm"
+          type="button"
+          variant="ghost"
+        >
+          <Plus className="h-3 w-3" />
+          Dodaj regały
+        </Button>
       </div>
       <ShelvesFields
         layoutIndex={layoutIndex}
+        onSelectShelf={onSelectShelf}
+        selectedShelfIndex={selectedShelfIndex}
         shelfDepthOptions={shelfDepths}
         unitIndex={unitIndex}
       />
+      <ExtrasFields layoutIndex={layoutIndex} />
     </div>
   )
 }
