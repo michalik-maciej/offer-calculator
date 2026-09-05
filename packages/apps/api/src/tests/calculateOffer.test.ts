@@ -1,3 +1,4 @@
+import jwt from "jsonwebtoken"
 import request from "supertest"
 import { describe, expect, it } from "vitest"
 
@@ -6,12 +7,16 @@ import { validOfferInput } from "@/domain/fixtures/validOfferInput"
 
 import { createApp } from "../app"
 
+process.env.JWT_SECRET = "test-secret"
+
 const app = createApp({ getInventory: async () => componentCatalogMock })
+const authCookie = `accessToken=${jwt.sign({ email: "tester@example.com" }, process.env.JWT_SECRET)}`
 
 describe("POST /api/offers/preview", () => {
   it("returns offer preview for valid input", async () => {
     const res = await request(app)
       .post("/api/offers/preview")
+      .set("Cookie", authCookie)
       .send(validOfferInput)
 
     expect(res.status).toBe(200)
@@ -24,7 +29,10 @@ describe("POST /api/offers/preview", () => {
   })
 
   it("returns 400 for invalid payload", async () => {
-    const response = await request(app).post("/api/offers/preview").send({})
+    const response = await request(app)
+      .post("/api/offers/preview")
+      .set("Cookie", authCookie)
+      .send({})
 
     expect(response.status).toBe(400)
     expect(response.body).toMatchObject({
@@ -52,6 +60,7 @@ describe("POST /api/offers/preview", () => {
 
     const res = await request(app)
       .post("/api/offers/preview")
+      .set("Cookie", authCookie)
       .send(unstockedHeightInput)
 
     expect(res.status).toBe(422)

@@ -1,6 +1,7 @@
 import type { Router as ExpressRouter } from "express"
 import { Router } from "express"
 
+import { requireAuth } from "../controllers/auth/requireAuth"
 import {
   createCalculateOfferController,
   InventorySource,
@@ -18,12 +19,16 @@ export function createOffersRouter({
 }): ExpressRouter {
   const router: ExpressRouter = Router()
 
-  router.get("/", getOffersController)
-  router.get("/:id", getOfferController)
-  router.post("/", createOfferController)
-  router.put("/:id", updateOfferController)
-  router.delete("/:id", deleteOfferController)
-  router.post("/preview", createCalculateOfferController({ getInventory }))
+  router.get("/", requireAuth, getOffersController)
+  router.get("/:id", requireAuth, getOfferController)
+  router.post("/", requireAuth, createOfferController)
+  router.put("/:id", requireAuth, updateOfferController)
+  router.delete("/:id", requireAuth, deleteOfferController)
+  router.post(
+    "/preview",
+    requireAuth,
+    createCalculateOfferController({ getInventory }),
+  )
 
   return router
 }
