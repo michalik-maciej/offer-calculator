@@ -4,11 +4,13 @@ import {
   OfferInput,
   OfferOutput,
   OfferOutputSchema,
+  OfferSummarySchema,
+  SavedOfferSchema,
 } from "@/schemas/Offer.schema"
 
 import { apiType, createApiMethod } from "../core/createMethod.api"
 
-const OfferListSchema = v.array(OfferOutputSchema)
+const OfferListSchema = v.array(OfferSummarySchema)
 
 const apiUrl = import.meta.env.VITE_API_URL
 if (!apiUrl) {
@@ -24,25 +26,24 @@ export const offerApi = {
   details: createApiMethod({
     method: "GET",
     path: `${apiUrl}/offers/:id`,
-    response: OfferOutputSchema,
+    response: SavedOfferSchema,
   }),
   create: createApiMethod({
     method: "POST",
     path: `${apiUrl}/offers`,
-    response: OfferOutputSchema,
+    response: SavedOfferSchema,
     data: apiType<OfferInput>(),
   }),
   update: createApiMethod({
     method: "PUT",
     path: `${apiUrl}/offers/:id`,
-    response: OfferOutputSchema,
+    response: SavedOfferSchema,
     data: apiType<OfferInput>(),
   }),
   delete: createApiMethod({
     method: "DELETE",
     path: `${apiUrl}/offers/:id`,
     response: v.null(),
-    data: apiType<{ id: string }>(),
   }),
   preview: createApiMethod({
     method: "POST",
@@ -50,6 +51,10 @@ export const offerApi = {
     response: OfferOutputSchema,
     data: apiType<OfferInput>(),
   }),
+}
+
+export const offerMutationKeys = {
+  autoSave: ["offer", "autoSave"] as const,
 }
 
 export const offerQueries = {

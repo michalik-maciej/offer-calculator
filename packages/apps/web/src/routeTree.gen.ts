@@ -9,16 +9,28 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as OrderRouteImport } from './routes/order'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as ConfigRouteImport } from './routes/config'
 import { Route as OfferRouteRouteImport } from './routes/offer/route'
 import { Route as InventoryRouteRouteImport } from './routes/inventory/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as InventoryNewRouteImport } from './routes/inventory/new'
 import { Route as InventoryComponentIdRouteImport } from './routes/inventory/$componentId'
 
+const OrderRoute = OrderRouteImport.update({
+  id: '/order',
+  path: '/order',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConfigRoute = ConfigRouteImport.update({
+  id: '/config',
+  path: '/config',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OfferRouteRoute = OfferRouteRouteImport.update({
@@ -51,7 +63,9 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/inventory': typeof InventoryRouteRouteWithChildren
   '/offer': typeof OfferRouteRoute
+  '/config': typeof ConfigRoute
   '/login': typeof LoginRoute
+  '/order': typeof OrderRoute
   '/inventory/$componentId': typeof InventoryComponentIdRoute
   '/inventory/new': typeof InventoryNewRoute
 }
@@ -59,7 +73,9 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/inventory': typeof InventoryRouteRouteWithChildren
   '/offer': typeof OfferRouteRoute
+  '/config': typeof ConfigRoute
   '/login': typeof LoginRoute
+  '/order': typeof OrderRoute
   '/inventory/$componentId': typeof InventoryComponentIdRoute
   '/inventory/new': typeof InventoryNewRoute
 }
@@ -68,7 +84,9 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/inventory': typeof InventoryRouteRouteWithChildren
   '/offer': typeof OfferRouteRoute
+  '/config': typeof ConfigRoute
   '/login': typeof LoginRoute
+  '/order': typeof OrderRoute
   '/inventory/$componentId': typeof InventoryComponentIdRoute
   '/inventory/new': typeof InventoryNewRoute
 }
@@ -78,7 +96,9 @@ export interface FileRouteTypes {
     | '/'
     | '/inventory'
     | '/offer'
+    | '/config'
     | '/login'
+    | '/order'
     | '/inventory/$componentId'
     | '/inventory/new'
   fileRoutesByTo: FileRoutesByTo
@@ -86,7 +106,9 @@ export interface FileRouteTypes {
     | '/'
     | '/inventory'
     | '/offer'
+    | '/config'
     | '/login'
+    | '/order'
     | '/inventory/$componentId'
     | '/inventory/new'
   id:
@@ -94,7 +116,9 @@ export interface FileRouteTypes {
     | '/'
     | '/inventory'
     | '/offer'
+    | '/config'
     | '/login'
+    | '/order'
     | '/inventory/$componentId'
     | '/inventory/new'
   fileRoutesById: FileRoutesById
@@ -103,16 +127,32 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   InventoryRouteRoute: typeof InventoryRouteRouteWithChildren
   OfferRouteRoute: typeof OfferRouteRoute
+  ConfigRoute: typeof ConfigRoute
   LoginRoute: typeof LoginRoute
+  OrderRoute: typeof OrderRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/order': {
+      id: '/order'
+      path: '/order'
+      fullPath: '/order'
+      preLoaderRoute: typeof OrderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/config': {
+      id: '/config'
+      path: '/config'
+      fullPath: '/config'
+      preLoaderRoute: typeof ConfigRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/offer': {
@@ -171,7 +211,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   InventoryRouteRoute: InventoryRouteRouteWithChildren,
   OfferRouteRoute: OfferRouteRoute,
+  ConfigRoute: ConfigRoute,
   LoginRoute: LoginRoute,
+  OrderRoute: OrderRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

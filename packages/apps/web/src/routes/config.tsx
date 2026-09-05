@@ -1,0 +1,41 @@
+import { FilePlus2 } from "lucide-react"
+import { createFileRoute } from "@tanstack/react-router"
+
+import { Button } from "../core/ui/button"
+import { OfferLayouts } from "../offer/components/OfferLayouts"
+import { useCreateOffer } from "../offer/hooks/useCreateOffer"
+import { useOffer } from "../offer/hooks/useOffer"
+
+export const Route = createFileRoute("/config")({
+  component: ConfigPage,
+})
+
+function ConfigPage() {
+  const { offer, offerId } = useOffer()
+  const createOffer = useCreateOffer()
+
+  return (
+    <section>
+      <h1 className="px-8 pt-8 pb-4 text-xl font-semibold">Konfigurator</h1>
+
+      {offerId ? (
+        <OfferLayouts output={offer?.output ?? undefined} />
+      ) : (
+        <div className="flex flex-col items-start gap-3 px-8">
+          <p className="text-sm text-muted-foreground">
+            Nie masz otwartej oferty. Utwórz nową albo wczytaj zapisaną w
+            zakładce Oferta.
+          </p>
+          <Button
+            disabled={createOffer.isPending}
+            onClick={() => createOffer.mutate()}
+            type="button"
+          >
+            <FilePlus2 className="h-4 w-4" />
+            Nowa oferta
+          </Button>
+        </div>
+      )}
+    </section>
+  )
+}

@@ -1,47 +1,108 @@
 import { FolderOpen, Loader2 } from "lucide-react"
 import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
+import { useNavigate } from "@tanstack/react-router"
+
+import { OfferSummary } from "@/schemas/Offer.schema"
 
 import { Button } from "../../core/ui/button"
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogTitle,
   DialogTrigger,
 } from "../../core/ui/dialog"
 import { offerQueries } from "../offer.api"
 
-export const OfferList = () => {
+const dateFormatter = new Intl.DateTimeFormat("pl-PL", {
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  month: "2-digit",
+  year: "numeric",
+})
+
+export function OfferList() {
   const [isOpen, setIsOpen] = useState(false)
-  const { data, isPending } = useQuery({
+  const [pendingOffer, setPendingOffer] = useState<OfferSummary | null>(null)
+
+  const navigate = useNavigate()
+
+  const { data: offers, isPending } = useQuery({
     ...offerQueries.list(),
     enabled: isOpen,
   })
 
+  const openOffer = (id: string) => {
+    navigate({ search: { offerId: id }, to: "." })
+    setPendingOffer(null)
+    setIsOpen(false)
+  }
+
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger>
-        <Button className="mx-6">
-          Oferty
-          <FolderOpen />
+    <Dialog
+      onOpenChange={(open) => {
+        setIsOpen(open)
+        if (!open) setPendingOffer(null)
+      }}
+      open={isOpen}
+    >
+      <DialogTrigger asChild>
+        <Button type="button" variant="outline">
+          <FolderOpen className="h-4 w-4" />
+          Wczytaj
         </Button>
       </DialogTrigger>
       <DialogContent>
-        <DialogTitle>Katalog ofert</DialogTitle>
-        {isPending && <Loader2 className="animate-spin" />}
-        {!isPending && (
-          <ul className="grid gap-4 py-4 min-h-100">
-            {data?.length === 0 && <p>Brak ofert</p>}
-            {data?.map((offer) => (
-              <li
-                key={offer.title}
-                className="flex items-center justify-between gap-2"
+        <DialogTitle>Zapisane oferty</DialogTitle>
+
+        {pendingOffer ? (
+          <>
+            <DialogDescription>
+              W bieżącej ofercie są zmiany, które nie zostały zapisane.
+              Wczytanie „{pendingOffer.title}” je odrzuci.
+            </DialogDescription>
+            <div className="flex justify-end gap-2">
+              <Button
+                onClick={() => setPendingOffer(null)}
+                type="button"
+                variant="outline"
               >
-                <FolderOpen />
-                {offer.title}
-              </li>
-            ))}
-          </ul>
+                Anuluj
+              </Button>
+              <Button onClick={() => openOffer(pendingOffer.id)} type="button">
+                Wczytaj mimo to
+              </Button>
+            </div>
+          </>
+        ) : (
+          <>
+            {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+            {!isPending && offers?.length === 0 && (
+              <DialogDescription>
+                Nie ma jeszcze żadnej zapisanej oferty.
+              </DialogDescription>
+            )}
+            {!isPending && offers && offers.length > 0 && (
+              <ul className="divide-y divide-border border-y border-border">
+                {offers.map((offer) => (
+                  <li key={offer.id}>
+                    <button
+                      className="flex w-full items-center justify-between gap-4 px-1 py-2 text-left text-sm hover:bg-accent"
+                      onClick={() => openOffer(offer.id)}
+                      type="button"
+                    >
+                      <span className="truncate">{offer.title}</span>
+                      <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
+                        {dateFormatter.format(new Date(offer.createdAt))}
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </>
         )}
       </DialogContent>
     </Dialog>

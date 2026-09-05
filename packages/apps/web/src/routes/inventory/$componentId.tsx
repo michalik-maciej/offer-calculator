@@ -13,7 +13,7 @@ function RouteComponent() {
   return (
     <InventoryItemDialog
       componentId={componentId}
-      onOpenChange={() => navigate({ to: ".." })}
+      onOpenChange={() => navigate({ search: true, to: ".." })}
     />
   )
 }

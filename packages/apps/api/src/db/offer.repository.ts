@@ -41,3 +41,7 @@ export async function getAllOffers(): Promise<
 export async function getOfferById(id: string): Promise<Offer | null> {
   return prisma.offer.findUnique({ where: { id } })
 }
+
+export async function deleteOffer(id: string): Promise<Offer> {
+  return prisma.offer.delete({ where: { id } })
+}

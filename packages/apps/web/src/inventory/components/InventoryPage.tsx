@@ -36,7 +36,7 @@ export function InventoryPage() {
       <div className="flex items-center justify-between mb-6">
         <h1>Katalog części</h1>
         <Button variant="secondary" size="sm" asChild>
-          <Link to="/inventory/new">
+          <Link search={true} to="/inventory/new">
             <CopyPlusIcon />
             Dodaj
           </Link>
@@ -54,6 +54,7 @@ export function InventoryPage() {
                   key={item.id}
                   to="/inventory/$componentId"
                   params={{ componentId: item.id }}
+                  search={true}
                   className="block py-1"
                 >
                   {item.label}

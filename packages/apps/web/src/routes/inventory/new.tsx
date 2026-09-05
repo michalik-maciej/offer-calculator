@@ -9,5 +9,9 @@ export const Route = createFileRoute("/inventory/new")({
 function RouteComponent() {
   const navigate = Route.useNavigate()
 
-  return <InventoryItemDialog onOpenChange={() => navigate({ to: ".." })} />
+  return (
+    <InventoryItemDialog
+      onOpenChange={() => navigate({ search: true, to: ".." })}
+    />
+  )
 }

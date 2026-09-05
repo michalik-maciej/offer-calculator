@@ -45,10 +45,24 @@ export function TopBar() {
       <nav className="flex justify-between w-full" aria-label="Primary">
         <div className="flex gap-4">
           <Button variant="outline" asChild>
-            <Link to="/offer">Oferta</Link>
+            <Link search={(previous) => previous} to="/offer">
+              Oferta
+            </Link>
           </Button>
           <Button variant="outline" asChild>
-            <Link to="/inventory">Katalog</Link>
+            <Link search={(previous) => previous} to="/config">
+              Konfigurator
+            </Link>
+          </Button>
+          <Button variant="outline" asChild>
+            <Link search={(previous) => previous} to="/order">
+              Rozpiska
+            </Link>
+          </Button>
+          <Button variant="outline" asChild>
+            <Link search={true} to="/inventory">
+              Katalog części
+            </Link>
           </Button>
         </div>
         <div className="flex items-center gap-4">

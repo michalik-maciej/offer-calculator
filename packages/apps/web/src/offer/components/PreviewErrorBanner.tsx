@@ -13,7 +13,7 @@ export function PreviewErrorBanner({
 }) {
   return createPortal(
     <div
-      className="pointer-events-auto fixed inset-x-0 top-0 z-[60] flex items-center justify-between gap-4 border-2 border-destructive bg-red-200 px-6 py-3 shadow-lg"
+      className="pointer-events-auto fixed inset-x-0 top-0 z-[60] flex items-center justify-between gap-4 border-2 border-destructive bg-card px-6 py-3 shadow-lg"
       onPointerDown={(event) => event.stopPropagation()}
       role="alert"
     >
@@ -22,8 +22,10 @@ export function PreviewErrorBanner({
           <SearchAlert />
           {message}
         </p>
-        <Button asChild size="sm" variant="outline">
-          <Link to="/inventory/new">Dodaj</Link>
+        <Button asChild size="sm" variant="secondary">
+          <Link search={true} to="/inventory/new">
+            Dodaj
+          </Link>
         </Button>
       </div>
       <Button

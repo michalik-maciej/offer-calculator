@@ -9,11 +9,7 @@ import { createDefaultWallLayout } from "../helpers/createDefaultWallLayout"
 import { useInventoryDimensions } from "../hooks/useInventoryDimensions"
 import { WallOfferInput } from "../offer.types"
 
-export function OfferLayouts({
-  preview,
-}: {
-  preview: OfferOutput | undefined
-}) {
+export function OfferLayouts({ output }: { output: OfferOutput | undefined }) {
   const { control, getValues } = useFormContext<WallOfferInput>()
   const { append, fields, insert, remove } = useFieldArray({
     control,
@@ -33,7 +29,7 @@ export function OfferLayouts({
             insert(index + 1, structuredClone(getValues(`layouts.${index}`)))
           }
           onRemove={() => remove(index)}
-          preview={preview?.layouts[index]}
+          preview={output?.layouts[index]}
         />
       ))}
 
