@@ -99,7 +99,7 @@ These standards apply to backend code (APIs, domain logic, auth, data layer).
 One controller file per endpoint, routers that only wire, `app.ts` as the composition root, controllers calling the domain while repositories touch the database, resource paths, and why `bootstrap.ts` keeps its dynamic import.
 
 #### Authentication and Route Protection (`standards/backend/auth.md`)
-Stateless JWT in an httpOnly cookie, `requireAuth` on every data route with only the health check and login public, CORS is not authorization, never log or return credentials. Records one unresolved deviation: the offers router applies `requireAuth` to none of its routes, so it must not be copied as a pattern.
+Stateless JWT in an httpOnly cookie, `requireAuth` on every data route with only the health check and login public, why the guard goes on the same line as the route, CORS is not authorization, never log or return credentials.
 
 #### Domain Layer (`standards/backend/domain.md`)
 The domain package depending on nothing, four layers running in one direction (models, calculations, transformations, orchestrations), one folder per function, the `(context, inventory)` signature, pure functions with no I/O and no catching.

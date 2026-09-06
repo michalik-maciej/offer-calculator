@@ -18,10 +18,13 @@ design are only the health check and the login endpoint.
 router.post("/items", requireAuth, createComponentController)
 ```
 
-**Known deviation, unresolved.** `packages/apps/api/src/routes/offers.routes.ts` applies `requireAuth`
-to none of its six routes, and `app.ts` mounts it without middleware, so listing, reading, creating,
-updating and deleting offers is currently unauthenticated. The inventory routes are guarded. Do not
-copy the offers router as a pattern.
+Both routers apply it to every route they expose. The offers router went unguarded for months, which
+is how a whole feature ends up public without anyone deciding it: the guard is per route, so a new
+route is unprotected until someone remembers to add it. Add the middleware on the same line as the
+route, not afterwards.
+
+The protection is pinned by `packages/apps/api/src/tests/offerRoutesAuth.test.ts`, which walks every
+offer route without a cookie and requires 401, and rejects a forged token as well.
 
 ### CORS Is Not Authorization
 
