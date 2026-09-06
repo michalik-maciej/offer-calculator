@@ -1,0 +1,26 @@
+{
+  "extraKnownMarketplaces": {
+    "maister-plugins": {
+      "source": {
+        "source": "github",
+        "repo": "SkillPanel/maister"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "maister@maister-plugins": true
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/block-agent-commits.mjs\""
+          }
+        ]
+      }
+    ]
+  }
+}

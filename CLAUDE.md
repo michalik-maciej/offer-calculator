@@ -523,22 +523,22 @@ Frontend reads from environment at build time (Vite). Set in Vercel dashboard or
 
 ## Git & SDLC Workflow
 
-### Branch Naming
+### Work Happens on `main`
 
-Format: `KM-{number}/{short-description-in-english}`
+There are no task branches and no pull requests. One maintainer works on one branch, commits land
+directly on `main`, and the ceremony of branching, opening a pull request and merging it into your
+own work bought nothing here.
 
-```
-KM-6/add-gondola-calculation
-KM-12/fix-login-validation
-KM-3/refactor-offer-preview
-```
+The consequence is worth naming: CI (`.github/workflows/ci.yml`) runs on push to `main`, so it
+reports on code that has already landed. It is a safety net, not a gate. The real gate is running
+`pnpm validate` and `pnpm vitest run` locally before the commit.
 
-- `KM-{number}` — Trello card ID (prefix from board "Kalkulator Metalu")
-- Description: lowercase, hyphens, English, max ~5 words
+A branch is still fine for something genuinely speculative that should not touch `main` until it
+works. That is an exception the maintainer decides on, not a routine.
 
 ### Commit Messages
 
-Format: `[KM-{number}] {type}: {short description}`
+Format: `{type}: {short description}`
 
 Types follow Conventional Commits:
 
@@ -550,22 +550,16 @@ Types follow Conventional Commits:
 - `docs` — documentation only
 
 ```
-[KM-6] feat: add gondola layout calculation
-[KM-6] fix: adjusted calculation logic for gondola shelves
-[KM-12] refactor: extract offer price helper
+feat: add gondola layout calculation
+fix: adjust calculation logic for gondola shelves
+refactor: extract offer price helper
 ```
-
-### Pull Request Format
-
-- **Title**: `[KM-{number}] Short description of the change`
-- **Body**: link to Trello card + summary of what changed and why
-- PRs target `main` branch
-- Run `pnpm validate` before opening a PR (typecheck + lint + format check)
 
 ### Trello Board
 
-Project tasks are tracked at: https://trello.com/b/kgMgLeH1/kalkulator-metalu
-Card IDs use the `KM-` prefix in this repo's conventions.
+Part of the work is tracked at: https://trello.com/b/kgMgLeH1/kalkulator-metalu
+The board is not complete, so no commit depends on a card existing and no card number appears in a
+commit message.
 
 ### Development Workflow
 
@@ -576,11 +570,13 @@ for the next instruction. Do not batch several unrelated fixes into one pass.
 
 1. **Leave changes in the working tree.** Do not run `git add`. The user reviews the diff file by
    file and stages what they accept.
-2. **Never create branches, commits or pushes on your own.** Do it only when the user says so
-   explicitly, in that message, for that action. Consent to one commit does not carry over to the
-   next one, nor from a commit to a push.
-3. **Propose, do not act.** When a branch or a commit is due, propose the name or the message
-   following the conventions above, then wait.
+2. **No branches, no commits, no pushes.** Work stays on `main` and stays in the working tree.
+   Committing and pushing belong to the maintainer, without exception, tooling bookkeeping
+   included. A `PreToolUse` hook (`.claude/hooks/block-agent-commits.mjs`) blocks every `git commit`
+   the agent attempts, so this does not depend on the instruction being remembered. A branch is
+   created only when the maintainer asks for one in that message.
+3. **Propose, do not act.** When a commit is due, propose the message following the conventions
+   above, then wait for the maintainer to make it.
 4. **Verify every step** with `pnpm validate` and `pnpm vitest run`, and report plainly what passed
    and what did not. Say explicitly when something was checked statically only and not exercised in
    a running app.
@@ -591,8 +587,8 @@ and only after the user agrees to it.
 
 ### Definition of Done
 
-This is a single-maintainer repository and work lands directly on `main`. There is no PR review
-step and no second pair of eyes, so the checks below are the only gate.
+Work lands directly on `main`. There is no review step and no second pair of eyes, so the checks
+below are the only gate, and they have to be run before the commit rather than after it.
 
 A step is done, from Claude's side, when:
 
@@ -600,13 +596,19 @@ A step is done, from Claude's side, when:
 2. `pnpm validate` passes (no TS errors, no lint errors, formatted)
 3. `pnpm vitest run` passes
 4. Tests were added or updated if domain logic changed
-5. The changes sit unstaged in the working tree, and what was verified (and how) was reported
+5. The changes sit unstaged in the working tree and what was verified (and how) was reported
 
-The task itself is done when the maintainer has reviewed the diff, staged it and committed it.
-That step is never Claude's to take on its own.
+The task itself is done when the maintainer has reviewed the diff, staged it and committed it. That
+step is never Claude's to take on its own.
 
 ## Resources & References
 
 - **Decision Log**: `docs/decisions.md` (why the architecture is what it is; read it before
   changing package wiring, auth or how offers are persisted)
 - **Trello Board**: https://trello.com/b/kgMgLeH1/kalkulator-metalu
+
+## Project Documentation & Standards
+
+Before starting a task, read @.maister/docs/INDEX.md and then open the specific standard files it
+points to that are relevant to the work at hand. The conventions in this file and in
+`docs/decisions.md` take precedence wherever the two disagree.
