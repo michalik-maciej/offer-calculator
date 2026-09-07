@@ -1,15 +1,4 @@
 {
-  "extraKnownMarketplaces": {
-    "maister-plugins": {
-      "source": {
-        "source": "github",
-        "repo": "SkillPanel/maister"
-      }
-    }
-  },
-  "enabledPlugins": {
-    "maister@maister-plugins": true
-  },
   "hooks": {
     "PreToolUse": [
       {

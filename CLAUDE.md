@@ -609,6 +609,6 @@ step is never Claude's to take on its own.
 
 ## Project Documentation & Standards
 
-Before starting a task, read @.maister/docs/INDEX.md and then open the specific standard files it
+Before starting a task, read @docs/INDEX.md and then open the specific standard files it
 points to that are relevant to the work at hand. The conventions in this file and in
 `docs/decisions.md` take precedence wherever the two disagree.

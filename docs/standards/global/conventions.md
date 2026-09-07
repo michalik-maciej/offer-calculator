@@ -27,6 +27,6 @@ No speculative code, no "just in case" additions. See `minimal-implementation.md
 
 ### Documentation Follows the Code
 
-`CLAUDE.md`, `docs/decisions.md` and the documents under `.maister/docs/` describe how this project
+`CLAUDE.md`, `docs/decisions.md` and the documents under `docs/` describe how this project
 actually works. When a change makes one of them wrong, the change is not finished until that file is
 corrected too.

@@ -30,12 +30,12 @@ działało. „Rozłącz gondolę" też już istniało, jako kłódka trzymając
 
 ## Gdzie czego szukać
 
-| Repo | Gondole |
-| --- | --- |
-| `projektownia-kalkulator` (v1) | pełna implementacja i wycena, Formik + Chakra + Firestore |
-| `next-kalkulator` (v2) | drugi model, ze szczytami, Zod + RHF + shadcn + Prisma, nieukończony |
-| `remix-kalkulator` (v3) | usunięte, model płaski bez stron |
-| `masterplan*`, `bubu-vanilla` | brak, jedyne trafienie to nazwa koloru w CSS |
+| Repo                           | Gondole                                                              |
+| ------------------------------ | -------------------------------------------------------------------- |
+| `projektownia-kalkulator` (v1) | pełna implementacja i wycena, Formik + Chakra + Firestore            |
+| `next-kalkulator` (v2)         | drugi model, ze szczytami, Zod + RHF + shadcn + Prisma, nieukończony |
+| `remix-kalkulator` (v3)        | usunięte, model płaski bez stron                                     |
+| `masterplan*`, `bubu-vanilla`  | brak, jedyne trafienie to nazwa koloru w CSS                         |
 
 ## v1: model, który wyceniał u klienta
 
@@ -51,7 +51,7 @@ export type FormCollectionType = {
   isCollapsed?: boolean
   // flag to edit both sub collections at once or separately
   isEditLocked?: boolean
-  variant: CollectionOption   // "P" | "G" | "I"
+  variant: CollectionOption // "P" | "G" | "I"
   numberOfCollections: number
   otherItems: FormOtherType[]
   subCollections: FormSubCollectionType[]
@@ -64,11 +64,11 @@ na dwustronny była więc bezstratna, w przeciwieństwie do dzisiejszych dwóch 
 
 Podział odpowiedzialności, identyczny z dzisiejszym:
 
-| Poziom | Pola | Znaczenie |
-| --- | --- | --- |
-| ciąg | `height`, `variant`, `numberOfCollections` | wspólne dla obu stron |
-| strona (`subCollection`) | `depth`, `hasBaseCover` | głębokość jest per strona |
-| segment (`stand`) | `width`, `numberOfStands`, `backVariant`, `shelves[]` | szerokość jest per segment |
+| Poziom                   | Pola                                                  | Znaczenie                  |
+| ------------------------ | ----------------------------------------------------- | -------------------------- |
+| ciąg                     | `height`, `variant`, `numberOfCollections`            | wspólne dla obu stron      |
+| strona (`subCollection`) | `depth`, `hasBaseCover`                               | głębokość jest per strona  |
+| segment (`stand`)        | `width`, `numberOfStands`, `backVariant`, `shelves[]` | szerokość jest per segment |
 
 ## v1: dzielenie nóg, czyli rozbieżność cenowa
 
@@ -76,11 +76,13 @@ Podział odpowiedzialności, identyczny z dzisiejszym:
 
 ```ts
 const number = sumBy("numberOfStands", stands) + 1
-return [{
-  // share profiles in gondola and impulse collections between sides
-  number: variant === "P" ? number : 0.5 * number,
-  price: number * profile.price,
-}]
+return [
+  {
+    // share profiles in gondola and impulse collections between sides
+    number: variant === "P" ? number : 0.5 * number,
+    price: number * profile.price,
+  },
+]
 ```
 
 Połówki sumowane po stronach, potem `Math.ceil` w agregacie. Stopy (`orderFeet.ts`) **nie** były
@@ -101,10 +103,14 @@ była podwójna wobec ilości. Tego nie przenosić.
 ```tsx
 useEffect(() => {
   if (isEditLocked) {
-    setValues({ ...values, collections: values.collections.map((collection, index) =>
-      index === collectionIndex
-        ? { ...collection, subCollections: Array(2).fill(subCollection) }
-        : collection) })
+    setValues({
+      ...values,
+      collections: values.collections.map((collection, index) =>
+        index === collectionIndex
+          ? { ...collection, subCollections: Array(2).fill(subCollection) }
+          : collection,
+      ),
+    })
   }
 }, [subCollection])
 ```
@@ -133,14 +139,14 @@ Semantyka warta powtórzenia:
 export const groupSchema = z.object({
   foot: z.number(),
   stands: z.array(standSchema),
-  variant: z.enum(['peak', 'side', 'side-gondola']),
+  variant: z.enum(["peak", "side", "side-gondola"]),
 })
 ```
 
 Gondola to **cztery grupy: strona, strona, szczyt, szczyt**:
 
 ```ts
-if (variant === 'G') {
+if (variant === "G") {
   return [...Array(2).fill(groupSideGondola), ...Array(2).fill(groupPeak)]
 }
 ```
@@ -160,7 +166,11 @@ kwestii ilości.**
 ## v2: opis ciągu
 
 ```ts
-const collectionVariants = { P: 'przyściennych', G: 'dwustronnych', I: 'impulsów' }
+const collectionVariants = {
+  P: "przyściennych",
+  G: "dwustronnych",
+  I: "impulsów",
+}
 ```
 
 Identyczne słownictwo jak dziś w `buildLayoutDescription`. Obie wersje czytają **tylko stronę

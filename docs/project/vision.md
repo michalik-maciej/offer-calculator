@@ -41,7 +41,9 @@ rules survived, which is why those rules live in a package that depends on nothi
 `docs/decisions.md`).
 
 Alongside the product work, this repository is where an agent-driven development workflow is being
-learned and put in place. That is what the Maister harness in `.maister/` serves.
+learned and put in place. The standards under `docs/standards/` and the guard hook in
+`.claude/hooks/` are what survives of that so far; a packaged harness was tried and dropped
+(decision 10 in `docs/decisions.md`).
 
 ---
 

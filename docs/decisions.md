@@ -140,3 +140,27 @@ and keeps the hosting cost of a single-user internal tool at nothing.
 
 **Cost.** More explicit guards in the calculation code. The alternative is discovering the missing
 check in an offer sent to a customer.
+
+## 10. A packaged agent harness was tried and dropped
+
+**Decision.** The Maister plugin (`SkillPanel/maister`) was installed, used to derive the standards
+now under `docs/standards/`, and run once end to end on a real feature (gondola support in the offer
+configurator). The plugin has been removed: no marketplace entry, no enabled plugin, no `.maister/`
+directory. The pilot's code was discarded unmerged, so the feature itself is not in the repository.
+What is kept from the experiment is documentation only, plus the `PreToolUse` hook in
+`.claude/hooks/block-agent-git-writes.mjs`, which predates the plugin and is not part of it.
+
+**Why.** The parts worth keeping turned out to be the artifacts, not the machinery. Standards derived
+from this repository's own code, the end client's requirements list and the prior art recovered from
+three dead calculators are all useful on their own and needed no plugin to stay useful. The workflow
+around them cost a directory of orchestrator state, a dashboard, per-task bookkeeping and a
+thirteen-phase process for a repository with one maintainer working directly on `main`.
+
+**Cost.** No packaged workflow to fall back on, so process discipline lives in `CLAUDE.md` and in
+the standards rather than in tooling that enforces it. The bundled Playwright MCP goes with the
+plugin, so browser verification has to be arranged separately when it is next needed. The pilot's
+implementation was discarded, which means gondola support in the configurator remains unbuilt and
+the seven task groups behind it would have to be redone; what survives of that work is the analysis,
+not the code. The task's specification, implementation plan, work log, mockups and audit are no
+longer in the working tree, but they are in commits `09b92e1` and `eceb46d` and can be read back
+with `git show`.

@@ -2,8 +2,8 @@
 
 ## TL;DR
 
-Lista wymagań od użytkownika końcowego kalkulatora, przekazana przez maintainera w trakcie Fazy 1.
-Wiążące wejście dla całego workflow, nie tło rozmowy. Sekcja 5 (logika gondoli) dotyczy wprost tego
+Lista wymagań od użytkownika końcowego kalkulatora, przekazana przez maintainera.
+Wiążące wejście dla pracy nad konfiguratorem, nie tło rozmowy. Sekcja 5 (logika gondoli) dotyczy wprost tego
 zadania i zmienia jego zakres: gondola jest bytem dwustronnym, nie pojedynczą stroną.
 Pozostałe sekcje opisują szerszy dług konfiguratora i mają być weryfikowane na bieżąco, nie
 realizowane w całości w tym zadaniu.
