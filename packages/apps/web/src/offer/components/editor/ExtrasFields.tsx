@@ -1,10 +1,9 @@
-import { X } from "lucide-react"
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form"
 import { useQuery } from "@tanstack/react-query"
 
 import { COMPONENT_CATEGORIES } from "@/domain/models/component"
 
-import { Badge } from "../../../core/ui/badge"
+import { CountStepper } from "./CountStepper"
 import {
   Select,
   SelectContent,
@@ -40,50 +39,45 @@ export function ExtrasFields({ layoutIndex }: { layoutIndex: number }) {
 
   return (
     <div className="flex flex-col gap-2">
-      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-        Inne elementy ciągu
-      </p>
-
-      <Select
-        key={extraValues.length}
-        onValueChange={(id) => extras.append({ id, quantity: 1 })}
-      >
-        <SelectTrigger disabled={groups.length === 0}>
-          <SelectValue placeholder="Wybierz element" />
-        </SelectTrigger>
-        <SelectContent>
-          {groups.map(({ category, items }) => (
-            <SelectGroup key={category}>
-              <SelectLabel>{CATEGORY_LABELS[category]}</SelectLabel>
-              {items.map(({ id, label }) => (
-                <SelectItem key={id} value={id}>
-                  {label}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          ))}
-        </SelectContent>
-      </Select>
+      <div className="flex items-center gap-1.5">
+        <span className="w-28 shrink-0 text-sm text-muted-foreground">
+          Inne elementy
+        </span>
+        <Select
+          key={extraValues.length}
+          onValueChange={(id) => extras.append({ id, quantity: 1 })}
+        >
+          <SelectTrigger className="h-8 flex-1" disabled={groups.length === 0}>
+            <SelectValue placeholder="Dodaj element" />
+          </SelectTrigger>
+          <SelectContent>
+            {groups.map(({ category, items }) => (
+              <SelectGroup key={category}>
+                <SelectLabel>{CATEGORY_LABELS[category]}</SelectLabel>
+                {items.map(({ id, label }) => (
+                  <SelectItem key={id} value={id}>
+                    {label}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
 
       {extras.fields.length > 0 && (
-        <ul className="flex flex-wrap gap-1.5">
+        <ul className="flex flex-col gap-2">
           {extras.fields.map((field, extraIndex) => {
             const componentId = extraValues[extraIndex]?.id
             const item = inventoryItems.find(({ id }) => id === componentId)
 
             return (
               <li key={field.id}>
-                <Badge className="gap-1 pr-1" variant="selected">
-                  {item?.label ?? componentId}
-                  <button
-                    aria-label="Usuń element"
-                    className="rounded-sm hover:text-destructive"
-                    onClick={() => extras.remove(extraIndex)}
-                    type="button"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                </Badge>
+                <CountStepper
+                  label={item?.label ?? componentId ?? ""}
+                  name={`layouts.${layoutIndex}.extras.${extraIndex}.quantity`}
+                  onRemove={() => extras.remove(extraIndex)}
+                />
               </li>
             )
           })}

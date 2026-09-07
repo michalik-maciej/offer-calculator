@@ -1,7 +1,6 @@
-import { ChevronLeft, ChevronRight, Minus, Plus, Trash2 } from "lucide-react"
+import { ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react"
 import {
   Controller,
-  FieldPathByValue,
   useFieldArray,
   useFormContext,
   useWatch,
@@ -9,18 +8,12 @@ import {
 
 import { DEFAULT_SHELF_COUNT_BY_HEIGHT } from "@/domain/models/shelfDefaults"
 
-import { ExtrasFields } from "./ExtrasFields"
+import { CountStepper } from "./CountStepper"
+import { OptionsFields } from "./OptionsFields"
+import { SectionLabel } from "./SectionLabel"
 import { Button } from "../../../core/ui/button"
 import { useInventoryDimensions } from "../../hooks/useInventoryDimensions"
-import { WallOfferInput } from "../../offer.types"
-
-type NumericPath = FieldPathByValue<WallOfferInput, number>
-
-const SectionLabel = ({ children }: { children: React.ReactNode }) => (
-  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-    {children}
-  </p>
-)
+import { NumericPath, WallOfferInput } from "../../offer.types"
 
 const ValueDisplay = ({ value }: { value: number | null | undefined }) => (
   <span className="flex h-8 w-16 shrink-0 items-center justify-center rounded-md border border-input text-sm tabular-nums">
@@ -125,71 +118,6 @@ const OptionStepper = ({
   )
 }
 
-const CountStepper = ({
-  label,
-  min = 1,
-  name,
-  onRemove,
-}: {
-  label: string
-  min?: number
-  name: NumericPath
-  onRemove?: () => void
-}) => {
-  const { control } = useFormContext<WallOfferInput>()
-
-  return (
-    <div className="flex items-center gap-1.5">
-      <span className="w-28 shrink-0 text-sm text-muted-foreground">
-        {label}
-      </span>
-      <Controller
-        control={control}
-        name={name}
-        render={({ field }) => {
-          const value = field.value ?? min
-
-          return (
-            <>
-              <Button
-                className="h-8 w-8 shrink-0"
-                disabled={value <= min}
-                onClick={() => field.onChange(value - 1)}
-                size="icon"
-                type="button"
-                variant="outline"
-              >
-                <Minus className="h-3 w-3" />
-              </Button>
-              <ValueDisplay value={value} />
-              <Button
-                className="h-8 w-8 shrink-0"
-                onClick={() => field.onChange(value + 1)}
-                size="icon"
-                type="button"
-                variant="outline"
-              >
-                <Plus className="h-3 w-3" />
-              </Button>
-            </>
-          )
-        }}
-      />
-      {onRemove && (
-        <Button
-          className="h-8 w-8 shrink-0 text-destructive hover:text-destructive"
-          onClick={onRemove}
-          size="icon"
-          type="button"
-          variant="ghost"
-        >
-          <Trash2 className="h-3 w-3" />
-        </Button>
-      )}
-    </div>
-  )
-}
-
 const ShelvesFields = ({
   layoutIndex,
   onSelectShelf,
@@ -231,7 +159,7 @@ const ShelvesFields = ({
   }
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 bg-neutral-200/50 p-4 rounded-lg">
       <div className="flex items-center justify-between gap-2">
         <SectionLabel>Półki</SectionLabel>
         {shelfCount > 0 && (
@@ -254,6 +182,7 @@ const ShelvesFields = ({
           />
           <CountStepper
             label="Liczba półek"
+            min={1}
             name={`${shelfPath}.numberOfShelves`}
             onRemove={handleRemove}
           />
@@ -306,8 +235,8 @@ export function ShelfUnitEditor({
   if (!unit) return null
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-2 bg-neutral-200/50 p-4 rounded-lg">
         <SectionLabel>Ciąg</SectionLabel>
         <OptionStepper
           label="Głębokość bazy"
@@ -320,7 +249,7 @@ export function ShelfUnitEditor({
           options={layoutHeights}
         />
       </div>
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 bg-neutral-200/50 p-4 rounded-lg">
         <div className="flex items-center justify-between gap-2">
           <SectionLabel>Regały</SectionLabel>
           <SectionNavigator
@@ -336,6 +265,7 @@ export function ShelfUnitEditor({
         />
         <CountStepper
           label="Liczba regałów"
+          min={1}
           name={`layouts.${layoutIndex}.shelfUnits.${unitIndex}.numberOfShelfUnits`}
           onRemove={onRemoveUnit}
         />
@@ -357,7 +287,7 @@ export function ShelfUnitEditor({
         shelfDepthOptions={shelfDepths}
         unitIndex={unitIndex}
       />
-      <ExtrasFields layoutIndex={layoutIndex} />
+      <OptionsFields layoutIndex={layoutIndex} />
     </div>
   )
 }

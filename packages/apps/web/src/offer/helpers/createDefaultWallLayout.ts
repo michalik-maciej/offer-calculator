@@ -1,5 +1,5 @@
 import { DEFAULT_SHELF_COUNT_BY_HEIGHT } from "@/domain/models/shelfDefaults"
-import { LayoutWall } from "@/schemas/LayoutWall.schema"
+import { DEFAULT_BACK_VARIANT, LayoutWall } from "@/schemas/LayoutWall.schema"
 
 import { InventoryDimensions } from "../hooks/useInventoryDimensions"
 
@@ -28,8 +28,10 @@ export function createDefaultWallLayout({
   if (shelfDepth == null) return null
 
   return {
+    backVariant: DEFAULT_BACK_VARIANT,
     depth,
     extras: [],
+    hasBaseCover: false,
     height,
     numberOfLayouts: 1,
     shelfUnits: [

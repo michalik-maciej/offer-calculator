@@ -12,45 +12,22 @@ export const OfferInputSchema = v.object({
 
 export type OfferInput = v.InferOutput<typeof OfferInputSchema>
 
-export const OfferOutputSchema = v.object({
-  breakdown: v.record(
-    v.picklist([
-      "back",
-      "baseCover",
-      "foot",
-      "leg",
-      "misc",
-      "shelf",
-      "support",
-    ]),
-    v.array(
-      v.object({
-        id: v.string(),
-        label: v.string(),
-        quantity: v.pipe(v.number(), v.minValue(0)),
-      }),
-    ),
+const BreakdownSchema = v.record(
+  v.picklist(["back", "baseCover", "foot", "leg", "misc", "shelf", "support"]),
+  v.array(
+    v.object({
+      id: v.string(),
+      label: v.string(),
+      quantity: v.number(),
+    }),
   ),
+)
+
+export const OfferOutputSchema = v.object({
+  breakdown: BreakdownSchema,
   layouts: v.array(
     v.object({
-      breakdown: v.record(
-        v.picklist([
-          "back",
-          "baseCover",
-          "foot",
-          "leg",
-          "misc",
-          "shelf",
-          "support",
-        ]),
-        v.array(
-          v.object({
-            id: v.string(),
-            label: v.string(),
-            quantity: v.pipe(v.number(), v.minValue(0)),
-          }),
-        ),
-      ),
+      breakdown: BreakdownSchema,
       description: v.string(),
       basePrice: v.pipe(v.number(), v.minValue(0)),
     }),

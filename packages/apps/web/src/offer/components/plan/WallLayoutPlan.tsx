@@ -184,7 +184,7 @@ export function WallLayoutPlan({
         onOpenChange={(isOpen) => !isOpen && selectUnit(null)}
         open={selectedUnitIndex !== null}
       >
-        <DrawerContent className="py-6 pl-6">
+        <DrawerContent className="py-4 pl-4">
           {selectedUnitIndex !== null && selectedUnit && (
             <>
               <DrawerTitle className="mb-4 pr-6">

@@ -1,3 +1,5 @@
+import { FieldPathByValue } from "react-hook-form"
+
 import { LayoutWall } from "@/schemas/LayoutWall.schema"
 import { OfferInput } from "@/schemas/Offer.schema"
 
@@ -6,3 +8,6 @@ import { OfferInput } from "@/schemas/Offer.schema"
 export type WallOfferInput = Omit<OfferInput, "layouts"> & {
   layouts: LayoutWall[]
 }
+
+export type NumericPath = FieldPathByValue<WallOfferInput, number>
+export type CountPath = FieldPathByValue<WallOfferInput, number | undefined>

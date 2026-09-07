@@ -1,20 +1,29 @@
 import { filter, orderBy } from "lodash/fp"
 
-import { Component } from "../../models/component"
+import { DEFAULT_BACK_VARIANT } from "@/schemas/LayoutWall.schema"
+
+import { Component, ComponentDemand } from "../../models/component"
 import { MissingComponentError } from "../../models/missingComponentError"
 import { ShelfUnit } from "../../models/shelfUnit"
 
 type BackPanelCalculationContext = {
+  backVariant?: number
   height: number
   shelfUnitsByWidth: ShelfUnit[]
 }
 
 export function calculateBackPanelDemand(
-  { height, shelfUnitsByWidth }: BackPanelCalculationContext,
+  {
+    backVariant = DEFAULT_BACK_VARIANT,
+    height,
+    shelfUnitsByWidth,
+  }: BackPanelCalculationContext,
   inventory: Component[],
 ) {
   const BACK_CLEARANCE_CM = 10
-  const demand = []
+  const demand: ComponentDemand = []
+
+  if (backVariant === 0) return demand
 
   for (const { width, numberOfShelfUnits } of shelfUnitsByWidth) {
     const availableBackPanels = orderBy(
@@ -40,7 +49,7 @@ export function calculateBackPanelDemand(
 
       demand.push({
         id,
-        quantity: numberOfShelfUnits * countPerShelfUnit,
+        quantity: numberOfShelfUnits * countPerShelfUnit * backVariant,
       })
 
       remainder %= panelHeight
