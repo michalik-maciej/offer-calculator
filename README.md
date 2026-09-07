@@ -105,11 +105,11 @@ Other entry points: `pnpm dev:web`, `pnpm dev:api`, `pnpm build`.
 ## Tests and quality
 
 ```bash
-pnpm test           # 26 tests across 15 files
+pnpm test           # 35 tests across 17 files
 pnpm test:coverage  # collected from the domain package
 pnpm typecheck
 pnpm lint
-pnpm validate       # typecheck + lint + format check, everything at once
+pnpm validate
 ```
 
 Tests concentrate on the domain package, where the logic that can actually be wrong lives, plus one

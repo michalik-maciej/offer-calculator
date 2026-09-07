@@ -13,31 +13,45 @@ alone. It becomes its own step, and only after the maintainer agrees to it.
 
 ### Verify With pnpm validate and pnpm vitest run
 
-Every step is checked with `pnpm validate` (typecheck, lint, format check) and `pnpm vitest run`, and
-the report says plainly what passed and what did not. When something was only checked statically and
+Every step is checked with `pnpm validate` (typecheck, lint, format check, build) and
+`pnpm vitest run`, and the report says plainly what passed and what did not. CI splits the same work
+across separate jobs, but locally these two commands are the whole gate. When something was only
+checked statically and
 never exercised in a running app, say so in those words. A frontend change is not verified until it
 has been opened in a browser.
 
 ### What Green Means Here
 
-CI runs two jobs. The first, `validate`, runs `pnpm install --frozen-lockfile`, then `pnpm validate`,
-then `pnpm vitest run`, then `pnpm build`. Typecheck and lint fan out across all four packages
-through Turborepo; the format check is a single `prettier --check .` over the whole repository. The
-workflow also declares a `pull_request` trigger, which never fires, because this repository does not
-use pull requests.
+CI runs four jobs. Three of them run in parallel, each on its own runner, each repeating checkout,
+Node, pnpm and `pnpm install --frozen-lockfile` before doing its own work: `lint` runs `pnpm lint`
+and `pnpm format:check`, `build` runs `pnpm build`, and `test` runs `pnpm vitest run`. The fourth,
+`deploy-api`, waits on all three. The workflow also declares a `pull_request` trigger, which never
+fires, because this repository does not use pull requests.
+
+There is no separate typecheck job, and that is deliberate rather than an oversight. `pnpm build`
+runs `tsc -b` in the API and the web app, and TypeScript project references make that walk into
+`domain` and `schemas` as well, so the build already typechecks every package. A typecheck job would
+compile the same code a second time.
+
+The `test` job generates the Prisma client itself before running Vitest. Its runner is a fresh
+machine that has never run a build, and `createApp` imports `@prisma/client` through the repository
+layer, so without that step the suite fails on an ungenerated client.
 
 So CI reports on code that is already on `main`. It catches what a machine other than this one sees,
-which is worth having, but it is a net rather than a gate. The gate is running `pnpm validate` and
-`pnpm vitest run` locally, before the commit.
+which is worth having, but it is a net rather than a gate. Splitting one job into four makes a
+failure easier to read and lets a single job be rerun, but it does not turn CI into a gate. The gate
+is running `pnpm validate` and `pnpm vitest run` locally, before the commit.
 
-The second job, `deploy-api`, runs `flyctl deploy --remote-only` after `validate` passes, and only on
-a push to `main`. It exists because Vercel redeploys the front end on every push while Fly.io does not. A single `deploy-api`
-concurrency group keeps two deploys from running the migration release command at the same time.
+`deploy-api` runs `flyctl deploy --remote-only` after `lint`, `build` and `test` all pass, and only
+on a push to `main`. It exists because Vercel redeploys the front end on every push while Fly.io does
+not. A single `deploy-api` concurrency group keeps two deploys from running the migration release
+command at the same time.
 
-Two gaps are worth knowing about. Neither the tests nor the build are part of `validate`, they are
-separate steps, so running only `pnpm validate` proves less than it looks. And the CI build is a
-compile check, not a rehearsal of the real one: the runner has no `VITE_API_URL`, so the bundle it
-produces is thrown away and only Vercel's build makes a bundle that runs.
+Two things are worth knowing about. No CI job runs `pnpm validate` itself, it runs the pieces, so the
+local command and the remote checks can drift apart if one is changed without the other. And the
+build is a compile check, not a rehearsal of the real one: neither the CI runner nor a bare checkout
+has a `VITE_API_URL`, so the bundle it produces is thrown away and only Vercel's build makes a bundle
+that runs. `validate` also writes to `dist/`, which no other check does.
 
 ### The Toolchain Version Lives in Three Places
 
@@ -47,9 +61,9 @@ version means changing all of them together.
 
 ### CI Has No Database
 
-The `validate` job sets a deliberately unusable `DATABASE_URL` purely so `prisma generate` can run.
-There are no service containers and no secrets in that job, so every test must be pure or take its
-collaborators by injection. The one secret the workflow uses, `FLY_API_TOKEN`, belongs to
+The `build` and `test` jobs set a deliberately unusable `DATABASE_URL`, purely so `prisma generate`
+can run. There are no service containers and no secrets in either of them, so every test must be pure
+or take its collaborators by injection. The one secret the workflow uses, `FLY_API_TOKEN`, belongs to
 `deploy-api` and never reaches a test.
 
 ### Read the Decision Log Before Touching the Foundations

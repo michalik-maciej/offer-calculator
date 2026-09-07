@@ -64,11 +64,13 @@ Multi-stage `Dockerfile` for the API (deps, build, runner).
 
 ### CI/CD
 
-GitHub Actions (`.github/workflows/ci.yml`): a `validate` job running `pnpm validate`, `pnpm vitest
-run` and `pnpm build`, then a `deploy-api` job running `flyctl deploy --remote-only`. Both fire on push
-to `main`, which is where all work lands, and `deploy-api` runs only there and only once `validate`
-is green. The workflow also declares a `pull_request` trigger, kept but dormant, since the repository
-does not use pull requests. Deploying the API needs a `FLY_API_TOKEN` repository secret.
+GitHub Actions (`.github/workflows/ci.yml`): three parallel jobs, `lint` (`pnpm lint` and
+`pnpm format:check`), `build` (`pnpm build`, which typechecks every package through project
+references) and `test` (`prisma generate`, then `pnpm vitest run`), followed by a `deploy-api` job
+running `flyctl deploy --remote-only`. All fire on push to `main`, which is where all work lands, and
+`deploy-api` runs only there and only once the other three are green. The workflow also declares a
+`pull_request` trigger, kept but dormant, since the repository does not use pull requests. Deploying
+the API needs a `FLY_API_TOKEN` repository secret.
 
 ### Hosting
 
@@ -87,7 +89,8 @@ does not use pull requests. Deploying the API needs a `FLY_API_TOKEN` repository
 
 ### Type Checking
 
-`pnpm typecheck` through Turborepo; `pnpm validate` runs typecheck, lint and format check together.
+`pnpm typecheck` through Turborepo; `pnpm validate` runs typecheck, lint, format check and build
+together.
 
 ## Key Dependencies
 
@@ -103,6 +106,6 @@ itself comes from the `packageManager` field and is read by CI.
 
 ---
 
-_Last Updated_: 2026-09-05
+_Last Updated_: 2026-09-07
 _Auto-detected_: all versions and tooling, from package manifests and configuration files
 _User-provided_: none

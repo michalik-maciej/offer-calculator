@@ -161,7 +161,7 @@ The agent never stages, commits or pushes, everything happens on `main` without 
 
 #### Working Process (`standards/workflow/process.md`)
 
-One concern per step, problems reported rather than quietly fixed, verification with `pnpm validate` and `pnpm vitest run`, what green actually means here, the two CI jobs and why the API deploys itself, the toolchain version pinned in three places, CI running without a database, and reading `docs/decisions.md` before touching wiring, auth or persistence.
+One concern per step, problems reported rather than quietly fixed, verification with `pnpm validate` and `pnpm vitest run`, what green actually means here, the four CI jobs and why there is no typecheck job among them, the toolchain version pinned in three places, CI running without a database, and reading `docs/decisions.md` before touching wiring, auth or persistence.
 
 ---
 

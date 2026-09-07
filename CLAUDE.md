@@ -88,7 +88,7 @@ pnpm lint             # ESLint all packages
 pnpm typecheck        # TypeScript type checking
 pnpm format           # Format with Prettier + fix ESLint
 pnpm format:check     # Check formatting without modifying
-pnpm validate         # Full validation: typecheck + lint + format:check
+pnpm validate         # Full validation: typecheck + lint + format:check + build
 
 # Testing
 pnpm test             # Run all tests in watch mode
@@ -277,8 +277,8 @@ pnpm build              # Builds all: domain → schemas → api → web
 ```
 
 The deploy is not manual. The `deploy-api` job in `.github/workflows/ci.yml` runs
-`flyctl deploy --remote-only` on every push to `main` once `validate` is green, using the
-`FLY_API_TOKEN` repository secret.
+`flyctl deploy --remote-only` on every push to `main` once the `lint`, `build` and `test` jobs are
+green, using the `FLY_API_TOKEN` repository secret.
 
 ### Frontend Deployment (Vercel)
 
@@ -597,7 +597,7 @@ below are the only gate, and they have to be run before the commit rather than a
 A step is done, from Claude's side, when:
 
 1. The code does what the task asked, and nothing beyond it
-2. `pnpm validate` passes (no TS errors, no lint errors, formatted)
+2. `pnpm validate` passes (no TS errors, no lint errors, formatted, both apps build)
 3. `pnpm vitest run` passes
 4. Tests were added or updated if domain logic changed
 5. The changes sit unstaged in the working tree and what was verified (and how) was reported
