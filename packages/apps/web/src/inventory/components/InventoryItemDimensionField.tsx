@@ -6,13 +6,6 @@ import { CATEGORY_REQUIREMENTS } from "@/domain/models/component"
 import { type InventoryItemFormValues } from "./InventoryItem"
 import { Input } from "../../core/ui/input"
 import { Label } from "../../core/ui/label"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../core/ui/select"
 import { getDimensionOptions } from "../../inventory/helpers/getDimensionOptions"
 import { inventoryQueries } from "../inventory.api"
 
@@ -32,71 +25,64 @@ export const InventoryItemDimensionField = ({ dimension, label }: Props) => {
   })
   const { control, watch } = useFormContext<InventoryItemFormValues>()
   const category = watch("category")
-  const options =
+  const suggestions =
     category && optionsByCategory ? optionsByCategory[category] : []
   const isRequired =
-    CATEGORY_REQUIREMENTS[category]?.required.includes(dimension)
+    CATEGORY_REQUIREMENTS[category]?.required.includes(dimension) ?? false
+  const suggestionsId = `inventory-${dimension}-suggestions`
 
   return (
     <div className="flex flex-col space-y-1 gap-2">
-      <Label
-        className={
-          isRequired || category === "misc"
-            ? "font-semibold"
-            : "text-muted-foreground"
-        }
-      >
+      <Label className={isRequired ? "font-semibold" : "text-muted-foreground"}>
         {label}
       </Label>
       <Controller
         name={dimension}
         control={control}
         rules={{
-          required: isRequired && category !== "misc" ? "Pole wymagane" : false,
           validate: (value) => {
-            if (value === null) {
-              return isRequired && category !== "misc" ? "Pole wymagane" : true
+            if (value == null) {
+              return isRequired ? "Pole wymagane" : true
             }
 
             if (typeof value !== "number" || !Number.isFinite(value)) {
               return "Nieprawidłowa wartość"
             }
 
-            return true
+            return value > 0 || "Wartość musi być dodatnia"
           },
         }}
-        render={({ field }) =>
-          category === "misc" ? (
+        render={({ field, fieldState }) => (
+          <>
             <Input
+              list={suggestionsId}
               min={0}
-              type="number"
-              inputMode="numeric"
-              placeholder="—"
-              value={field.value == null ? "" : String(field.value)}
+              name={field.name}
+              onBlur={field.onBlur}
               onChange={(e) => {
                 const raw = e.target.value
                 field.onChange(raw === "" ? null : Number(raw))
               }}
+              placeholder="—"
+              ref={field.ref}
+              type="number"
+              inputMode="numeric"
+              value={field.value == null ? "" : String(field.value)}
             />
-          ) : (
-            <Select
-              disabled={!isRequired}
-              value={field.value == null ? undefined : String(field.value)}
-              onValueChange={(v) => field.onChange(Number(v))}
+            <datalist id={suggestionsId}>
+              {suggestions.map((value) => (
+                <option key={value} value={value} />
+              ))}
+            </datalist>
+            <p
+              className={`text-xs text-destructive min-h-5 ${
+                fieldState.error?.message ? "" : "invisible"
+              }`}
             >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {options.map((value) => (
-                  <SelectItem key={value} value={String(value)}>
-                    {value}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )
-        }
+              {fieldState.error?.message}
+            </p>
+          </>
+        )}
       />
     </div>
   )

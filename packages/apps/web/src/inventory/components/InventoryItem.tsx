@@ -176,7 +176,7 @@ export function InventoryItem({ defaultValues, onClose }: Props) {
         </div>
 
         {/* Dimensions */}
-        <div className="grid grid-cols-3 gap-4 h-20">
+        <div className="grid grid-cols-3 gap-4">
           <InventoryItemDimensionField dimension="width" label="Szerokość" />
           <InventoryItemDimensionField dimension="height" label="Wysokość" />
           <InventoryItemDimensionField dimension="depth" label="Głębokość" />
