@@ -64,8 +64,8 @@ Multi-stage `Dockerfile` for the API (deps, build, runner).
 
 ### CI/CD
 
-GitHub Actions (`.github/workflows/ci.yml`): a `validate` job running `pnpm validate` followed by
-`pnpm vitest run`, then a `deploy-api` job running `flyctl deploy --remote-only`. Both fire on push
+GitHub Actions (`.github/workflows/ci.yml`): a `validate` job running `pnpm validate`, `pnpm vitest
+run` and `pnpm build`, then a `deploy-api` job running `flyctl deploy --remote-only`. Both fire on push
 to `main`, which is where all work lands, and `deploy-api` runs only there and only once `validate`
 is green. The workflow also declares a `pull_request` trigger, kept but dormant, since the repository
 does not use pull requests. Deploying the API needs a `FLY_API_TOKEN` repository secret.

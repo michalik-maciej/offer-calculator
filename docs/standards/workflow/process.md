@@ -21,9 +21,10 @@ has been opened in a browser.
 ### What Green Means Here
 
 CI runs two jobs. The first, `validate`, runs `pnpm install --frozen-lockfile`, then `pnpm validate`,
-then `pnpm vitest run`. Typecheck and lint fan out across all four packages through Turborepo; the
-format check is a single `prettier --check .` over the whole repository. The workflow also declares a
-`pull_request` trigger, which never fires, because this repository does not use pull requests.
+then `pnpm vitest run`, then `pnpm build`. Typecheck and lint fan out across all four packages
+through Turborepo; the format check is a single `prettier --check .` over the whole repository. The
+workflow also declares a `pull_request` trigger, which never fires, because this repository does not
+use pull requests.
 
 So CI reports on code that is already on `main`. It catches what a machine other than this one sees,
 which is worth having, but it is a net rather than a gate. The gate is running `pnpm validate` and
@@ -33,10 +34,10 @@ The second job, `deploy-api`, runs `flyctl deploy --remote-only` after `validate
 a push to `main`. It exists because Vercel redeploys the front end on every push while Fly.io does not. A single `deploy-api`
 concurrency group keeps two deploys from running the migration release command at the same time.
 
-Two gaps are worth knowing about. Tests are not part of `validate`, they are a separate step, so
-running only `pnpm validate` proves less than it looks. And nothing builds the web bundle, in CI or
-in `validate`, so a change that typechecks and lints can still break `vite build` and will surface
-first on Vercel.
+Two gaps are worth knowing about. Neither the tests nor the build are part of `validate`, they are
+separate steps, so running only `pnpm validate` proves less than it looks. And the CI build is a
+compile check, not a rehearsal of the real one: the runner has no `VITE_API_URL`, so the bundle it
+produces is thrown away and only Vercel's build makes a bundle that runs.
 
 ### The Toolchain Version Lives in Three Places
 
