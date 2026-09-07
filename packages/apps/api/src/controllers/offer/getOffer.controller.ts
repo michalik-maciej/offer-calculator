@@ -13,5 +13,10 @@ export async function getOfferController(req: Request, res: Response) {
   }
 
   const offer = await getOfferById(params.output.id)
-  res.status(200).json(offer)
+
+  if (!offer) {
+    return res.status(404).json({ error: "Offer not found" })
+  }
+
+  return res.status(200).json(offer)
 }
