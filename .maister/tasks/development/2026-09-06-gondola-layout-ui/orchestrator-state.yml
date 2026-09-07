@@ -1,0 +1,312 @@
+orchestrator:
+  started_phase: phase-10
+  completed_phases: [phase-1, phase-2, phase-4, phase-5, phase-6, phase-7, phase-8]
+  plan_summary:
+    task_groups: 7
+    total_steps: 40
+    execution: serial
+    tests_expected: 4-6
+    note: >-
+      Planista skorygował specyfikację: ShelvesFields też potrzebuje prefiksu ścieżki,
+      bo jego useFieldArray wskazuje ścieżkę ścienną, która po poszerzeniu typu nadal się
+      kompiluje i wywala się dopiero w działającej aplikacji.
+  skipped_phases:
+    - phase: phase-3
+      reason: >-
+        Brak odtwarzalnego defektu. Rozjazd w liczeniu nóg odtwarza się w teście domeny,
+        ale żaden użytkownik nie może go wywołać i żadna zapisana oferta go nie zawiera,
+        więc decyzja o dzieleniu nóg definiuje koszt gondoli, a nie naprawia regresję.
+  failed_phases: []
+
+  auto_fix_attempts:
+    phase-1: 0
+    phase-2: 0
+
+  options:
+    html_output: true
+    mockup_format: html
+    spec_audit_enabled: true
+    skip_test_suite: true
+    e2e_enabled: true
+    user_docs_enabled: true
+    code_review_enabled: true
+    pragmatic_review_enabled: true
+    reality_check_enabled: true
+    production_check_enabled: true
+    sequential: null
+
+  created: 2026-09-06T12:47:03Z
+  updated: 2026-09-06T14:04:30Z
+  task_path: .maister/tasks/development/2026-09-06-gondola-layout-ui
+
+  task_ids: {}
+  task_tracking_note: >-
+    TaskCreate/TaskUpdate tools are not available in this harness. Phase tracking
+    lives in completed_phases and in dashboard-data.js only.
+
+task:
+  title: Gondola layout support in the offer configurator UI
+  description: >-
+    Add gondola layout support to the offer configurator UI. The domain already
+    calculates gondola demand (calculateGondolaLayoutDemand, with tests), the Valibot
+    contract exists (packages/schemas/src/LayoutGondola.schema.ts) and
+    buildLayoutDescription already produces Polish descriptions for gondolas, but
+    nothing under packages/apps/web references gondolas at all: a user cannot add one.
+    Needed: choosing the run type when adding a run, the gondola dimension form, plan
+    rendering and pricing for it. All user-facing text in Polish.
+  status: in_progress
+  tags: [frontend, gondola, configurator]
+  priority: high
+
+task_context:
+  risk_level: medium
+  clarifications_resolved: true
+  scope_expanded: true
+  scope_note: >-
+    Faza 1 rozszerzyła zakres poza interfejs: maintainer rozstrzygnął, że gondola
+    dzieli nogi między strony jak w wersji pierwszej kalkulatora, więc zmienia się
+    calculateGondolaLayoutDemand i jego test. Obie strony konfigurowane są razem, jako
+    jedna konfiguracja, bez edycji stron osobno.
+  architecture_decision: null
+
+  task_characteristics:
+    has_reproducible_defect: false
+    modifies_existing_code: true
+    creates_new_entities: true
+    involves_data_operations: true
+    ui_heavy: true
+  task_characteristics_note: >-
+    has_reproducible_defect ustawione na false świadomie. Rozjazd w liczeniu nóg
+    odtwarza się jedną komendą w calculateGondolaLayoutDemand.test.ts, ale żaden
+    użytkownik nie może go wywołać, żadna zapisana oferta nie zawiera gondoli, a
+    test w repo utrwala dzisiejsze zachowanie celowo. Decyzja o dzieleniu nóg
+    definiuje więc, ile gondola kosztuje, a nie przywraca utracone zachowanie.
+
+  research_reference:
+    path: null
+    research_question: null
+    research_type: null
+    confidence_level: null
+
+  design_reference:
+    source: mockup-studio
+    product_design_path: null
+    mockup_count: 4
+    has_brief: false
+    index_path: analysis/design-context/INDEX.md
+    gallery_url: http://localhost:3847
+
+  project_context:
+    project_doc_paths:
+      - .maister/docs/INDEX.md
+      - .maister/docs/project/vision.md
+      - .maister/docs/project/tech-stack.md
+    note: >-
+      INDEX.md deliberately has no project/architecture.md and no project/roadmap.md;
+      CLAUDE.md and docs/decisions.md are the authoritative architecture documents.
+
+  phase_summaries:
+    research: {summary: null, key_findings: [], recommended_approach: null}
+    design:
+      summary: >-
+        Cztery makiety HTML związane z realnym systemem projektowym repo: tokeny shadcn
+        z index.css, prymitywy z core/ui, ikony lucide, skala rysunku 1.6 px na cm.
+        Dwa ekrany istnieją po to, żeby rozstrzygnąć odłożone decyzje wizualne.
+      screen_count: 4
+      component_count: 4
+      index_path: analysis/design-context/INDEX.md
+      artifacts:
+        - {path: analysis/design-context/INDEX.md, label: Inwentarz makiet, html: null}
+        - {path: analysis/design-context/design-resources.md, label: Odkryty język wizualny, html: null}
+    ui_mockups:
+      components_designed: [layout-plan-header, plan-unit, type-picker, both-sides-note]
+      summary: >-
+        Wygenerowane w formacie HTML przez mockup-studio, serwer galerii na porcie 3847,
+        pliki zapisane w analysis/design-context/mockups. Bez konsultacji zewnętrznych
+        skilli projektowych: repo ma własny system tokenów.
+      format_used: html
+      decisions:
+        - decision: Dodawanie ciągu przez dwa przyciski obok siebie
+          rationale: >-
+            "Dodaj ciąg przyścienny" i "Dodaj gondolę", każdy wyłączany niezależnie.
+            Gondola widoczna od pierwszego wejścia, bez dodatkowego kliknięcia.
+        - decision: Gondola rysowana jako dwa pasy stykające się plecami
+          rationale: >-
+            Widać, że to regał dwustronny. Zgodne z geometrią z drugiego kalkulatora
+            i z metaforą rysunku w skali. Oba pasy z tej samej konfiguracji.
+      risks:
+        - >-
+          Konfiguracja shadcn w components.json wskazuje nieistniejący tailwind.config.cjs
+          i aliasy @/components/ui, gdy prymitywy leżą w src/core/ui. Martwa konfiguracja,
+          myląca przy dodawaniu nowych komponentów.
+      artifacts:
+        - {path: analysis/design-context/mockups/dodawanie-ci-gu-dwa-warianty.html, label: Dodawanie ciągu, dwa warianty, html: null}
+        - {path: analysis/design-context/mockups/gondola-na-planie-dwa-warianty.html, label: Gondola na planie, dwa warianty, html: null}
+        - {path: analysis/design-context/mockups/konfigurator-z-gondol.html, label: Konfigurator z gondolą, html: null}
+        - {path: analysis/design-context/mockups/szuflada-edycji-gondoli.html, label: Szuflada edycji gondoli, html: null}
+    codebase_analysis:
+      summary: >-
+        Obsługa gondoli jest kompletna poniżej granicy API i całkowicie nieobecna powyżej:
+        schematy, domena, API i Prisma nie wymagają zmian, a jedyną blokadą jest
+        ośmiolinijkowy plik typów zawężający unię layoutów do LayoutWall[]. Prior art z
+        dwóch wcześniejszych kalkulatorów rozstrzygnął, że gondolaUnits to strony, nie
+        segmenty, i ujawnił rozbieżność w liczeniu nóg.
+      primary_language: TypeScript
+      key_files:
+        - packages/apps/web/src/offer/offer.types.ts
+        - packages/apps/web/src/offer/components/OfferLayouts.tsx
+        - packages/apps/web/src/offer/components/plan/WallLayoutPlan.tsx
+        - packages/apps/web/src/offer/components/editor/ShelfUnitEditor.tsx
+        - packages/apps/web/src/offer/components/OfferFormProvider.tsx
+        - packages/domain/src/orchestrations/calculateGondolaLayoutDemand/calculateGondolaLayoutDemand.ts
+      decisions:
+        - decision: gondolaUnits to strony gondoli, nie segmenty wzdłuż ciągu
+          rationale: >-
+            Obie wcześniejsze implementacje modelowały ten poziom jako strony, niezależnie
+            od siebie: v1 przez subCollections o stałej długości dwa, v2 przez grupy
+            side/side/peak/peak.
+      risks:
+        - >-
+          Dzisiejszy calculateGondolaLayoutDemand nie dzieli nóg między strony, a wersja
+          pierwsza kalkulatora dzieliła je na pół. Rozbieżność cenowa wobec zachowania,
+          które działało u klienta.
+        - >-
+          buildLayoutDescription opisuje wyłącznie pierwszą stronę gondoli, więc opis
+          ciągu o rozjechanych stronach jest niepełny.
+        - >-
+          Brak jakichkolwiek testów pod packages/apps/web i brak JSDOM w konfiguracji
+          Vitest: poprawność interfejsu weryfikuje się wyłącznie użyciem aplikacji.
+      artifacts:
+        - {path: analysis/codebase-analysis.md, label: Analiza kodu, html: null}
+        - {path: analysis/prior-art.md, label: Prior art z wcześniejszych kalkulatorów, html: null}
+        - {path: analysis/client-requirements.md, label: Uwagi końcowego klienta, html: null}
+    clarifications:
+      - decision: Gondola dzieli nogi między strony, jak w v1
+        rationale: Jedna wspólna kolumna nóg, dwa niezależne komplety stóp. Zmienia domenę i jej test.
+      - decision: Obie strony gondoli konfigurowane razem, bez możliwości rozdzielenia
+        rationale: >-
+          Jedna konfiguracja stosowana do obu stron, czyli jeden wpis gondolaUnits
+          z numberOfGondolaUnits równym dwa. Zgodne z uwagą klienta, że około 90% gondol
+          jest symetrycznych. Brak akcji "rozłącz gondolę" w tej iteracji.
+      - decision: Zakres zawężony do gondoli, bez szczytu, pleców i osłon
+        rationale: Każdy z tych punktów wymaga nowych pól w schemacie i migracji zapisanych ofert.
+      - decision: W interfejsie "Strona", schemat bez przemianowania
+        rationale: Unika migracji, kosztem mylącej nazwy gondolaUnits w kodzie.
+    gap_analysis:
+      summary: >-
+        Poniżej granicy API ryzyko jest niskie: żadnej zmiany schematu, kontrolera ani
+        Prismy, brak migracji, brak zapisanych gondoli do zepsucia. Powyżej granicy całość
+        skupia się w jednym poszerzeniu typu przechodzącym przez sześć plików, przy zerowym
+        pokryciu testami frontendu. Po decyzji o wspólnej konfiguracji obu stron ścieżka
+        użytkownika dla gondoli jest identyczna jak dla ciągu przyściennego, tylko z innym
+        rysunkiem.
+      integration_points:
+        - packages/domain/src/orchestrations/calculateGondolaLayoutDemand (reguła nóg i test)
+        - packages/domain/src/orchestrations/calculateWallLayoutDemand (tylko jeśli wydzielimy zapotrzebowanie bez nóg)
+        - packages/apps/web/src/offer/offer.types.ts (poszerzenie typu, po nim równe OfferInput)
+        - packages/apps/web/src/offer/components/OfferFormProvider.tsx (generyk i znikające rzutowanie)
+        - packages/apps/web/src/offer/components/OfferLayouts.tsx (wybór typu, dyspozytor planu, druga fabryka)
+        - packages/apps/web/src/offer/components/plan (nowy plan gondoli, ewentualny wspólny nagłówek)
+        - packages/apps/web/src/offer/components/editor/ShelfUnitEditor.tsx (ścieżki pól)
+        - packages/apps/web/src/offer/helpers (nowa fabryka domyślnej gondoli)
+      decisions:
+        - decision: "Nogi: sufit(liczba stron / 2) razy (liczba regałów + 1) razy liczba ciągów"
+          rationale: Dwie strony dzielą kolumnę, wpis jednostronny dostaje pełną, żadnych ułamków na wyjściu.
+        - decision: Sposób dodawania ciągu i rysunek gondoli rozstrzygną makiety
+          rationale: Decyzje wizualne łatwiej podjąć na obrazku niż z opisu.
+        - decision: Dekompozycję komponentów rozstrzygnie plan implementacji
+          rationale: Planista zobaczy realny rozmiar obu wariantów przy gotowej specyfikacji.
+        - decision: Gondola o rozjechanych stronach nieobsługiwana
+          rationale: Schemat ją dopuszcza, ale nie da się jej dziś utworzyć i nie ma takich ofert.
+      risks:
+        - >-
+          Ułamki nie mogą opuścić orkiestracji: calculateBomPrice i breakdownDemandByCategory
+          nie zaokrąglają, więc pół nogi wyszłoby na Rozpiskę jako "0.5".
+        - >-
+          Dzielenia nóg nie da się zrobić przez delegację, bo calculateWallLayoutDemand liczy
+          plecy, bazy, półki, nogi i stopy w jednym wywołaniu. To jedyne miejsce narażające
+          ścieżkę ścienną na regresję.
+        - >-
+          Zerowe pokrycie testami pod packages/apps/web, więc poszerzenie typu przez sześć
+          plików nie ma siatki bezpieczeństwa poza kompilatorem.
+      artifacts:
+        - {path: analysis/gap-analysis.md, label: Analiza luk, html: null}
+        - {path: analysis/scope-clarifications.md, label: Rozstrzygnięcia zakresowe, html: null}
+    scope_clarifications: {scope_expanded: null, summary: null}
+    ui_mockups: {components_designed: [], summary: null}
+    specification:
+      summary: >-
+        Gondola staje się możliwa do dodania, edycji, narysowania i wyceny, zawsze
+        symetryczna: jeden wpis gondolaUnits z licznikiem dwa. Typ formularza zwija się do
+        OfferInput, co kasuje offer.types.ts razem z rzutowaniem przy hydratacji. Nogi
+        stają się wspólne dla obu stron, więc ich liczenie wychodzi z kalkulacji ściennej,
+        a jej wynik zostaje zamrożony co do treści i kolejności.
+      requirements_count: 17
+      reusable_components: 11
+      new_components_needed: 3
+      decisions:
+        - decision: Zwinąć typ formularza do OfferInput i skasować offer.types.ts
+          rationale: >-
+            Oferta mieszająca oba typy ciągów sprawia, że każde zawężenie per wariant jest
+            faktycznie fałszywe, więc dwa zawężone typy tylko podwoiłyby rzutowanie, które
+            standard stylu i tak wyklucza.
+        - decision: Liczenie nóg wychodzi z calculateWallLayoutDemand
+          rationale: Każda orkiestracja deklaruje własny zasięg zamiast współczynnika ukrytego we wspólnej kalkulacji.
+        - decision: Wynik kalkulacji ściennej zamrożony co do treści i kolejności
+          rationale: Trzy przechodzące testy porównują listy przez toEqual, więc kolejność jest najtańszym dowodem, że ścieżka ścienna się nie ruszyła.
+        - decision: Jeden edytor sparametryzowany prefiksem ścieżki, dwa osobne komponenty planu
+          rationale: Różnica w edytorze to jeden segment ścieżki, różnica w planie to co rysuje.
+        - decision: Fabryka gondoli bierze domyślne z createDefaultWallLayout i składa obiekt pole po polu
+          rationale: Bez dwunastego importu z domeny w przeglądarce i bez ryzyka wycieku klucza ściennego do obiektu gondoli.
+      risks:
+        - >-
+          Typowanie ścieżek React Hook Form nad tablicą unii to jedyna rzecz, która może
+          zamienić poszerzenie typu z mechanicznego w uciążliwe. Sprawdzić przez pnpm
+          typecheck zanim powstanie jakikolwiek nowy komponent.
+        - >-
+          Wydzielenie liczenia nóg może zmienić kolejność zwracanej listy zapotrzebowania,
+          a testy porównują przez toEqual, więc poprawne ilości i tak dadzą czerwony test.
+          Czerwony test ścienny po tej zmianie znaczy, że ruszyła się kolejność, i poprawiać
+          należy kompozycję, nie oczekiwanie.
+        - >-
+          Każda oferta zapisana ponownie po tej zmianie przeliczy swoje gondole według nowej
+          reguły nóg. Dziś nie ma czego migrować, ale ten sam input wyceniony przed i po
+          daje inne liczby.
+        - >-
+          Nic z tego, co powstaje po stronie web, nie jest objęte testami: zero testów pod
+          packages/apps/web, Vitest w Node bez JSDOM, pokrycie liczone tylko z domeny.
+        - >-
+          Gondoli o rozjechanych wpisach gondolaUnits ten edytor nie wyrazi. Formularz
+          pokaże i edytuje wpis zerowy, resztę tablicy zostawi nietkniętą, więc rysunek
+          pokaże mniej, niż obejmuje cena.
+      artifacts:
+        - {path: implementation/spec.md, label: Specyfikacja, html: implementation/spec.html}
+    architecture_decision:
+      decision: Zwinięcie typu formularza do OfferInput
+      summary: >-
+        Po poszerzeniu WallOfferInput jest tożsamy z OfferInput, więc plik znika razem
+        z rzutowaniem w OfferFormProvider. Zawężanie i tak jest potrzebne do dyspozytora
+        planu, a typy ścieżek dla stepperów poszerzają się same.
+
+spec_audit:
+  verdict: pass_with_concerns
+  findings: {high: 2, medium: 2, low: 3}
+  headline: >-
+    Wymaganie R12 przeczy samo sobie: nogi mają wyjść z calculateWallLayoutDemand, a wynik
+    ścieżki ściennej ma zostać identyczny, podczas gdy ta funkcja JEST ścieżką ścienną i jej
+    własny test asercjonuje nogi jako dziesiąty element listy. Sprzeczność odziedziczona
+    wprost z technical-clarifications.md, czyli z ustalenia orkiestratora, nie z pracy
+    subagenta piszącego specyfikację.
+  best_fix_identified_by_audit: >-
+    Odrzucenie wariantu z mnożnikiem opierało się na fałszywej przesłance: sufit(n/2) jest
+    zawsze całkowity, więc żaden ułamek nie wchodzi do funkcji. calculateLegDemand ma już
+    sygnaturę wyrażającą tę regułę wprost.
+  artifacts:
+    - {path: verification/spec-audit.md, label: Audyt specyfikacji, html: null}
+
+verification_context:
+  last_status: null
+  issues_found: []
+  fixes_applied: []
+  decisions_made: []
+  reverify_count: 0

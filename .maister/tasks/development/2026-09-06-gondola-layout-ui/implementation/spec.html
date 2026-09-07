@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Specification: Gondola layout support in the offer configurator UI</title>
+<style>
+:root {
+  --bg:#f6f7f9; --surface:#fff; --border:#e2e5ea; --text:#1a1d23; --dim:#6b7280;
+  --accent:#4f46e5; --accent-soft:#eef2ff; --ok:#16a34a; --ok-soft:#ecfdf3;
+  --warn:#d97706; --warn-soft:#fffbeb; --crit:#dc2626; --crit-soft:#fef2f2;
+  --info:#2563eb; --info-soft:#eff6ff; --radius:10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#111418; --surface:#1a1f26; --border:#2e3640; --text:#e6e9ee; --dim:#9aa4b2;
+    --accent:#818cf8; --accent-soft:#26294a; --ok:#4ade80; --ok-soft:#11291a;
+    --warn:#fbbf24; --warn-soft:#2e2410; --crit:#f87171; --crit-soft:#321616;
+    --info:#60a5fa; --info-soft:#15233a; }
+}
+* { box-sizing:border-box; }
+body { margin:0 auto; max-width:1100px; padding:24px 20px 64px; background:var(--bg);
+  color:var(--text); font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; }
+a { color:var(--accent); text-decoration:none; } a:hover { text-decoration:underline; }
+h1 { font-size:22px; letter-spacing:-.01em; } h2 { font-size:16px; margin-top:28px; }
+.card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+  padding:16px 18px; margin:14px 0; }
+.badge { display:inline-block; font-size:11px; font-weight:600; text-transform:uppercase;
+  letter-spacing:.04em; padding:2px 8px; border-radius:99px; background:var(--accent-soft); color:var(--accent); }
+.sev { display:inline-block; font-size:10.5px; font-weight:700; text-transform:uppercase;
+  padding:1.5px 7px; border-radius:99px; margin-right:6px; }
+.sev.critical { background:var(--crit-soft); color:var(--crit); }
+.sev.warning  { background:var(--warn-soft); color:var(--warn); }
+.sev.info     { background:var(--info-soft); color:var(--info); }
+.pass { color:var(--ok); font-weight:600; } .fail { color:var(--crit); font-weight:600; }
+table { width:100%; border-collapse:collapse; }
+th, td { text-align:left; padding:7px 10px; border-bottom:1px solid var(--border); vertical-align:top; }
+th { font-size:11.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--dim); }
+code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12.5px;
+  background:var(--accent-soft); padding:1px 5px; border-radius:4px; }
+img.shot { max-width:100%; border:1px solid var(--border); border-radius:var(--radius); }
+details > summary { cursor:pointer; font-weight:600; }
+.crumbs { display:flex; gap:14px; font-size:13px; margin-bottom:18px; flex-wrap:wrap; }
+.crumbs a.md { margin-left:auto; color:var(--dim); }
+.crumbs .here { font-weight:650; color:var(--text); }
+.tiles { display:flex; gap:10px; flex-wrap:wrap; margin:14px 0; }
+.tile { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+  padding:10px 16px; text-align:center; min-width:90px; }
+.tile b { display:block; font-size:20px; letter-spacing:-.01em; }
+.tile span { font-size:10.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--dim); }
+header p.meta { color:var(--dim); font-size:12.5px; margin:4px 0 0; }
+.two { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+@media (max-width:760px) { .two { grid-template-columns:1fr; } }
+.two ul { margin:6px 0 0; padding-left:18px; } .two li { margin:3px 0; }
+.tldr .lead { font-size:14.5px; margin-top:0; }
+.k { list-style:none; padding:0; margin:8px 0 0; }
+.k li { padding:7px 0 7px 12px; border-left:3px solid var(--accent); margin-bottom:8px; }
+.k b { display:block; }
+.r { list-style:none; padding:0; margin:8px 0 0; }
+.r li { padding:6px 0 6px 12px; border-left:3px solid var(--warn); margin-bottom:8px; }
+.stories { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:12px; }
+.story { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+  padding:12px 14px; font-size:13px; }
+.story b { color:var(--dim); font-size:11px; text-transform:uppercase; letter-spacing:.04em;
+  display:block; margin-bottom:4px; }
+.toc { font-size:12.5px; color:var(--dim); margin:16px 0 0; }
+.chip { display:inline-block; font-size:11.5px; font-family:ui-monospace,Menlo,monospace;
+  background:var(--surface); border:1px solid var(--border); border-radius:6px; padding:1px 6px; margin:2px 3px 2px 0; }
+.new td:first-child { color:var(--ok); }
+.formula { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+  padding:12px 14px; font-family:ui-monospace,Menlo,monospace; font-size:13px; overflow-x:auto; }
+.muted { color:var(--dim); }
+</style>
+</head>
+<body>
+
+<nav class="crumbs">
+  <a href="../dashboard.html">&larr; Dashboard</a>
+  <span class="here">Spec</span>
+  <a href="implementation-plan.html">Plan</a>
+  <a href="../verification/implementation-verification.html">Verification</a>
+  <a href="spec.md" target="_blank" rel="noopener" class="md">md twin &#8599;</a>
+</nav>
+
+<header>
+  <h1>Gondola layout support in the offer configurator UI</h1>
+  <p class="meta"><span class="badge">specification</span> &nbsp; generated 2026-09-06 &nbsp;&middot;&nbsp;
+    twin: <a href="spec.md" target="_blank" rel="noopener">implementation/spec.md</a></p>
+</header>
+
+<div class="tiles">
+  <div class="tile"><b>17</b><span>requirements</span></div>
+  <div class="tile"><b>12</b><span>reused</span></div>
+  <div class="tile"><b>3</b><span>new files</span></div>
+  <div class="tile"><b>4</b><span>binding mockups</span></div>
+  <div class="tile"><b>medium</b><span>risk level</span></div>
+</div>
+
+<section class="tldr card">
+  <h2 style="margin-top:0">TL;DR</h2>
+  <p class="lead">A gondola becomes creatable, editable, drawable and priceable, always symmetric:
+    one <code>gondolaUnits</code> entry with <code>numberOfGondolaUnits: 2</code>. The form generic
+    collapses to <code>OfferInput</code>, deleting <code>offer.types.ts</code> and the hydration cast
+    with it. Uprights become shared between the sides, carried by an optional leg scope that
+    <code>calculateWallLayoutDemand</code> defaults for the wall path, so no wall assertion can move.
+    The gondola ships without an end cap, understating the standard case.</p>
+
+  <h2>Key Decisions</h2>
+  <ul class="k">
+    <li><b>Collapse the form type to <code>OfferInput</code>, delete <code>offer.types.ts</code>.</b>
+      A mixed offer makes any per-variant narrowing factually false, so two narrowed types would
+      double a cast the coding-style standard already rules out.</li>
+    <li><b>Upright rule: <code>ceil(numberOfGondolaUnits / 2) * (units + 1) * numberOfLayouts</code>
+      per entry.</b> One shared column per pair of sides, a full column for a lone side, never a
+      fraction.</li>
+    <li><b><code>calculateWallLayoutDemand</code> keeps its leg counting and gains an optional leg
+      scope, defaulting to <code>numberOfLayouts</code>.</b> The wall path passes nothing, so its
+      result and its list order are untouched by construction, and no new domain file is needed.</li>
+    <li><b>The gondola orchestration passes <code>ceil(numberOfGondolaUnits / 2) *
+      numberOfLayouts</code> as that scope.</b> <code>calculateLegDemand</code> already expresses the
+      rule through its <code>numberOfLayouts</code> argument, so the shared column costs one argument
+      rather than a refactor of the file the working wall pricing rests on.</li>
+    <li><b>The wall demand output is frozen in content and in order.</b> Three passing tests compare
+      whole results with <code>toEqual</code>, and the default keeps that promise without anyone
+      having to preserve an order by hand.</li>
+    <li><b>Two add buttons: „Dodaj ciąg przyścienny" and „Dodaj gondolę".</b> Binding mockup
+      decision, and this control is the only entry point into the whole feature.</li>
+    <li><b>The gondola is drawn as two strips back to back, both from the same configuration.</b>
+      Binding mockup decision, it is what a gondola physically is, and it matches the v2 prior art
+      geometry.</li>
+    <li><b>One editor parameterised on a units path prefix, two separate plan components.</b> The
+      editor difference is one path segment; the plan difference is what it draws.</li>
+    <li><b>The gondola factory takes its defaults from <code>createDefaultWallLayout</code> and
+      builds the object key by key.</b> No twelfth <code>@/domain</code> import in the browser, and
+      no wall key can leak into a gondola.</li>
+  </ul>
+
+  <h2>Open Questions / Risks</h2>
+  <ul class="r">
+    <li><span class="sev warning">warning</span> React Hook Form typing over a union array is the
+      one thing that could turn the type widening from mechanical into awkward, and it has
+      <b>two</b> surfaces, not one. Verify both with <code>pnpm typecheck</code> before any new
+      component is written.
+      <ul>
+        <li><code>FieldPathByValue&lt;OfferInput, number&gt;</code> for the stepper
+          <code>name</code> props. Fallback: type those props explicitly, never reintroduce a
+          per-variant cast.</li>
+        <li><code>useFieldArray</code>, which resolves through <code>ArrayPath</code> /
+          <code>FieldArray</code> and is therefore untouched by the first fallback. Three call sites
+          take array paths that exist on only one member of the union:
+          <span class="chip">OfferLayouts.tsx:14</span><span class="chip">WallLayoutPlan.tsx:69</span><span class="chip">ShelfUnitEditor.tsx:210</span>
+          Both surfaces should resolve by the same distributive-conditional mechanism, so this is a
+          completeness gap in the risk register rather than a predicted failure. Fallback if it
+          bites: give <code>name</code> an explicitly typed value at those three sites, and keep the
+          runtime path unchanged.</li>
+      </ul></li>
+    <li><span class="sev warning">warning</span> The wall path is protected by a default, not by
+      discipline, but the default has to actually be applied.
+      <code>calculateWallLayoutDemand.test.ts:43</code> asserts
+      <code>{ id: "leg-130-8-3", quantity: 12 }</code> as the tenth element of a whole-list
+      <code>toEqual</code>, so any wall assertion that moves means the wall call site started passing
+      a scope it should not pass.</li>
+    <li><span class="sev critical">critical</span> <b>A gondola priced by this iteration carries no
+      end cap, while the client's standard gondola has one</b>
+      (<code>analysis/client-requirements.md</code> section 5: "standardowo: ze szczytem"). The quote
+      for the standard case is therefore systematically understated. Known and accepted, to be closed
+      by a separate task before the feature is shown to the client.</li>
+    <li><span class="sev info">info</span> Every offer re-saved after this change re-prices its
+      gondolas under the new rule. Nothing is persisted today, so there is nothing to migrate.</li>
+    <li><span class="sev warning">warning</span> Nothing added on the web side is covered by the
+      suite: zero tests under <code>packages/apps/web</code>, Node environment, no JSDOM. Browser
+      verification in the E2E phase is the only real gate the view layer has, and Success Criteria 1
+      to 5 are written to be run there.</li>
+    <li><span class="sev info">info</span> A schema-legal gondola with several diverging
+      <code>gondolaUnits</code> entries cannot be expressed by this editor. The form shows and edits
+      entry zero and leaves the rest untouched, so the drawing shows less than the price covers.</li>
+  </ul>
+</section>
+
+<p class="toc">Contents:
+  <a href="#scope">Scope</a> &middot;
+  <a href="#requirements">Requirements</a> &middot;
+  <a href="#stories">User stories</a> &middot;
+  <a href="#visual">Visual design</a> &middot;
+  <a href="#reuse">Reuse vs new</a> &middot;
+  <a href="#technical">Technical approach</a> &middot;
+  <a href="#testing">Testing &amp; standards</a> &middot;
+  <a href="#success">Success criteria</a>
+</p>
+
+<main>
+
+<h2 id="scope">Goal and scope</h2>
+<p>Give the user a way to add, edit, see and price a double-sided run (gondola) in the offer
+configurator, and correct what a gondola costs by sharing one column of uprights between its two
+sides, as the first version of this calculator did.</p>
+
+<div class="two">
+  <div class="card">
+    <b>In scope</b>
+    <ul>
+      <li>Two add buttons, gondola visible from the first visit</li>
+      <li>Default gondola factory, one entry, two sides</li>
+      <li>Plan drawing: two strips back to back, one configuration</li>
+      <li>Drawer editing applying to both sides at once</li>
+      <li>Shared run header for both run types</li>
+      <li>Shared uprights in <code>calculateGondolaLayoutDemand</code></li>
+      <li>Form type widening to <code>OfferInput</code></li>
+    </ul>
+  </div>
+  <div class="card">
+    <b>Out of scope (each its own task)</b>
+    <ul>
+      <li>End caps (szczyt), double backs, bottom and top covers.
+        <span class="sev critical">critical</span> The client's standard gondola has an end cap, so
+        every quote this iteration produces for the standard case is understated. Accepted
+        knowingly, and to be said out loud to the client before the demo.</li>
+      <li>The „półka nie głębsza niż baza" validation</li>
+      <li>Right-click menu, shelves dialog redesign, drawer ordering</li>
+      <li>The permanent caption at the bottom of the screen</li>
+      <li>Asymmetric gondolas, per-side editing, „rozłącz gondolę"</li>
+      <li>Converting an existing run between the two types</li>
+      <li><code>buildLayoutDescription</code> beyond <code>gondolaUnits[0]</code></li>
+      <li>The pre-existing defects recorded in the codebase analysis</li>
+    </ul>
+  </div>
+</div>
+
+<h2 id="requirements">Core requirements</h2>
+<table>
+  <thead><tr><th style="width:52px">ID</th><th>Requirement</th><th style="width:70px">Priority</th></tr></thead>
+  <tbody>
+    <tr><td>R1</td><td>Two add buttons replace the single „Dodaj ciąg": „Dodaj ciąg przyścienny" and „Dodaj gondolę". Each disabled independently when its own factory returns <code>null</code>, with a hint naming the type that cannot be built.</td><td>must</td></tr>
+    <tr><td>R2</td><td>The default gondola is one <code>gondolaUnits</code> entry with <code>numberOfGondolaUnits: 2</code>, one shelf unit, smallest height, base depth and unit width, shelf depth preferring the run depth, shelf count from the height table with fallback 1, <code>shelves</code> always at least <code>[]</code>, <code>numberOfLayouts: 1</code>, <code>extras: []</code>. Returns <code>null</code> when the inventory cannot furnish a run.</td><td>must</td></tr>
+    <tr><td>R3</td><td>Per-layout dispatch to the wall or gondola plan, discriminating structurally with <code>isLayoutWall</code> / <code>isLayoutGondola</code>, reading from <code>useWatch</code> / <code>getValues</code> and never from the <code>useFieldArray</code> field snapshot.</td><td>must</td></tr>
+    <tr><td>R4</td><td>The gondola plan draws a top view at <code>SCALE_PX_PER_CM = 1.6</code>: two strips of unit rectangles back to back, both from <code>gondolaUnits.0</code>, „Strona 1" above and „Strona 2" below, box captions width/depth/height as today.</td><td>must</td></tr>
+    <tr><td>R5</td><td>Clicking a box on either strip opens the right drawer with the same editor state, and selecting a unit highlights the matching box on both strips.</td><td>must</td></tr>
+    <tr><td>R6</td><td>The drawer carries the note „Zmiany dotyczą obu stron gondoli." above the editor.</td><td>must</td></tr>
+    <tr><td>R7</td><td>Gondola editor fields: „Głębokość bazy" at <code>layouts.{i}.gondolaUnits.0.depth</code>, „Wysokość" at <code>layouts.{i}.height</code>, „Szerokość" / „Liczba regałów" / „Dodaj regały" under <code>gondolaUnits.0.shelfUnits.{u}</code>, „Półki" under that unit, „Inne elementy ciągu" at <code>layouts.{i}.extras</code>. No layout-level depth, no extras on a gondola unit.</td><td>must</td></tr>
+    <tr><td>R8</td><td>The run header is identical for both types: index badge, server description, „Liczba ciągów", price through <code>formatPrice</code>, „Powiel ciąg", „Usuń ciąg". Wall header behaviour, markup and copy do not change.</td><td>must</td></tr>
+    <tr><td>R9</td><td>Duplicating and removing a gondola run clone or drop the whole layout value, preserving any <code>gondolaUnits</code> entries beyond the first.</td><td>must</td></tr>
+    <tr><td>R10</td><td>Gondola uprights: <code>ceil(numberOfGondolaUnits / 2) * (units + 1) * numberOfLayouts</code> per entry. No fractional quantity may leave <code>calculateGondolaLayoutDemand</code>.</td><td>must</td></tr>
+    <tr><td>R11</td><td>Feet stay counted in full per side; back panels, base shelves and shelves stay per side. Only uprights change.</td><td>must</td></tr>
+    <tr><td>R12</td><td><code>calculateWallLayoutDemand</code> keeps its <code>calculateLegDemand</code> call and gains one optional leg scope, defaulting to <code>numberOfLayouts</code>. The wall call site passes nothing, so the wall demand list stays identical in content and in order. <code>calculateGondolaLayoutDemand</code> keeps delegating per side and passes <code>ceil(numberOfGondolaUnits / 2) * numberOfLayouts</code> as that scope. No leg-free core is extracted and no new domain file is created.</td><td>must</td></tr>
+    <tr><td>R13</td><td>The form generic becomes <code>OfferInput</code>: <code>offer.types.ts</code> deleted, the cast at <code>OfferFormProvider.tsx:37</code> removed, every whole-layout consumer narrowing with the schema guards.</td><td>must</td></tr>
+    <tr><td>R14</td><td>No new <code>@/domain</code> import in the web layer. The eleven existing ones are recorded debt and this task does not add to it.</td><td>must</td></tr>
+    <tr><td>R15</td><td>Every new user-facing string in Polish, from the vocabulary already in the application, plus the domain's „N x ciąg regałów dwustronnych" (<code>buildLayoutDescription.ts:29</code>). „Strona" is the one genuinely new word: it appears nowhere under <code>packages/</code> and comes from the maintainer's naming decision (<code>analysis/clarifications.md</code>, question 4) as rendered in the mockups.</td><td>must</td></tr>
+    <tr><td>R16</td><td>Pricing stays server-side: the 800 ms debounced autosave PUT remains the only path from an edit to a number on screen.</td><td>must</td></tr>
+    <tr><td>R17</td><td>The configurator page carries the mockup's subtitle: „Oferta może mieszać oba rodzaje ciągów. Wycena spływa z serwera po zapisie."</td><td>should</td></tr>
+  </tbody>
+</table>
+
+<h2 id="stories">User stories</h2>
+<div class="stories">
+  <div class="story"><b>Offer author</b>Add a gondola next to a wall run, so a double-sided display can be quoted without leaving the configurator.</div>
+  <div class="story"><b>Offer author</b>Edit depth, height, width, unit count and shelves once and have both sides follow, so the roughly 90% of gondolas that are symmetric take one pass.</div>
+  <div class="story"><b>Offer author</b>See the gondola on the plan as two strips back to back, so the drawing matches the object being quoted.</div>
+  <div class="story"><b>Maintainer</b>Price a gondola with one shared column of uprights, so the quote matches what the client was charged by the first calculator.</div>
+</div>
+
+<h2 id="visual">Visual design</h2>
+<p>Mockups in <code>analysis/design-context/</code> are <b>binding inputs, not references</b>. The
+implementation-planner attaches <code>Visual References</code> to the UI task groups. Fidelity is
+structural, not pixel-perfect: the mockups were built against this project's own tokens
+(<code>packages/apps/web/src/index.css</code>) and <code>core/ui</code> primitives, so the
+implementation reuses those primitives and reproduces layout, spacing intent and copy. The two
+decisions below (two buttons, two strips) are binding, not advisory.</p>
+<table>
+  <thead><tr><th>ID</th><th>Mockup</th><th>What it fixes</th></tr></thead>
+  <tbody>
+    <tr><td><code>screen:dodawanie-ciagu</code></td>
+      <td><a href="../analysis/design-context/mockups/dodawanie-ci-gu-dwa-warianty.html">dodawanie-ci-gu-dwa-warianty.html</a></td>
+      <td>Variant A wins: two buttons side by side reusing <code>core/ui/button.tsx</code>. The type-picker variant, and with it <code>radio-group.tsx</code>, is not built.</td></tr>
+    <tr><td><code>screen:gondola-na-planie</code></td>
+      <td><a href="../analysis/design-context/mockups/gondola-na-planie-dwa-warianty.html">gondola-na-planie-dwa-warianty.html</a></td>
+      <td>Variant A wins: two strips back to back at <code>depth * 1.6</code> each, not one strip at doubled depth. Captions „Strona 1" and „Strona 2".</td></tr>
+    <tr><td><code>screen:konfigurator-z-gondola</code></td>
+      <td><a href="../analysis/design-context/mockups/konfigurator-z-gondol.html">konfigurator-z-gondol.html</a></td>
+      <td>The full page: a wall run and a gondola side by side, shared header, the two add buttons, the page subtitle.</td></tr>
+    <tr><td><code>screen:szuflada-edycji-gondoli</code></td>
+      <td><a href="../analysis/design-context/mockups/szuflada-edycji-gondoli.html">szuflada-edycji-gondoli.html</a></td>
+      <td>The right drawer for a gondola: the symmetry note above the existing sections Ciąg, Regały, Półki, Inne elementy ciągu.</td></tr>
+    <tr><td><code>component:layout-plan-header</code></td><td class="muted">konfigurator-z-gondol.html</td>
+      <td>The shared run header, extraction target at <code>WallLayoutPlan.tsx:97-137</code>.</td></tr>
+    <tr><td><code>component:plan-unit</code></td><td class="muted">gondola-na-planie-dwa-warianty.html</td>
+      <td>The unit rectangle at 1.6 px per cm, caption width/depth/height, clickable, opens the drawer.</td></tr>
+    <tr><td><code>component:both-sides-note</code></td><td class="muted">szuflada-edycji-gondoli.html</td>
+      <td>„Zmiany dotyczą obu stron gondoli.", the only element communicating shared configuration.</td></tr>
+  </tbody>
+</table>
+
+<h2 id="reuse">Reuse versus new code</h2>
+<table>
+  <thead><tr><th style="width:56px">Kind</th><th>Path</th><th>How it is used</th></tr></thead>
+  <tbody>
+    <tr><td class="pass">reuse</td><td><code>offer/components/plan/WallLayoutPlan.tsx</code></td><td>Header (lines 97-137, the <code>&lt;header&gt;</code> element) extracted and shared; the rest is the template the gondola plan follows</td></tr>
+    <tr><td class="pass">reuse</td><td><code>offer/components/editor/ShelfUnitEditor.tsx</code></td><td>Parameterised on a units path prefix and used for both variants; the six file-local sub-components are deliberately not extracted</td></tr>
+    <tr><td class="pass">reuse</td><td><code>offer/components/editor/ExtrasFields.tsx</code></td><td>Unchanged apart from the generic; <code>layouts.{i}.extras</code> is valid for both variants</td></tr>
+    <tr><td class="pass">reuse</td><td><code>offer/helpers/createDefaultWallLayout.ts</code></td><td>Source of the default-picking rule and the null-means-cannot-furnish contract</td></tr>
+    <tr><td class="pass">reuse</td><td><code>offer/hooks/useInventoryDimensions.ts</code></td><td>Unchanged: a gondola is constrained by the same four dimensions</td></tr>
+    <tr><td class="pass">reuse</td><td><code>offer/helpers/formatPrice.ts</code></td><td>The only price formatter; no second one is created</td></tr>
+    <tr><td class="pass">reuse</td><td><code>schemas/LayoutWall.schema.ts</code>, <code>LayoutGondola.schema.ts</code></td><td><code>isLayoutWall</code> / <code>isLayoutGondola</code>, the only sanctioned way the UI tells the variants apart</td></tr>
+    <tr><td class="pass">reuse</td><td><code>core/ui/*</code></td><td>button, badge, drawer, input, label as-is; no new primitive</td></tr>
+    <tr><td class="pass">reuse</td><td><code>domain/orchestrations/calculateWallLayoutDemand</code></td><td>Extended, not restructured: one optional leg scope defaulting to <code>numberOfLayouts</code>. The wall call site passes nothing; the gondola keeps delegating per side and passes the shared scope</td></tr>
+    <tr><td class="pass">reuse</td><td><code>domain/calculations/calculateLegDemand</code></td><td>Unchanged. Its <code>numberOfLayouts</code> argument already means "how many columns of this run exist", which is exactly what the leg scope feeds, and <code>ceil(n / 2)</code> keeps it an integer</td></tr>
+    <tr><td class="pass">reuse</td><td><code>domain/src/fixtures/</code></td><td><code>componentCatalogMock</code>, <code>validOfferInput</code> for every domain test touched here</td></tr>
+    <tr><td class="pass">reuse</td><td>api, <code>Offer.schema.ts</code>, Prisma</td><td>Unchanged: the union already validates and the controller already prices whatever passes</td></tr>
+    <tr class="new"><td>new</td><td><code>offer/components/plan/GondolaLayoutPlan.tsx</code></td><td>The geometry is genuinely different: two strips from one configuration sharing one selection. Parameterising the wall plan would put two drawings in one file.</td></tr>
+    <tr class="new"><td>new</td><td><code>offer/components/plan/LayoutPlanHeader.tsx</code></td><td>Extracted, not written: <code>WallLayoutPlan.tsx:97-137</code>, about 40 lines identical for both types. Extracting before the second plan exists is what stops the two headers drifting.</td></tr>
+    <tr class="new"><td>new</td><td><code>offer/helpers/createDefaultGondolaLayout.ts</code></td><td>A different shape with different required keys. Contract mirrored exactly, values taken from the wall factory, object built key by key so no wall key leaks.</td></tr>
+  </tbody>
+</table>
+<p class="muted">Declined on purpose, and in particular <b>no new domain file</b>: the leg scope is
+one optional argument on a function that already exists, so nothing is extracted into a shared
+leg-free core. Also declined: no layout-kind registry, no speculative extraction of the six editor
+sub-components, no gondola-specific editor, no gondola constraints in the domain, no
+<code>type</code> discriminant in the schemas.</p>
+
+<h2 id="technical">Technical approach</h2>
+
+<div class="card">
+  <b>The form type: collapse to <code>OfferInput</code> (the decision this spec owed)</b>
+  <p><code>offer/offer.types.ts</code> narrows the layout union to <code>LayoutWall[]</code> and is
+  the form's type argument in six other files (<code>useForm</code> at
+  <code>OfferFormProvider.tsx:18</code>, <code>useFormContext</code> everywhere else). Option A is
+  chosen: the type collapses to <code>OfferInput</code> and the file is deleted.</p>
+  <ol>
+    <li><b>Option B is not merely stylistic debt, it is false.</b> The configurator explicitly
+      supports an offer mixing both run types, and for such an offer neither
+      <code>WallOfferInput</code> nor a new <code>GondolaOfferInput</code> describes the form value.
+      Option B keeps a cast the data contradicts, in two places instead of one.</li>
+    <li><b>It removes a live defect for free.</b> <code>OfferFormProvider.tsx:37</code> force-casts a
+      hydrated offer to the wall type today. The coding-style standard is explicit that narrowing is
+      done with a real guard and never with a cast.</li>
+    <li><b>It deletes a file instead of adding one</b>, which is what minimal-implementation asks of
+      a change with two viable shapes.</li>
+    <li><b>The narrowing it forces is needed anyway.</b> R3 already requires a structural guard per
+      layout, and each plan narrows once at the top, folding into the
+      <code>if (!layout) return null</code> guard already required there.</li>
+    <li><b>Field paths widen for free.</b> <code>FieldPathByValue&lt;OfferInput, number&gt;</code>
+      covers the gondola paths, so the steppers need no change.</li>
+  </ol>
+  <p>The cost is real: every whole-layout <code>useWatch</code> returns a union. Order of work
+  follows from it: widen the type and run <code>pnpm typecheck</code> before writing any new
+  component.</p>
+</div>
+
+<div class="card">
+  <b>The upright rule and how it reaches <code>calculateLegDemand</code></b>
+  <pre class="formula">uprights per gondolaUnits entry = ceil(numberOfGondolaUnits / 2) * (units + 1) * numberOfLayouts
+feet     per gondolaUnits entry = (units + 1) * numberOfLayouts * numberOfGondolaUnits  (unchanged)
+backs, base shelves, shelves    = per side, unchanged</pre>
+  <p><code>units</code> is the entry's summed <code>numberOfShelfUnits</code>;
+  <code>numberOfLayouts</code> is the run-level value. For the shape this UI creates (one entry, two
+  sides) that is one column of <code>units + 1</code> per run copy; for a lone side it is a full
+  column, which is physically right. The <code>ceil</code> guarantees an integer:
+  <code>calculateBomPrice</code> and <code>breakdownDemandByCategory</code> take the demand list raw
+  and neither rounds, so half an upright would surface in Rozpiska as "0.5".</p>
+  <p>Uprights are the only one of the five demands that now needs a scope different from the other
+  four, and <code>calculateWallLayoutDemand</code> computes all five in one call.
+  <b><code>calculateWallLayoutDemand</code> keeps that call and takes one optional leg scope,
+  defaulting to <code>numberOfLayouts</code>.</b> The wall path passes nothing and is therefore
+  unchanged, byte for byte and element for element. The gondola orchestration keeps delegating per
+  side and passes <code>ceil(numberOfGondolaUnits / 2) * numberOfLayouts</code>, which
+  <code>calculateLegDemand</code> multiplies by <code>units + 1</code> to give exactly the rule
+  above.</p>
+  <p><b>Read the two numbers carefully, they are not the same number.</b> The delegated context keeps
+  folding the side count into its <code>numberOfLayouts</code>
+  (<code>numberOfLayouts * numberOfGondolaUnits</code>), which is what keeps back panels, base
+  shelves, shelves and feet at a full set per side. The leg scope is the run-level
+  <code>numberOfLayouts</code> narrowed by <code>ceil(numberOfGondolaUnits / 2)</code> instead, and
+  it applies to uprights only. Against the existing gondola fixture: entry zero (2 sides, 3 units, 1
+  run) gives feet <code>(3 + 1) * 2 = 8</code>, unchanged, and uprights <code>(3 + 1) * 1 = 4</code>,
+  down from 8; entry one (1 side, 1 unit, 1 run) gives <code>ceil(1 / 2) = 1</code>, so both feet and
+  uprights stay at 2.</p>
+  <p>Three reasons this beats extracting a leg-free core into a shared function:</p>
+  <ol>
+    <li><b>It cannot move the wall path.</b> Legs sit in the middle of the returned list (backs, base
+      shelves, shelves, <b>legs</b>, feet, extras), and
+      <code>calculateWallLayoutDemand.test.ts:43</code> freezes
+      <code>{ id: "leg-130-8-3", quantity: 12 }</code> as the tenth element of a whole-list
+      <code>toEqual</code>. Any extraction either restores legs to the middle by hand or reorders the
+      list; a default argument does neither.</li>
+    <li><b>It creates no new domain file.</b> The order-preserving extraction needs a shared leg-free
+      function, which under <code>backend/domain.md</code> means a new folder, name and test, on the
+      one path where nothing was wrong.</li>
+    <li><b><code>calculateLegDemand</code> already expresses the rule.</b> Its
+      <code>numberOfLayouts</code> argument means "how many columns of this run exist", which is
+      exactly what the gondola narrows.</li>
+  </ol>
+  <p>The counter-argument is that a scope argument is a coefficient passed into a shared
+  calculation, which reads less explicitly than two orchestrations each counting their own. Accepted
+  here because the argument is named, optional and defaulted: the wall call site says nothing at
+  all, so the function still reads as "a full column per run copy unless the caller says otherwise".
+  The earlier reason for rejecting this shape, that it introduces a fraction into a function working
+  in whole numbers, is false under the rule that was chosen: <code>ceil(n / 2)</code> is an integer
+  for every integer <code>n</code>.</p>
+</div>
+
+<details class="card">
+  <summary>Expected test movement, in full: one assertion</summary>
+  <table>
+    <thead><tr><th>Test</th><th>Expected change</th></tr></thead>
+    <tbody>
+      <tr><td><code>calculateGondolaLayoutDemand.test.ts</code></td><td>First entry <code>leg-130-8-3</code> goes from 8 to 4, and that is the only change to the file. The second entry (<code>numberOfGondolaUnits: 1</code>) stays at 2, and the list order does not move, because the gondola still runs each side through the same composition.</td></tr>
+      <tr><td><code>calculateOfferDemand.test.ts</code></td><td class="pass">Unchanged. Its gondola has <code>numberOfGondolaUnits: 1</code>, so <code>leg-130-8-3: 2</code> holds, and with no reordering there is nothing else to touch.</td></tr>
+      <tr><td><code>calculateWallLayoutDemand.test.ts</code>, <code>createOfferPreview.test.ts</code>, <code>calculateLegDemand.test.ts</code></td><td class="pass">Unchanged. Any edit to one of them means the wall call site started passing a scope it should not pass, and the fix is the call site, not the expectation.</td></tr>
+    </tbody>
+  </table>
+  <p class="muted">Not carried over from prior art: v1 priced uprights from the unhalved count, so
+  its upright price was double its upright quantity. Quantity and price here come from one
+  number.</p>
+</details>
+
+<details class="card">
+  <summary>Component decomposition, gondola shape, the union-ordering trap, persistence</summary>
+  <p><b>Editor:</b> one <code>ShelfUnitEditor</code> parameterised on a units path prefix
+  (<code>layouts.{i}</code> for a wall, <code>layouts.{i}.gondolaUnits.0</code> for a gondola), which
+  carries <code>depth</code> and <code>shelfUnits</code>. <code>height</code> and <code>extras</code>
+  stay at run level for both variants, so <code>ShelvesFields</code> and <code>ExtrasFields</code>
+  are untouched apart from the generic. A sibling editor would be a copy of 363 lines differing by
+  one path segment.</p>
+  <p><b>Plan:</b> two components sharing the extracted header. The gondola plan iterates
+  <code>gondolaUnits.0.shelfUnits</code>, renders the resulting strip twice, and reads depth from the
+  gondola unit rather than from the layout. <b>Dispatch:</b> a hand-written branch in
+  <code>OfferLayouts.tsx</code>, matching the three structural branches the domain already uses.</p>
+  <p><b>Shape:</b> exactly one <code>gondolaUnits</code> entry with
+  <code>numberOfGondolaUnits: 2</code>, pinned by the factory, never rendered and never edited. That
+  is what removes the side index, the per-side editor and the third drawer-selection coordinate.
+  Because there is one entry, <code>buildLayoutDescription</code> reading only
+  <code>gondolaUnits[0]</code> is correct for everything this UI produces.</p>
+  <p><b>What that shape prices, and what it does not:</b> two sides of shelf units with their back
+  panels, base shelves, shelves, one shared column of uprights, two full sets of feet, and whatever
+  the user adds under „Inne elementy ciągu". It carries <b>no end cap, no double back and no bottom
+  or top cover</b>. The end cap is the commercially significant one: the client's standard gondola
+  has one, so a quote produced by this iteration for the standard case is systematically low.
+  Anything an end cap would have contributed can still be entered by hand as an extra, but nothing
+  in the UI says so.</p>
+  <p><b>Union-ordering trap:</b> <code>OfferInputSchema</code> lists gondola first and Valibot
+  returns the first fully valid option while stripping unknown keys, whereas the domain switches on
+  <code>isLayoutWall</code> first. An object carrying both <code>gondolaUnits</code> and layout-level
+  <code>depth</code> / <code>shelfUnits</code> would persist as a gondola with its wall keys
+  stripped, yet classify as a wall. It stays dormant as long as no path produces a hybrid, which is
+  why the factory builds key by key and why nothing here converts a run between types.</p>
+  <p><b>Persistence:</b> no schema, migration, API or Prisma change. A gondola appended into the
+  field array is validated and priced on the first autosave, before any plan component exists, which
+  is the natural mid-implementation checkpoint. A persisted gondola with several diverging entries
+  gets no code written for it; the only requirement is that nothing destroys it, and React Hook Form
+  keeps the remaining entries in the value.</p>
+</details>
+
+<h2 id="testing">Testing approach and standards</h2>
+<div class="card">
+  <p>2 to 8 focused tests per implementation step group. Test verification runs the new and touched
+  tests, not the entire suite, with <code>pnpm vitest run</code> as the regression gate before a step
+  is reported. The domain half is the only part this suite can verify. Candidate assertions:</p>
+  <ol>
+    <li>A two-sided gondola entry yields one shared column of uprights (<code>units + 1</code>),
+      multiplied by <code>numberOfLayouts</code>.</li>
+    <li>A one-sided entry keeps a full column, so mixed entries add up as the rule says.</li>
+    <li>No demand entry the orchestration returns carries a fractional quantity.</li>
+    <li>The wall demand result is unchanged when no leg scope is passed, asserted on the whole list
+      including order (the existing <code>calculateWallLayoutDemand</code> test, which must pass
+      untouched).</li>
+  </ol>
+  <p>Binding project constraints: nothing is mocked, ever (the domain depends on nothing and
+  collaborators are injected); tests sit beside their subject as <code>{name}.test.ts</code>; each
+  file opens with an explicit <code>import { describe, expect, it } from "vitest"</code> and holds a
+  single top-level <code>describe</code> with <code>it</code>; fixtures come from
+  <code>packages/domain/src/fixtures</code>; assertions compare the whole result with
+  <code>toEqual</code>.</p>
+  <p><span class="sev critical">critical</span><b>The React layer cannot be unit-tested here.</b>
+  Zero tests under <code>packages/apps/web</code>, Vitest in Node with no JSDOM (the config would not
+  even match a <code>.test.tsx</code> file), coverage from <code>packages/domain</code> only. This is
+  a recorded decision, not an accident: <code>testing/test-writing.md</code> states that UI
+  components have no unit tests by decision. Do not propose or write component tests, and do not
+  propose lifting the constraint inside this task.</p>
+  <p><b>Browser verification is what stands in for those tests, and it is the only real gate for the
+  view layer</b> (<code>analysis/requirements.md</code> names the E2E phase as „jedyną realną bramką
+  dla warstwy widoku"). It is not optional manual clicking: the E2E phase runs the script in Success
+  Criteria 1 to 5 against a running application and leaves evidence.</p>
+  <table>
+    <thead><tr><th>Verified by</th><th>Covers</th></tr></thead>
+    <tbody>
+      <tr><td><code>pnpm vitest run</code></td><td>The upright rule and the frozen wall result (criterion 6)</td></tr>
+      <tr><td><code>pnpm validate</code> plus the grep in criterion 8</td><td>Types, lint, formatting, the deleted type file, the eleven <code>@/domain</code> imports (criteria 7 and 8)</td></tr>
+      <tr><td>The E2E phase, in a browser</td><td>Adding a gondola, the two strips and their captions, the drawer applying to both sides, description and price from the autosave, reload, a mixed offer (criteria 1 to 5)</td></tr>
+    </tbody>
+  </table>
+  <p>The work log must say plainly which parts were verified statically only, and no step touching
+  the view may be reported as done on the strength of <code>pnpm validate</code> alone.</p>
+</div>
+
+<details class="card">
+  <summary>Standards that bind this work</summary>
+  <table>
+    <thead><tr><th>Standard</th><th>What it binds here</th></tr></thead>
+    <tbody>
+      <tr><td><code>global/coding-style.md</code></td><td>Named exports, function declarations, <code>type</code> over <code>interface</code>, three-tier imports, a real guard instead of a cast (the reason Option A wins), named constants</td></tr>
+      <tr><td><code>global/minimal-implementation.md</code></td><td>No registry, no speculative extraction, no future stubs for asymmetric gondolas</td></tr>
+      <tr><td><code>global/commenting.md</code></td><td>No inline comments; JSDoc on the exported factory</td></tr>
+      <tr><td><code>global/validation.md</code></td><td>Valibot schemas stay the contract; no new form-layer validation beyond what exists</td></tr>
+      <tr><td><code>backend/domain.md</code></td><td>The domain depends on nothing, layers run one way, one folder per function, pure functions</td></tr>
+      <tr><td><code>frontend/components.md</code></td><td>Feature folders, props inline and alphabetical, one form shared through context, the browser bundle never importing domain code (R14)</td></tr>
+      <tr><td><code>frontend/language.md</code></td><td>Every user-facing string in Polish, <code>Intl</code> with <code>pl-PL</code> through the single price formatter</td></tr>
+      <tr><td><code>frontend/accessibility.md</code></td><td>Semantic markup, keyboard-reachable boxes and buttons, Polish <code>aria-label</code> on icon-only buttons</td></tr>
+      <tr><td><code>testing/test-writing.md</code></td><td>See above</td></tr>
+      <tr><td><code>workflow/git.md</code>, <code>workflow/process.md</code></td><td>One concern per step, changes left unstaged, no commits or pushes by the agent, verification before reporting</td></tr>
+      <tr><td><code>CLAUDE.md</code>, <code>docs/decisions.md</code></td><td>Take precedence wherever they disagree with the standards</td></tr>
+    </tbody>
+  </table>
+</details>
+
+<h2 id="success">Success criteria</h2>
+<p class="muted">Criteria 1 to 5 are the E2E script for the view layer, which has no unit tests by
+decision. Criteria 6 to 8 are mechanical and run from the command line.</p>
+<ol>
+  <li>„Dodaj gondolę" produces a run whose plan shows two strips of identical boxes, „Strona 1" above and „Strona 2" below.</li>
+  <li>Editing depth, height, width, unit count or shelves changes both strips at once, and after the autosave the header shows a description beginning „1 x ciąg regałów dwustronnych" and a price.</li>
+  <li>Reloading the offer brings the gondola back unchanged, with no cast in the hydration path.</li>
+  <li>Rozpiska shows no fractional quantity for any gondola, and the uprights line for a default gondola with N units reads <code>N + 1</code> per run copy, not <code>2 * (N + 1)</code>.</li>
+  <li>An offer mixing a wall run and a gondola prices both, and the wall run's price is identical to what it was before.</li>
+  <li><code>pnpm validate</code> and <code>pnpm vitest run</code> pass, and <b>the only changed assertion in the whole suite is the gondola upright quantity, 8 to 4</b> in <code>calculateGondolaLayoutDemand.test.ts</code>. Nothing else moves, including list order.</li>
+  <li><code>offer.types.ts</code> no longer exists and no <code>as WallOfferInput</code> cast remains.</li>
+  <li><code>grep -rn 'from "@/domain' packages/apps/web/src</code> still returns the same eleven lines.</li>
+</ol>
+
+<h2>Known limitations</h2>
+<ul>
+  <li>A gondola header's description is built from <code>gondolaUnits[0]</code>: correct for everything this UI creates, incomplete for a run that arrives with several entries by another route.</li>
+  <li>Such a run draws only entry zero while its price covers all of them. Nothing is corrupted, but the drawing and the price disagree silently.</li>
+  <li>The gondola shipped here is a correct but partial answer to point 5 of the client's list: end caps, double backs and covers are deliberately deferred. Because the client's standard gondola has an end cap, the quote for the standard case is systematically low, and the only workaround in this iteration is entering the missing parts by hand under „Inne elementy ciągu". Say this to the client before the demo rather than letting the demo raise it.</li>
+  <li><code>numberOfLayouts</code> still has no React Hook Form validation, only an HTML <code>min</code> attribute, so a run can be driven to zero and silently priced at nothing. Pre-existing, inherited by the shared header, out of scope here.</li>
+</ul>
+
+</main>
+</body>
+</html>

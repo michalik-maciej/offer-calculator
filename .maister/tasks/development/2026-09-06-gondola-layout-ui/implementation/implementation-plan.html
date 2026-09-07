@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Implementation Plan: Gondola layout support in the offer configurator UI</title>
+<style>
+:root {
+  --bg:#f6f7f9; --surface:#fff; --border:#e2e5ea; --text:#1a1d23; --dim:#6b7280;
+  --accent:#4f46e5; --accent-soft:#eef2ff; --ok:#16a34a; --ok-soft:#ecfdf3;
+  --warn:#d97706; --warn-soft:#fffbeb; --crit:#dc2626; --crit-soft:#fef2f2;
+  --info:#2563eb; --info-soft:#eff6ff; --radius:10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#111418; --surface:#1a1f26; --border:#2e3640; --text:#e6e9ee; --dim:#9aa4b2;
+    --accent:#818cf8; --accent-soft:#26294a; --ok:#4ade80; --ok-soft:#11291a;
+    --warn:#fbbf24; --warn-soft:#2e2410; --crit:#f87171; --crit-soft:#321616;
+    --info:#60a5fa; --info-soft:#15233a; }
+}
+* { box-sizing:border-box; }
+body { margin:0 auto; max-width:1100px; padding:24px 20px 64px; background:var(--bg);
+  color:var(--text); font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; }
+a { color:var(--accent); text-decoration:none; } a:hover { text-decoration:underline; }
+h1 { font-size:22px; letter-spacing:-.01em; } h2 { font-size:16px; margin-top:28px; }
+.card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+  padding:16px 18px; margin:14px 0; }
+.badge { display:inline-block; font-size:11px; font-weight:600; text-transform:uppercase;
+  letter-spacing:.04em; padding:2px 8px; border-radius:99px; background:var(--accent-soft); color:var(--accent); }
+.sev { display:inline-block; font-size:10.5px; font-weight:700; text-transform:uppercase;
+  padding:1.5px 7px; border-radius:99px; margin-right:6px; }
+.sev.critical { background:var(--crit-soft); color:var(--crit); }
+.sev.warning  { background:var(--warn-soft); color:var(--warn); }
+.sev.info     { background:var(--info-soft); color:var(--info); }
+.pass { color:var(--ok); font-weight:600; } .fail { color:var(--crit); font-weight:600; }
+table { width:100%; border-collapse:collapse; }
+th, td { text-align:left; padding:7px 10px; border-bottom:1px solid var(--border); vertical-align:top; }
+th { font-size:11.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--dim); }
+code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12.5px;
+  background:var(--accent-soft); padding:1px 5px; border-radius:4px; }
+img.shot { max-width:100%; border:1px solid var(--border); border-radius:var(--radius); }
+details > summary { cursor:pointer; font-weight:600; }
+
+.crumbs { display:flex; gap:14px; font-size:13px; margin-bottom:18px; flex-wrap:wrap; }
+.crumbs a.md { margin-left:auto; color:var(--dim); }
+.crumbs .here { font-weight:650; color:var(--text); }
+.tiles { display:flex; gap:10px; flex-wrap:wrap; margin:14px 0; }
+.tile { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+  padding:10px 16px; text-align:center; min-width:90px; }
+.tile b { display:block; font-size:20px; letter-spacing:-.01em; }
+.tile span { font-size:10.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--dim); }
+
+.step.todo::before  { content:"\2610 "; color:var(--dim); }
+.step.done::before  { content:"\2611 "; color:var(--ok); }
+.step.done          { color:var(--dim); }
+.group.todo .g-badge::after { content:"pending"; }
+.group.done .g-badge::after { content:"\2713 completed"; color:var(--ok); }
+
+.tldr { background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--accent);
+  border-radius:var(--radius); padding:16px 18px; margin:14px 0 20px; }
+.tldr h2:first-child { margin-top:0; }
+.tldr ul { padding-left:18px; margin:6px 0 0; }
+.tldr li { margin-bottom:6px; }
+.toc { font-size:13px; color:var(--dim); margin:0 0 22px; }
+.toc a { margin-right:4px; }
+
+.group { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+  padding:16px 18px; margin:16px 0; }
+.group > header { display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin-bottom:10px; }
+.group > header h3 { margin:0; font-size:15px; }
+.g-badge { display:inline-block; font-size:10.5px; font-weight:700; text-transform:uppercase;
+  letter-spacing:.04em; padding:2px 8px; border-radius:99px; background:var(--accent-soft); color:var(--accent); }
+.gnum { font-size:11px; font-weight:700; color:var(--dim); letter-spacing:.06em; }
+.meta { font-size:12.5px; color:var(--dim); margin:2px 0 10px; }
+.meta b { color:var(--text); font-weight:600; }
+.chips { display:flex; flex-wrap:wrap; gap:5px; margin:4px 0 10px; }
+.chips code { font-size:11.5px; }
+.chips code.new { background:var(--ok-soft); color:var(--ok); }
+.chips code.del { background:var(--crit-soft); color:var(--crit); }
+ul.steps { list-style:none; padding-left:0; margin:8px 0 0; }
+ul.steps > li.step { margin:5px 0; }
+ul.steps .detail { display:block; margin:3px 0 0 1.35em; font-size:12.5px; color:var(--dim); }
+.vref { background:var(--info-soft); border-radius:8px; padding:10px 12px; margin:8px 0; font-size:12.5px; }
+.vref h4 { margin:0 0 6px; font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--info); }
+.vref dl { margin:0; }
+.vref .item { margin-bottom:8px; padding-bottom:8px; border-bottom:1px dashed var(--border); }
+.vref .item:last-child { margin-bottom:0; padding-bottom:0; border-bottom:0; }
+.vref .k { font-weight:650; color:var(--text); }
+.acc { background:var(--ok-soft); border-radius:8px; padding:10px 12px; margin-top:10px; font-size:12.5px; }
+.acc h4 { margin:0 0 5px; font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--ok); }
+.acc ul { margin:0; padding-left:18px; }
+.gate { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em;
+  padding:2px 8px; border-radius:99px; }
+.gate.vitest { background:var(--ok-soft); color:var(--ok); }
+.gate.validate { background:var(--info-soft); color:var(--info); }
+.gate.browser { background:var(--warn-soft); color:var(--warn); }
+.chain { overflow-x:auto; margin:14px 0; }
+.chain svg { display:block; min-width:720px; }
+.chain text { font:600 12px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; fill:var(--text); }
+.chain text.sub { font-weight:400; font-size:10.5px; fill:var(--dim); }
+.chain rect { fill:var(--surface); stroke:var(--border); }
+.chain rect.domain { stroke:var(--ok); }
+.chain path, .chain line { stroke:var(--dim); stroke-width:1.4; fill:none; }
+</style>
+</head>
+<body>
+
+<nav class="crumbs">
+  <a href="../dashboard.html">&larr; Dashboard</a>
+  <a href="spec.html">Spec</a>
+  <span class="here">Plan</span>
+  <a href="../verification/implementation-verification.html">Verification</a>
+  <a href="visual-coverage.md" target="_blank" rel="noopener">Coverage matrix &#8599;</a>
+  <a href="implementation-plan.md" target="_blank" rel="noopener" class="md">md twin &#8599;</a>
+</nav>
+
+<header>
+  <span class="badge">Implementation plan</span>
+  <h1>Gondola layout support in the offer configurator UI</h1>
+  <p class="meta">Generated 2026-09-06 &middot; source of truth for step-level progress is
+    <a href="implementation-plan.md" target="_blank" rel="noopener">implementation-plan.md</a> &middot;
+    specification: <a href="spec.html">spec.html</a></p>
+</header>
+
+<div class="tiles">
+  <div class="tile"><b>7</b><span>task groups</span></div>
+  <div class="tile"><b>40</b><span>total steps</span></div>
+  <div class="tile"><b>4 to 6</b><span>expected tests</span></div>
+  <div class="tile"><b>serial</b><span>execution order</span></div>
+  <div class="tile"><b>7 / 8</b><span>mockup elements covered</span></div>
+</div>
+
+<div class="tldr">
+  <h2>TL;DR</h2>
+  <p>Seven task groups in one strictly serial chain, no parallelism: the domain upright rule first
+  (the only half <code>pnpm vitest run</code> can verify), then the type widening behind a
+  <code>pnpm typecheck</code> gate, then the plan extractions, then factory and buttons, the editor
+  parameterisation, and the gondola drawing last. 40 steps, 4 domain tests (one assertion moved,
+  three added), zero web tests by project decision. The spec's decomposition is confirmed on all
+  three counts, with one correction that would otherwise ship as a silent runtime bug.</p>
+
+  <h2>Key Decisions</h2>
+  <ul>
+    <li><b>Confirm: one <code>ShelfUnitEditor</code> parameterised on a units path prefix.</b> The
+      variants differ by one path segment, and a sibling would be a 363-line copy.</li>
+    <li><b>Confirm: two plan components sharing an extracted header.</b> The gondola geometry (two
+      strips, one selection, captions) is a different drawing, not a parameter.</li>
+    <li><b>Confirm: the six sub-components inside <code>ShelfUnitEditor.tsx</code> stay file-local
+      and unexported.</b> One editor serves both variants, so no second consumer exists. This
+      overturns the codebase-analysis recommendation, whose premise the shared-editor decision
+      removed.</li>
+    <li><b>Correction to the spec's parenthetical: <code>ShelvesFields</code> does take the units
+      path prefix.</b> Its <code>useFieldArray</code> name is a wall path. Only <code>height</code>
+      and <code>extras</code> are genuinely untouched.</li>
+    <li><b>Extract <code>ShelvesSummary</code> and <code>SCALE_PX_PER_CM</code> alongside
+      <code>LayoutPlanHeader</code>.</b> All three acquire a real second consumer in group 6, so the
+      extraction is not speculative.</li>
+    <li><b>The leg scope enters as a key on the context object, not as a third parameter.</b> It
+      keeps the <code>(context, inventory)</code> signature that <code>backend/domain.md</code>
+      mandates.</li>
+    <li><b>Buttons and factory (group 4) land before the gondola drawing (group 6).</b> A gondola is
+      priced by the server on its first autosave with no plan component in existence.</li>
+    <li><b>Groups are serialised by dependency, not scheduled concurrently.</b> Three files are each
+      touched by two or three groups.</li>
+  </ul>
+
+  <h2>Open Questions / Risks</h2>
+  <ul>
+    <li><span class="sev critical">critical</span><b>The two numbers in the gondola's delegated
+      context are not the same number.</b> The delegated <code>numberOfLayouts</code> keeps folding
+      in the side count; the leg scope is the run-level count narrowed by
+      <code>ceil(numberOfGondolaUnits / 2)</code>. Confusing them distorts the price with no failing
+      test, because the fixture's second entry gives the same answer either way. Step 1.3 exists only
+      for this, and test 1.1c pins feet alongside uprights.</li>
+    <li><span class="sev critical">critical</span><b>A wall path inside the parameterised editor
+      typechecks and fails at runtime.</b> <code>layouts.{i}.shelfUnits.{u}.shelves</code> stays a
+      legal <code>Path&lt;OfferInput&gt;</code> after the widening, so a missed prefix in
+      <code>ShelvesFields</code> compiles, lints and writes to a key a gondola does not have. Step
+      5.3 checks each of the six paths by name.</li>
+    <li><span class="sev warning">warning</span><b>Template literal path composition has no
+      precedent in this repo.</b> <code>${unitsPath}.shelfUnits.${unitIndex}.width</code> must
+      satisfy <code>FieldPathByValue&lt;OfferInput, number&gt;</code> over a two-member union.
+      Fallback in 5.5, and it never involves a cast.</li>
+    <li><span class="sev warning">warning</span><b>Five of the seven groups have no automated gate at
+      all.</b> Groups 2 to 6 are covered by <code>pnpm validate</code> and by nothing else until the
+      E2E phase. No step touching the view may be reported as done on <code>pnpm validate</code>
+      alone.</li>
+    <li><span class="sev info">info</span><b>The mockup's drawer heading reads „Regał 3" where the
+      application says „Ciąg {n}".</b> The plan keeps the application's copy and records the
+      deviation rather than acting on it.</li>
+    <li><span class="sev info">info</span><b><code>component:type-picker</code> is deliberately
+      uncovered.</b> It is variant B of the add-run screen, which the spec rejects.</li>
+    <li><span class="sev info">info</span><b>Every offer re-saved after this change re-prices its
+      gondolas.</b> Nothing is persisted today, so there is nothing to migrate.</li>
+  </ul>
+</div>
+
+<p class="toc">Contents:
+  <a href="#chain">Dependency chain</a> &middot;
+  <a href="#gates">What verifies what</a> &middot;
+  <a href="#groups">Task groups</a> &middot;
+  <a href="#order">Execution order</a> &middot;
+  <a href="#coverage">Visual coverage</a> &middot;
+  <a href="#standards">Standards</a> &middot;
+  <a href="#notes">Notes</a>
+</p>
+
+<main>
+
+<h2 id="chain">Dependency chain</h2>
+<div class="chain">
+<svg viewBox="0 0 900 170" width="100%" height="170" role="img" aria-label="Dependency chain: group 1 to group 2, then group 3 to group 5 and group 4, both into group 6, then group 7">
+  <rect class="domain" x="8" y="60" width="112" height="46" rx="8"/>
+  <text x="20" y="80">1 Domain</text><text class="sub" x="20" y="96">uprights, 5 steps</text>
+
+  <rect x="150" y="60" width="126" height="46" rx="8"/>
+  <text x="162" y="80">2 Type widen</text><text class="sub" x="162" y="96">6 steps, gate</text>
+
+  <rect x="306" y="14" width="126" height="46" rx="8"/>
+  <text x="318" y="34">3 Extractions</text><text class="sub" x="318" y="50">5 steps</text>
+
+  <rect x="306" y="106" width="126" height="46" rx="8"/>
+  <text x="318" y="126">4 Buttons</text><text class="sub" x="318" y="142">6 steps</text>
+
+  <rect x="462" y="14" width="126" height="46" rx="8"/>
+  <text x="474" y="34">5 Editor path</text><text class="sub" x="474" y="50">6 steps</text>
+
+  <rect x="618" y="60" width="126" height="46" rx="8"/>
+  <text x="630" y="80">6 Gondola</text><text class="sub" x="630" y="96">7 steps</text>
+
+  <rect x="774" y="60" width="118" height="46" rx="8"/>
+  <text x="786" y="80">7 Review</text><text class="sub" x="786" y="96">5 steps</text>
+
+  <line x1="120" y1="83" x2="150" y2="83"/>
+  <path d="M276 83 L291 83 L291 37 L306 37"/>
+  <path d="M276 83 L291 83 L291 129 L306 129"/>
+  <line x1="432" y1="37" x2="462" y2="37"/>
+  <path d="M588 37 L603 37 L603 83 L618 83"/>
+  <path d="M432 129 L603 129 L603 83 L618 83"/>
+  <line x1="744" y1="83" x2="774" y2="83"/>
+</svg>
+</div>
+<p class="meta">Groups 3 and 4 are the only pair whose declared dependencies would permit
+concurrency, and they are still run in order because group 4's checkpoint is easier to read against
+an unchanged wall path. <code>OfferLayouts.tsx</code> (groups 2, 4, 6),
+<code>WallLayoutPlan.tsx</code> (2, 3, 5) and <code>ShelfUnitEditor.tsx</code> (2, 5) are each shared,
+so nothing here is safe to schedule concurrently even where the graph allows it.</p>
+
+<h2 id="gates">What verifies what</h2>
+<p class="meta">Expected tests for the whole feature: 4 to 6 (4 in group 1, up to 2 more in group 7).
+That is far below the usual band, and it is honest rather than thin. There are zero tests under
+<code>packages/apps/web</code>, Vitest runs in a Node environment with no JSDOM
+(<code>vitest.config.ts</code> would not match a <code>.test.tsx</code> file), coverage is collected
+from <code>packages/domain</code> only, and
+<code>.maister/docs/standards/testing/test-writing.md</code> records that UI components have no unit
+tests by decision. Do not propose component tests.</p>
+<table>
+  <tr><th>Group</th><th>pnpm vitest run</th><th>pnpm validate</th><th>Running app / E2E phase</th></tr>
+  <tr><td>1 Domain upright rule</td><td class="pass">primary gate</td><td>yes</td><td>no</td></tr>
+  <tr><td>2 Form type widening</td><td>regression only</td><td class="pass">primary gate</td><td>yes, wall path unchanged</td></tr>
+  <tr><td>3 Plan extractions</td><td>regression only</td><td>yes</td><td class="pass">primary gate</td></tr>
+  <tr><td>4 Factory and add buttons</td><td>regression only</td><td>yes</td><td class="pass">primary gate</td></tr>
+  <tr><td>5 Editor parameterisation</td><td>regression only</td><td>yes</td><td class="pass">primary gate</td></tr>
+  <tr><td>6 Gondola plan and drawer</td><td>regression only</td><td>yes</td><td class="pass">primary gate</td></tr>
+  <tr><td>7 Review and success criteria</td><td>yes</td><td>yes</td><td>hands SC 1 to 5 to the E2E phase</td></tr>
+</table>
+
+<h2 id="groups">Task groups</h2>
+
+<section data-group="1" class="group done">
+  <header>
+    <span class="gnum">GROUP 1</span>
+    <h3>Domain, shared uprights via an optional leg scope</h3>
+    <span class="g-badge"></span>
+  </header>
+  <p class="meta"><b>Dependencies:</b> none &middot; <b>Steps:</b> 5 &middot; <b>Tests:</b> 4
+    &middot; <span class="gate vitest">pnpm vitest run</span></p>
+  <div class="chips">
+    <code>packages/domain/src/orchestrations/calculateWallLayoutDemand/calculateWallLayoutDemand.ts</code>
+    <code>packages/domain/src/orchestrations/calculateGondolaLayoutDemand/calculateGondolaLayoutDemand.ts</code>
+    <code>packages/domain/src/orchestrations/calculateGondolaLayoutDemand/calculateGondolaLayoutDemand.test.ts</code>
+  </div>
+  <ul class="steps">
+    <li data-step="1.1" class="step done">Write 4 focused tests in <code>calculateGondolaLayoutDemand.test.ts</code>
+      <span class="detail">Keep the file's shape: explicit vitest import, one top-level
+        <code>describe</code>, fixtures from <code>packages/domain/src/fixtures</code>, whole-result
+        <code>toEqual</code>, nothing mocked.</span>
+      <span class="detail">(a) the existing case's first-entry <code>leg-130-8-3</code> moves from 8
+        to 4, and nothing else in that assertion moves, order included.</span>
+      <span class="detail">(b) a two-sided entry with <code>numberOfLayouts: 3</code> yields
+        <code>(units + 1) * 3</code> uprights.</span>
+      <span class="detail">(c) feet and uprights diverge in one result: feet at
+        <code>(units + 1) * numberOfLayouts * numberOfGondolaUnits</code>, uprights at
+        <code>ceil(numberOfGondolaUnits / 2) * (units + 1) * numberOfLayouts</code>. This is the test
+        that catches the two numbers being swapped.</span>
+      <span class="detail">(d) an odd side count produces no fractional quantity.</span>
+      <span class="detail">Do not touch the wall, leg, offer-demand or preview tests. If one moves,
+        the fix is the wall call site, not the expectation.</span>
+    </li>
+    <li data-step="1.2" class="step done">Add the optional leg scope to <code>calculateWallLayoutDemand</code>
+      <span class="detail">Widen the context to <code>LayoutWall &amp; { numberOfLegLayouts?: number }</code>
+        and destructure <code>numberOfLegLayouts = numberOfLayouts</code> after
+        <code>numberOfLayouts</code>, so the default is today's behaviour by construction.</span>
+      <span class="detail">Feed it to <code>legContext</code> only. Foot, shelf, back-panel and
+        base-shelf contexts keep the run-level count. The wall call site passes nothing.</span>
+      <span class="detail">Fallback if the intersection reads badly: a third parameter. Prefer the
+        context key, because <code>backend/domain.md</code> fixes the signature.</span>
+    </li>
+    <li data-step="1.3" class="step done">Pass the narrowed scope from <code>calculateGondolaLayoutDemand</code>, and only there
+      <span class="detail">Keep <code>numberOfLayouts: numberOfLayouts * numberOfGondolaUnits</code>
+        unchanged: that is what keeps feet, back panels, base shelves and shelves full per side (R11).</span>
+      <span class="detail">Add one key:
+        <code>numberOfLegLayouts: Math.ceil(numberOfGondolaUnits / 2) * numberOfLayouts</code>.</span>
+      <span class="detail">Check against the fixture before moving on: entry zero gives feet 8 and
+        uprights 4; entry one gives feet 2 and uprights 2.</span>
+    </li>
+    <li data-step="1.4" class="step done">Ensure the domain tests pass
+      <span class="detail">Run only the two touched orchestration folders.</span>
+    </li>
+    <li data-step="1.5" class="step done">Run the full regression gate and prove the blast radius
+      <span class="detail"><code>pnpm vitest run</code> and <code>pnpm validate</code>;
+        <code>git diff --stat packages/domain</code> must show exactly three files and exactly one
+        changed number among pre-existing assertions.</span>
+    </li>
+  </ul>
+  <div class="acc"><h4>Acceptance criteria</h4><ul>
+    <li>The 4 tests pass and the rest of the suite is untouched.</li>
+    <li><code>calculateWallLayoutDemand.test.ts</code> passes with no edit, order included.</li>
+    <li>The only changed pre-existing assertion in the repository is <code>leg-130-8-3</code>, 8 to 4.</li>
+    <li>No new file under <code>packages/domain</code>.</li>
+  </ul></div>
+</section>
+
+<section data-group="2" class="group done">
+  <header>
+    <span class="gnum">GROUP 2</span>
+    <h3>Widen the form type to <code>OfferInput</code></h3>
+    <span class="g-badge"></span>
+  </header>
+  <p class="meta"><b>Dependencies:</b> group 1 &middot; <b>Steps:</b> 6 &middot; <b>Tests:</b> none
+    possible &middot; <span class="gate validate">pnpm typecheck</span>
+    <span class="gate browser">running app</span></p>
+  <div class="chips">
+    <code class="del">packages/apps/web/src/offer/offer.types.ts (deleted)</code>
+    <code>packages/apps/web/src/offer/components/OfferFormProvider.tsx</code>
+    <code>packages/apps/web/src/offer/components/OfferLayouts.tsx</code>
+    <code>packages/apps/web/src/offer/components/plan/WallLayoutPlan.tsx</code>
+    <code>packages/apps/web/src/offer/components/editor/ShelfUnitEditor.tsx</code>
+    <code>packages/apps/web/src/offer/components/editor/ExtrasFields.tsx</code>
+    <code>packages/apps/web/src/routes/offer/route.tsx</code>
+  </div>
+  <ul class="steps">
+    <li data-step="2.1" class="step done">Replace the generic at all six consumers, then delete the file
+      <span class="detail"><code>OfferFormProvider.tsx:13,18,43</code>, <code>OfferLayouts.tsx:10,13</code>,
+        <code>WallLayoutPlan.tsx:14,57</code>, <code>ShelfUnitEditor.tsx:15,17,76,139,206,297</code>,
+        <code>ExtrasFields.tsx:19,22</code>, <code>routes/offer/route.tsx:17,28</code>.</span>
+    </li>
+    <li data-step="2.2" class="step done">Remove the hydration cast
+      <span class="detail"><code>OfferFormProvider.tsx:37</code> becomes <code>reset(offer.input)</code>.
+        A live defect today: a saved gondola was force-cast to the wall type on load.</span>
+    </li>
+    <li data-step="2.3" class="step done">Narrow every whole-layout read with a schema guard, never a cast
+      <span class="detail">Fold into the existing guard at <code>WallLayoutPlan.tsx:93</code>:
+        <code>if (!layout || !isLayoutWall(layout)) return null</code>.</span>
+      <span class="detail">Do not add a <code>type</code> discriminant: Valibot strips unknown keys,
+        so a UI-added marker vanishes on the first save.</span>
+    </li>
+    <li data-step="2.4" class="step done">Verify the first typing surface: <code>FieldPathByValue</code>
+      <span class="detail">Expected to resolve, because RHF's <code>PathImpl</code> and
+        <code>PathValue</code> are distributive conditionals. Fallback: type the stepper
+        <code>name</code> props explicitly, never a per-variant cast.</span>
+    </li>
+    <li data-step="2.5" class="step done">Verify the second typing surface: <code>useFieldArray</code> over a union array
+      <span class="detail">Three call sites resolve through <code>ArrayPath</code> / <code>FieldArray</code>,
+        which 2.4's fallback does not reach: <code>OfferLayouts.tsx:14</code>,
+        <code>WallLayoutPlan.tsx:69</code>, <code>ShelfUnitEditor.tsx:210</code>.</span>
+    </li>
+    <li data-step="2.6" class="step done">Gate the rest of the plan on a clean typecheck
+      <span class="detail"><code>pnpm typecheck</code> alone first, then <code>pnpm validate</code>
+        and <code>pnpm vitest run</code>. <code>grep -rn 'WallOfferInput' packages/apps/web/src</code>
+        returns nothing.</span>
+      <span class="detail">In a running app: an existing wall offer still edits and prices. Nothing
+        new is visible; the point is that nothing broke.</span>
+    </li>
+  </ul>
+  <div class="acc"><h4>Acceptance criteria</h4><ul>
+    <li><code>pnpm typecheck</code> passes with no cast added anywhere.</li>
+    <li><code>offer.types.ts</code> no longer exists and no <code>as WallOfferInput</code> remains.</li>
+    <li><code>pnpm vitest run</code> still green.</li>
+    <li>A wall run still renders, edits and prices in a running app.</li>
+  </ul></div>
+</section>
+
+<section data-group="3" class="group done">
+  <header>
+    <span class="gnum">GROUP 3</span>
+    <h3>Extract the shared plan pieces, wall path only</h3>
+    <span class="g-badge"></span>
+  </header>
+  <p class="meta"><b>Dependencies:</b> group 2 &middot; <b>Steps:</b> 5 &middot; <b>Tests:</b> none
+    possible &middot; <span class="gate browser">running app</span></p>
+  <div class="chips">
+    <code>packages/apps/web/src/offer/components/plan/WallLayoutPlan.tsx</code>
+    <code class="new">plan/LayoutPlanHeader.tsx (new)</code>
+    <code class="new">plan/ShelvesSummary.tsx (new)</code>
+    <code class="new">plan/planScale.ts (new)</code>
+  </div>
+  <div class="vref">
+    <h4>Visual references</h4>
+    <div class="item">
+      <div><span class="k">mockup:</span> <code>analysis/design-context/mockups/konfigurator-z-gondol.html</code></div>
+      <div><span class="k">element:</span> <code>component:layout-plan-header</code></div>
+      <div><span class="k">locator:</span> lines 265 to 272, the <code>.between.gondola-head</code> block of the first card</div>
+      <div><span class="k">acceptance:</span> one row; left group is the index <code>Badge</code> then the
+        server description; right group in this order: „Liczba ciągów" label, numeric input, price
+        right-aligned, „Powiel ciąg" icon button, „Usuń ciąg" icon button. Byte-equivalent to
+        <code>WallLayoutPlan.tsx:97-137</code>, both Polish <code>aria-label</code>s included.</div>
+    </div>
+    <div class="item">
+      <div><span class="k">mockup:</span> <code>analysis/design-context/mockups/gondola-na-planie-dwa-warianty.html</code></div>
+      <div><span class="k">element:</span> <code>component:plan-unit</code></div>
+      <div><span class="k">locator:</span> lines 267 to 269, the three <code>.unit</code> rectangles of variant A</div>
+      <div><span class="k">acceptance:</span> the caption stays <code>width/depth/height</code> joined by
+        <code>/</code> with the shelves summary underneath, and the box is sized from the shared
+        <code>SCALE_PX_PER_CM</code> rather than a literal.</div>
+    </div>
+  </div>
+  <ul class="steps">
+    <li data-step="3.1" class="step done">Create <code>planScale.ts</code> exporting <code>SCALE_PX_PER_CM = 1.6</code>
+      <span class="detail">Both drawings must be on one scale by construction, and the
+        no-bare-numbers rule forbids duplicating the literal.</span>
+    </li>
+    <li data-step="3.2" class="step done">Extract <code>LayoutPlanHeader.tsx</code>
+      <span class="detail">Move <code>WallLayoutPlan.tsx:97-137</code> verbatim. Props inline,
+        destructured, alphabetical: <code>{ layoutIndex, onDuplicate, onRemove, preview }</code>. It
+        owns the <code>register(...numberOfLayouts)</code> call through <code>useFormContext</code>.</span>
+      <span class="detail"><code>numberOfLayouts</code> still has no RHF validation, only the HTML
+        <code>min</code>. Carry that verbatim; it is pre-existing and out of scope.</span>
+    </li>
+    <li data-step="3.3" class="step done">Extract <code>ShelvesSummary.tsx</code>
+      <span class="detail">Move <code>WallLayoutPlan.tsx:21-44</code> verbatim; the shelves shape is
+        identical in both schemas, so do not import a gondola type to widen it.</span>
+    </li>
+    <li data-step="3.4" class="step done">Rewire <code>WallLayoutPlan.tsx</code> to consume all three
+      <span class="detail">Roughly 60 lines out, three imports in. No behaviour, markup or copy change.</span>
+    </li>
+    <li data-step="3.5" class="step done">Verify
+      <span class="detail"><code>pnpm validate</code>, <code>pnpm vitest run</code>, and a running app:
+        header, drawing, duplicate, remove and drawer all behave as before.</span>
+    </li>
+  </ul>
+  <div class="acc"><h4>Acceptance criteria</h4><ul>
+    <li><code>pnpm validate</code> passes.</li>
+    <li>The wall run is visually and behaviourally identical to before the group.</li>
+    <li><code>SCALE_PX_PER_CM</code> is declared once in the repository.</li>
+    <li>Implementation matches each <code>acceptance</code> criterion declared above.</li>
+  </ul></div>
+</section>
+
+<section data-group="4" class="group done">
+  <header>
+    <span class="gnum">GROUP 4</span>
+    <h3>The gondola factory and the two add buttons</h3>
+    <span class="g-badge"></span>
+  </header>
+  <p class="meta"><b>Dependencies:</b> group 2 &middot; <b>Steps:</b> 6 &middot; <b>Tests:</b> none
+    possible &middot; <span class="gate browser">running app, mid-implementation checkpoint</span></p>
+  <div class="chips">
+    <code class="new">packages/apps/web/src/offer/helpers/createDefaultGondolaLayout.ts (new)</code>
+    <code>packages/apps/web/src/offer/components/OfferLayouts.tsx</code>
+  </div>
+  <div class="vref">
+    <h4>Visual references</h4>
+    <div class="item">
+      <div><span class="k">mockup:</span> <code>analysis/design-context/mockups/dodawanie-ci-gu-dwa-warianty.html</code></div>
+      <div><span class="k">element:</span> <code>screen:dodawanie-ciagu</code></div>
+      <div><span class="k">locator:</span> variant A only, lines 261 to 269 (its two buttons at 264 to
+        267), plus the empty-state card at 280 to 282. Variant B (270 to 278) is rejected and must not
+        be built.</div>
+      <div><span class="k">acceptance:</span> two buttons side by side in this order, „Dodaj ciąg
+        przyścienny" then „Dodaj gondolę", both from <code>core/ui/button.tsx</code>, each disabled
+        independently when its own factory returns <code>null</code>, and the hint under them naming
+        the type that cannot be built. No radio group, no menu, no select.</div>
+    </div>
+    <div class="item">
+      <div><span class="k">mockup:</span> <code>analysis/design-context/mockups/konfigurator-z-gondol.html</code></div>
+      <div><span class="k">element:</span> <code>screen:konfigurator-z-gondola</code></div>
+      <div><span class="k">locator:</span> lines 258 to 262, the page title row and the subtitle</div>
+      <div><span class="k">acceptance:</span> the two buttons sit on the title row, and the subtitle
+        underneath reads exactly „Oferta może mieszać oba rodzaje ciągów. Wycena spływa z serwera po
+        zapisie." (R17).</div>
+    </div>
+  </div>
+  <ul class="steps">
+    <li data-step="4.1" class="step done">Write <code>createDefaultGondolaLayout.ts</code>
+      <span class="detail">Same folder, same <code>InventoryDimensions</code> parameter, same
+        contract: <code>LayoutGondola | null</code>, where <code>null</code> keeps the button disabled.</span>
+      <span class="detail">Call <code>createDefaultWallLayout(dimensions)</code>, return
+        <code>null</code> when it does, then build the gondola key by key from its values: one
+        <code>gondolaUnits</code> entry <code>{ depth, numberOfGondolaUnits: GONDOLA_SIDES, shelfUnits }</code>,
+        plus <code>height</code>, <code>numberOfLayouts</code> and <code>extras: []</code>.</span>
+      <span class="detail">Never spread a wall layout: a hybrid object is persisted as a gondola with
+        the wall keys stripped, yet read as a wall by a guard checking wall first.</span>
+      <span class="detail">JSDoc on the export, no inline comments, and no new <code>@/domain</code>
+        import. The count must stay at eleven.</span>
+    </li>
+    <li data-step="4.2" class="step done">Replace the single button in <code>OfferLayouts.tsx</code></li>
+    <li data-step="4.3" class="step done">Split the disabled hint so it names the unavailable type
+      <span class="detail">Today's single string is „Uzupełnij magazyn komponentów, żeby móc dodać
+        ciąg." Compose from existing vocabulary only; no new noun is coined here.</span>
+    </li>
+    <li data-step="4.4" class="step done">Add the page subtitle, verbatim</li>
+    <li data-step="4.5" class="step done">Memoise nothing that was not memoised before
+      <span class="detail">The unmemoised factory call is a recorded pre-existing defect and is out of
+        scope. Do not fix it here.</span>
+    </li>
+    <li data-step="4.6" class="step done">Verify, and take the mid-implementation checkpoint
+      <span class="detail">The configurator draws nothing for the gondola yet, because
+        <code>WallLayoutPlan</code> now narrows and returns <code>null</code>. That is expected.</span>
+      <span class="detail">Confirm the round trip on the offer page instead
+        (<code>routes/offer/route.tsx:149-168</code> reads only description and price): after the
+        800 ms autosave the run appears with „1 x ciąg regałów dwustronnych" and a price. Schema, API,
+        pricing and persistence accept the gondola before a pixel of it is drawn.</span>
+    </li>
+  </ul>
+  <div class="acc"><h4>Acceptance criteria</h4><ul>
+    <li>A gondola can be created and is priced by the server, with no plan component in existence.</li>
+    <li><code>grep -rn 'from "@/domain' packages/apps/web/src</code> still returns eleven lines.</li>
+    <li>Both buttons disable independently and the hint names the unavailable type.</li>
+    <li>Implementation matches each <code>acceptance</code> criterion declared above.</li>
+  </ul></div>
+</section>
+
+<section data-group="5" class="group done">
+  <header>
+    <span class="gnum">GROUP 5</span>
+    <h3>Parameterise <code>ShelfUnitEditor</code> on a units path prefix</h3>
+    <span class="g-badge"></span>
+  </header>
+  <p class="meta"><b>Dependencies:</b> group 3 &middot; <b>Steps:</b> 6 &middot; <b>Tests:</b> none
+    possible &middot; <span class="gate browser">running app, wall path only</span></p>
+  <div class="chips">
+    <code>packages/apps/web/src/offer/components/editor/ShelfUnitEditor.tsx</code>
+    <code>packages/apps/web/src/offer/components/plan/WallLayoutPlan.tsx</code>
+  </div>
+  <div class="vref">
+    <h4>Visual references</h4>
+    <div class="item">
+      <div><span class="k">mockup:</span> <code>analysis/design-context/mockups/szuflada-edycji-gondoli.html</code></div>
+      <div><span class="k">element:</span> <code>screen:szuflada-edycji-gondoli</code></div>
+      <div><span class="k">locator:</span> lines 284 to 299, the four sections of the drawer body</div>
+      <div><span class="k">acceptance:</span> section order and labels unchanged from today's wall
+        drawer, which this mockup reproduces: „Ciąg" (Głębokość bazy, Wysokość), „Regały" (Szerokość,
+        Liczba regałów, Dodaj regały), „Półki", „Inne elementy ciągu". This group changes only where
+        the fields write, never what the drawer looks like.</div>
+    </div>
+  </div>
+  <ul class="steps">
+    <li data-step="5.1" class="step done">Introduce the prefix type and prop
+      <span class="detail"><code>type UnitsPath = `layouts.${number}` | `layouts.${number}.gondolaUnits.${number}`</code>.
+        The prefix points at the object carrying <code>depth</code> and <code>shelfUnits</code>, which
+        is the entire difference between the variants.</span>
+    </li>
+    <li data-step="5.2" class="step done">Repoint the unit-scoped fields in the editor body
+      <span class="detail">„Głębokość bazy" to <code>${unitsPath}.depth</code> (:314), „Szerokość" to
+        <code>${unitsPath}.shelfUnits.{u}.width</code> (:334), „Liczba regałów" to
+        <code>...numberOfShelfUnits</code> (:339), and the unit <code>useWatch</code> (:301).</span>
+      <span class="detail">„Wysokość" stays at <code>layouts.{layoutIndex}.height</code> (:319). It is
+        a run-level field in both schemas and must not move.</span>
+    </li>
+    <li data-step="5.3" class="step done">Give <code>ShelvesFields</code> the prefix too, and check all six paths by name
+      <span class="detail">Its <code>useFieldArray</code> (:210) and <code>shelfPath</code> (:216) are
+        wall paths and take <code>${unitsPath}.shelfUnits.{u}...</code>. Its height
+        <code>useWatch</code> (:207) does not move. <code>ExtrasFields</code> is untouched.</span>
+      <span class="detail">This is the step the spec's parenthetical understates: a leftover wall path
+        still typechecks and still lints, and writes to a key a gondola does not have. Read the six
+        paths, do not trust the compiler.</span>
+    </li>
+    <li data-step="5.4" class="step done">Update the one existing call site
+      <span class="detail"><code>WallLayoutPlan.tsx</code> passes
+        <code>unitsPath={`layouts.${layoutIndex}`}</code>. The drawer, its
+        <code>key={selectedUnit.id}</code> and the „Ciąg {n}" title stay as they are.</span>
+    </li>
+    <li data-step="5.5" class="step done">Resolve the template literal path typing
+      <span class="detail">TypeScript distributes template literal types over unions, so both branches
+        should be produced and both should be legal paths.</span>
+      <span class="detail">Fallback: keep the prop union and compose the paths in the two callers,
+        passing already-formed literal paths down. Do not reach for a cast under any circumstance.</span>
+    </li>
+    <li data-step="5.6" class="step done">Verify on the wall path only
+      <span class="detail">Base depth, height, width, unit count, shelves add and remove, extras add
+        and remove, unit duplicate and remove: all identical to before, and the autosave still returns
+        a price.</span>
+    </li>
+  </ul>
+  <div class="acc"><h4>Acceptance criteria</h4><ul>
+    <li>The wall drawer is behaviourally identical to before the group.</li>
+    <li>No <code>layouts.{i}.shelfUnits</code> path remains inside <code>ShelfUnitEditor.tsx</code>.</li>
+    <li><code>pnpm validate</code> passes with no cast introduced.</li>
+    <li>Implementation matches each <code>acceptance</code> criterion declared above.</li>
+  </ul></div>
+</section>
+
+<section data-group="6" class="group done">
+  <header>
+    <span class="gnum">GROUP 6</span>
+    <h3>The gondola plan, the dispatch and the drawer</h3>
+    <span class="g-badge"></span>
+  </header>
+  <p class="meta"><b>Dependencies:</b> groups 4 and 5 &middot; <b>Steps:</b> 7 &middot;
+    <b>Tests:</b> none possible &middot; <span class="gate browser">E2E phase, Success Criteria 1 to 5</span></p>
+  <div class="chips">
+    <code class="new">packages/apps/web/src/offer/components/plan/GondolaLayoutPlan.tsx (new)</code>
+    <code>packages/apps/web/src/offer/components/OfferLayouts.tsx</code>
+  </div>
+  <div class="vref">
+    <h4>Visual references</h4>
+    <div class="item">
+      <div><span class="k">mockup:</span> <code>gondola-na-planie-dwa-warianty.html</code></div>
+      <div><span class="k">element:</span> <code>screen:gondola-na-planie</code></div>
+      <div><span class="k">locator:</span> variant A only, lines 261 to 277. Variant B (278 to 288,
+        one strip at doubled depth) is rejected and must not be built.</div>
+      <div><span class="k">acceptance:</span> „Strona 1" above the first strip, two strips separated by
+        a hairline gap, the same unit rectangles in both, „Strona 2" below the second. Each rectangle
+        is <code>unit.width * SCALE_PX_PER_CM</code> by <code>gondolaUnit.depth * SCALE_PX_PER_CM</code>,
+        and depth is read from the gondola unit, never from the layout.</div>
+    </div>
+    <div class="item">
+      <div><span class="k">mockup:</span> <code>gondola-na-planie-dwa-warianty.html</code></div>
+      <div><span class="k">element:</span> <code>component:plan-unit</code></div>
+      <div><span class="k">locator:</span> lines 267 to 269</div>
+      <div><span class="k">acceptance:</span> caption <code>width/depth/height</code>, shelves summary
+        underneath, keyboard-reachable <code>button</code>, and a click on either strip opens the
+        drawer and highlights the matching box on both strips (R5).</div>
+    </div>
+    <div class="item">
+      <div><span class="k">mockup:</span> <code>konfigurator-z-gondol.html</code></div>
+      <div><span class="k">element:</span> <code>screen:konfigurator-z-gondola</code></div>
+      <div><span class="k">locator:</span> lines 278 to 300, the second card</div>
+      <div><span class="k">acceptance:</span> the gondola card carries the identical shared header
+        (badge, description „1 x ciąg regałów dwustronnych ...", „Liczba ciągów", price, „Powiel
+        ciąg", „Usuń ciąg"), and a wall card and a gondola card sit in one list without a visual break.</div>
+    </div>
+    <div class="item">
+      <div><span class="k">mockup:</span> <code>konfigurator-z-gondol.html</code></div>
+      <div><span class="k">element:</span> <code>component:layout-plan-header</code></div>
+      <div><span class="k">locator:</span> lines 279 to 286</div>
+      <div><span class="k">acceptance:</span> consumed unchanged from group 3. No gondola-specific
+        header variant is created.</div>
+    </div>
+    <div class="item">
+      <div><span class="k">mockup:</span> <code>szuflada-edycji-gondoli.html</code></div>
+      <div><span class="k">element:</span> <code>screen:szuflada-edycji-gondoli</code></div>
+      <div><span class="k">locator:</span> lines 282 to 299</div>
+      <div><span class="k">acceptance:</span> the drawer opens on the same editor state from either
+        strip, with the note above the editor body and the four sections unchanged underneath.</div>
+    </div>
+    <div class="item">
+      <div><span class="k">mockup:</span> <code>szuflada-edycji-gondoli.html</code></div>
+      <div><span class="k">element:</span> <code>component:both-sides-note</code></div>
+      <div><span class="k">locator:</span> line 283</div>
+      <div><span class="k">acceptance:</span> reads exactly „Zmiany dotyczą obu stron gondoli.", period
+        included, rendered above the editor inside the drawer, styled as muted secondary text.</div>
+    </div>
+  </div>
+  <ul class="steps">
+    <li data-step="6.1" class="step done">Create <code>GondolaLayoutPlan.tsx</code> from the <code>WallLayoutPlan</code> template
+      <span class="detail">Same prop set, so the two are interchangeable at the dispatch site.
+        <code>useWatch</code>, then <code>if (!layout || !isLayoutGondola(layout)) return null</code>.</span>
+      <span class="detail"><code>const GONDOLA_UNIT_INDEX = 0</code>. Carry over
+        <code>handleDuplicateUnit</code>, <code>handleRemoveUnit</code> with its index fix-up and the
+        <code>structuredClone(getValues(...))</code> idiom, one level deeper.</span>
+    </li>
+    <li data-step="6.2" class="step done">Draw the two strips
+      <span class="detail">Consume <code>LayoutPlanHeader</code>, <code>ShelvesSummary</code> and
+        <code>SCALE_PX_PER_CM</code> from group 3. Build the strip once and render it twice, both from
+        <code>gondolaUnits.0</code>.</span>
+    </li>
+    <li data-step="6.3" class="step done">Share one selection across both strips
+      <span class="detail">A single <code>selectedUnitIndex</code> and <code>selectedShelfIndex</code>.
+        No side index and no third selection coordinate, by design: the gondola is one configuration.</span>
+      <span class="detail">React keys must stay unique across the two strips: field id, copy index and
+        side.</span>
+    </li>
+    <li data-step="6.4" class="step done">Host the drawer and the symmetry note
+      <span class="detail">The note lives in this component, above <code>&lt;ShelfUnitEditor /&gt;</code>,
+        so the editor stays free of variant knowledge. Pass
+        <code>unitsPath={`layouts.${layoutIndex}.gondolaUnits.${GONDOLA_UNIT_INDEX}`}</code>.</span>
+    </li>
+    <li data-step="6.5" class="step done">Dispatch in <code>OfferLayouts.tsx</code>
+      <span class="detail">A hand-written branch on <code>isLayoutGondola(getValues(...))</code>,
+        matching the three the domain already uses. No layout-kind registry.</span>
+      <span class="detail">Read from <code>getValues</code> or <code>useWatch</code>, never from the
+        <code>useFieldArray</code> field snapshot: RHF merges an <code>id</code> and it can be stale.</span>
+    </li>
+    <li data-step="6.6" class="step done">Confirm the out-of-scope shape is not destroyed
+      <span class="detail">A gondola with several diverging entries is schema-legal and undrawable
+        here. The requirement is only that nothing destroys it: entry zero is read and written, RHF
+        keeps the rest, duplication clones the whole layout. Check by reading the code path.</span>
+    </li>
+    <li data-step="6.7" class="step done">Verify: the full Success Criteria 1 to 5 script
+      <span class="detail">Two strips and their captions; the drawer moving both sides at once;
+        description and price from the autosave; reload; Rozpiska with no fraction and uprights at
+        <code>N + 1</code> per run copy; a mixed offer whose wall price is what it was before.</span>
+    </li>
+  </ul>
+  <div class="acc"><h4>Acceptance criteria</h4><ul>
+    <li>Success Criteria 1 to 5 pass in a running application, with evidence left by the E2E phase.</li>
+    <li>The gondola and wall headers are the same component with no variant branch.</li>
+    <li>Rozpiska shows no fractional quantity for any gondola.</li>
+    <li>Implementation matches each <code>acceptance</code> criterion declared above.</li>
+  </ul></div>
+</section>
+
+<section data-group="7" class="group done">
+  <header>
+    <span class="gnum">GROUP 7</span>
+    <h3>Test review and success-criteria verification</h3>
+    <span class="g-badge"></span>
+  </header>
+  <p class="meta"><b>Dependencies:</b> all previous groups &middot; <b>Steps:</b> 5 &middot;
+    <b>Tests:</b> up to 2 more &middot; <span class="gate vitest">pnpm vitest run</span>
+    <span class="gate validate">pnpm validate</span></p>
+  <div class="chips">
+    <code>packages/domain/src/orchestrations/calculateGondolaLayoutDemand/calculateGondolaLayoutDemand.test.ts</code>
+    <span class="meta">only if 7.2 finds a gap; otherwise no file changes</span>
+  </div>
+  <ul class="steps">
+    <li data-step="7.1" class="step done">Review the 4 tests from group 1
+      <span class="detail">Whole-result <code>toEqual</code>, nothing mocked, fixtures from the domain
+        package, beside their subject.</span>
+    </li>
+    <li data-step="7.2" class="step done">Analyse gaps for this feature only, and write at most 2 further tests
+      <span class="detail">The cap is 10; the realistic number is 0 to 2. No web coverage, and no
+        <code>.test.tsx</code> file: the runner would not match it and the environment could not run it.</span>
+    </li>
+    <li data-step="7.3" class="step done">Run the feature tests, then the whole suite
+      <span class="detail">Expect green with the single moved assertion and nothing else.</span>
+    </li>
+    <li data-step="7.4" class="step done">Run the mechanical success criteria
+      <span class="detail">SC 6: <code>pnpm validate</code> and <code>pnpm vitest run</code> pass, and
+        <code>git diff</code> shows the only changed pre-existing assertion is
+        <code>leg-130-8-3</code>, 8 to 4.</span>
+      <span class="detail">SC 7: <code>offer.types.ts</code> is gone and no
+        <code>as WallOfferInput</code> remains. SC 8:
+        <code>grep -rn 'from "@/domain' packages/apps/web/src</code> returns eleven lines.</span>
+    </li>
+    <li data-step="7.5" class="step done">Report the split plainly in the work log
+      <span class="detail">Which parts were verified by the test run, which by <code>pnpm validate</code>
+        only, and which by exercising the running application.</span>
+      <span class="detail">Leave every change unstaged. No <code>git add</code>, no commit, no push, no
+        branch. Propose a commit message and stop.</span>
+    </li>
+  </ul>
+  <div class="acc"><h4>Acceptance criteria</h4><ul>
+    <li>All feature tests pass (4 to 6 total).</li>
+    <li>No more than 2 additional tests added, and none of them a component test.</li>
+    <li>Success Criteria 6, 7 and 8 verified from the command line, with commands and output recorded.</li>
+    <li>Success Criteria 1 to 5 handed to the E2E phase with the script above.</li>
+  </ul></div>
+</section>
+
+<h2 id="order">Execution order</h2>
+<table>
+  <tr><th>#</th><th>Group</th><th>Steps</th><th>Depends on</th><th>Why here</th></tr>
+  <tr><td>1</td><td>Domain shared uprights</td><td>5</td><td>none</td><td>the only half the test suite can verify, so it goes first</td></tr>
+  <tr><td>2</td><td>Form type widening</td><td>6</td><td>1</td><td>a clean typecheck is the gate the rest of the plan sits behind</td></tr>
+  <tr><td>3</td><td>Plan extractions</td><td>5</td><td>2</td><td>extract before the second consumer exists, against an unchanged wall path</td></tr>
+  <tr><td>4</td><td>Factory and add buttons</td><td>6</td><td>2</td><td>a gondola must be creatable before anything can draw one</td></tr>
+  <tr><td>5</td><td>Editor parameterisation</td><td>6</td><td>3</td><td>the risky 363-line refactor lands on the wall path alone</td></tr>
+  <tr><td>6</td><td>Gondola plan, dispatch, drawer</td><td>7</td><td>4, 5</td><td>the drawer works from its first render</td></tr>
+  <tr><td>7</td><td>Review and success criteria</td><td>5</td><td>all</td><td>mechanical checks and the E2E handover</td></tr>
+</table>
+
+<h2 id="coverage">Visual coverage</h2>
+<p class="meta">Full matrix and rejected-variant table:
+  <a href="visual-coverage.md" target="_blank" rel="noopener">visual-coverage.md &#8599;</a>.
+  Source: <code>analysis/design-context/INDEX.md</code>.</p>
+<table>
+  <tr><th>Screen / component</th><th>Covered by</th><th>Status</th></tr>
+  <tr><td><code>screen:dodawanie-ciagu</code></td><td>Group 4, variant A only</td><td class="pass">covered</td></tr>
+  <tr><td><code>screen:gondola-na-planie</code></td><td>Group 6, variant A only</td><td class="pass">covered</td></tr>
+  <tr><td><code>screen:konfigurator-z-gondola</code></td><td>Group 4 (buttons, subtitle), Group 6 (gondola card)</td><td class="pass">covered</td></tr>
+  <tr><td><code>screen:szuflada-edycji-gondoli</code></td><td>Group 5 (sections), Group 6 (drawer host, note)</td><td class="pass">covered</td></tr>
+  <tr><td><code>component:layout-plan-header</code></td><td>Group 3 (extracted), Group 6 (consumed)</td><td class="pass">covered</td></tr>
+  <tr><td><code>component:plan-unit</code></td><td>Group 3 (summary and scale), Group 6 (both strips)</td><td class="pass">covered</td></tr>
+  <tr><td><code>component:both-sides-note</code></td><td>Group 6</td><td class="pass">covered</td></tr>
+  <tr><td><code>component:type-picker</code></td><td>none</td><td class="fail">not built, by decision</td></tr>
+</table>
+<details>
+  <summary>Why <code>component:type-picker</code> is uncovered</summary>
+  <p>It is the run-type chooser from variant B of <code>screen:dodawanie-ciagu</code>, built in the
+  mockup on <code>core/ui/radio-group.tsx</code>. The specification closes decision I1 in favour of
+  variant A (two buttons side by side, R1 and the Visual Design table), so the picker has no place in
+  the implementation. <code>core/ui/radio-group.tsx</code> remains used only by
+  <code>inventory/components/InventoryItem.tsx</code>, exactly as today. A task group that referenced
+  this component would be building the rejected variant.</p>
+</details>
+
+<h2 id="standards">Standards compliance</h2>
+<p class="meta">Follow <code>.maister/docs/standards/</code>, with <code>CLAUDE.md</code> and
+<code>docs/decisions.md</code> taking precedence wherever they disagree.</p>
+<table>
+  <tr><th>Standard</th><th>What it binds here</th></tr>
+  <tr><td><code>global/coding-style.md</code></td><td>named exports, function declarations, <code>type</code> over <code>interface</code>, three-tier import order, named constants (<code>SCALE_PX_PER_CM</code>, <code>GONDOLA_SIDES</code>, <code>GONDOLA_UNIT_INDEX</code>), a real guard instead of a cast at every indexed or optional read</td></tr>
+  <tr><td><code>global/commenting.md</code></td><td>no inline comments; JSDoc on the exported factory only</td></tr>
+  <tr><td><code>global/minimal-implementation.md</code></td><td>no registry, no extraction of the six editor sub-components, no stubs for asymmetric gondolas</td></tr>
+  <tr><td><code>global/validation.md</code></td><td>Valibot stays the contract; no new form-layer validation</td></tr>
+  <tr><td><code>backend/domain.md</code></td><td>the domain depends on nothing, one folder per function, <code>(context, inventory)</code>, pure functions</td></tr>
+  <tr><td><code>frontend/components.md</code></td><td>feature folders, props inline, destructured and alphabetical, one <code>useForm</code> shared through context, the browser bundle never importing domain code</td></tr>
+  <tr><td><code>frontend/language.md</code></td><td>every user-facing string in Polish, prices through the single <code>formatPrice</code></td></tr>
+  <tr><td><code>frontend/accessibility.md</code></td><td>semantic markup, keyboard-reachable unit boxes, Polish <code>aria-label</code>s on icon-only buttons</td></tr>
+  <tr><td><code>testing/test-writing.md</code></td><td>nothing mocked, tests beside their subject, explicit vitest import, one top-level <code>describe</code>, domain fixtures, whole-result assertions, UI deliberately untested</td></tr>
+  <tr><td><code>workflow/git.md</code>, <code>workflow/process.md</code></td><td>one concern per step, changes left unstaged, no commits or pushes by the agent, <code>pnpm validate</code> and <code>pnpm vitest run</code> before each step is reported</td></tr>
+</table>
+
+<h2 id="notes">Notes</h2>
+<ul>
+  <li><b>Test-driven:</b> group 1 starts with its 4 tests. Groups 2 to 6 have no test to start with,
+    which is a project decision and not an omission; each names its real gate instead.</li>
+  <li><b>Run incrementally:</b> run the touched tests after each step, then <code>pnpm vitest run</code>
+    as the regression gate before reporting.</li>
+  <li><b>Mark progress:</b> check off steps as they complete.
+    <a href="implementation-plan.md" target="_blank" rel="noopener">implementation-plan.md</a> is the
+    resume source of truth; this page mirrors it.</li>
+  <li><b>Reuse first:</b> <code>createDefaultWallLayout</code>, <code>useInventoryDimensions</code>,
+    <code>ExtrasFields</code>, <code>formatPrice</code>, <code>core/ui/*</code>, the two schema guards
+    and <code>calculateWallLayoutDemand</code> all carry the gondola without being restructured.</li>
+  <li><b>Commercial note:</b> the gondola shipped here has no end cap, while the client's standard
+    gondola does, so the quote for the standard case is systematically low. Accepted knowingly, closed
+    by a separate task, and to be said to the client before the demo.</li>
+</ul>
+
+</main>
+</body>
+</html>
