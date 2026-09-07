@@ -1,5 +1,5 @@
 import { Copy, Trash2 } from "lucide-react"
-import { Fragment, useState } from "react"
+import { Fragment } from "react"
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form"
 
 import { LayoutWall } from "@/schemas/LayoutWall.schema"
@@ -7,11 +7,11 @@ import { OfferOutput } from "@/schemas/Offer.schema"
 
 import { Badge } from "../../../core/ui/badge"
 import { Button } from "../../../core/ui/button"
-import { Drawer, DrawerContent, DrawerTitle } from "../../../core/ui/drawer"
 import { Input } from "../../../core/ui/input"
 import { Label } from "../../../core/ui/label"
-import { formatPrice } from "../../helpers/formatPrice"
 import { WallOfferInput } from "../../offer.types"
+import { BreakdownList } from "../BreakdownList"
+import { EditorPanel, PanelTab } from "../editor/EditorPanel"
 import { ShelfUnitEditor } from "../editor/ShelfUnitEditor"
 
 const SCALE_PX_PER_CM = 1.6
@@ -47,24 +47,27 @@ export function WallLayoutPlan({
   layoutIndex,
   onDuplicate,
   onRemove,
+  onSelectShelf,
+  onSelectTab,
+  onSelectUnit,
+  panelTab,
   preview,
+  selectedShelfIndex,
+  selectedUnitIndex,
 }: {
   layoutIndex: number
   onDuplicate: () => void
   onRemove: () => void
+  onSelectShelf: (shelfIndex: number) => void
+  onSelectTab: (tab: PanelTab) => void
+  onSelectUnit: (unitIndex: number | null) => void
+  panelTab: PanelTab
   preview: LayoutPreview | undefined
+  selectedShelfIndex: number
+  selectedUnitIndex: number | null
 }) {
   const { control, getValues, register } = useFormContext<WallOfferInput>()
   const layout = useWatch({ control, name: `layouts.${layoutIndex}` })
-  const [selectedUnitIndex, setSelectedUnitIndex] = useState<number | null>(
-    null,
-  )
-  const [selectedShelfIndex, setSelectedShelfIndex] = useState(0)
-
-  const selectUnit = (unitIndex: number | null) => {
-    setSelectedUnitIndex(unitIndex)
-    setSelectedShelfIndex(0)
-  }
 
   const shelfUnits = useFieldArray({
     control,
@@ -87,7 +90,7 @@ export function WallLayoutPlan({
     const wasLast = unitIndex === shelfUnits.fields.length - 1
 
     shelfUnits.remove(unitIndex)
-    selectUnit(wasLast ? unitIndex - 1 : unitIndex)
+    onSelectUnit(wasLast ? unitIndex - 1 : unitIndex)
   }
 
   if (!layout) return null
@@ -111,9 +114,6 @@ export function WallLayoutPlan({
             min={1}
             type="number"
           />
-          <span className="w-28 text-right text-sm tabular-nums">
-            {preview ? formatPrice(preview.basePrice) : "—"}
-          </span>
           <Button
             aria-label="Powiel ciąg"
             onClick={onDuplicate}
@@ -153,7 +153,7 @@ export function WallLayoutPlan({
                       : ""
                   }`}
                   key={`${unitField.id}-${copyIndex}`}
-                  onClick={() => selectUnit(unitIndex)}
+                  onClick={() => onSelectUnit(unitIndex)}
                   style={{
                     height: layout.depth * SCALE_PX_PER_CM,
                     width: unit.width * SCALE_PX_PER_CM,
@@ -179,37 +179,33 @@ export function WallLayoutPlan({
           })}
         </div>
       </div>
-      <Drawer
-        direction="right"
-        onOpenChange={(isOpen) => !isOpen && selectUnit(null)}
-        open={selectedUnitIndex !== null}
-      >
-        <DrawerContent className="py-4 pl-4">
-          {selectedUnitIndex !== null && selectedUnit && (
-            <>
-              <DrawerTitle className="mb-4 pr-6">
-                Ciąg {layoutIndex + 1}
-              </DrawerTitle>
 
-              <div className="min-h-0 flex-1 overflow-y-auto pr-6">
-                <ShelfUnitEditor
-                  key={selectedUnit.id}
-                  layoutIndex={layoutIndex}
-                  onDuplicateUnit={() => handleDuplicateUnit(selectedUnitIndex)}
-                  {...(canRemoveUnit && {
-                    onRemoveUnit: () => handleRemoveUnit(selectedUnitIndex),
-                  })}
-                  onSelectShelf={setSelectedShelfIndex}
-                  onSelectUnit={selectUnit}
-                  selectedShelfIndex={selectedShelfIndex}
-                  unitCount={shelfUnits.fields.length}
-                  unitIndex={selectedUnitIndex}
-                />
-              </div>
-            </>
+      {selectedUnitIndex !== null && selectedUnit && (
+        <EditorPanel
+          onSelectTab={onSelectTab}
+          tab={panelTab}
+          title={`Ciąg ${layoutIndex + 1}`}
+        >
+          {panelTab === "edit" && (
+            <ShelfUnitEditor
+              key={selectedUnit.id}
+              layoutIndex={layoutIndex}
+              onDuplicateUnit={() => handleDuplicateUnit(selectedUnitIndex)}
+              {...(canRemoveUnit && {
+                onRemoveUnit: () => handleRemoveUnit(selectedUnitIndex),
+              })}
+              onSelectShelf={onSelectShelf}
+              onSelectUnit={onSelectUnit}
+              selectedShelfIndex={selectedShelfIndex}
+              unitCount={shelfUnits.fields.length}
+              unitIndex={selectedUnitIndex}
+            />
           )}
-        </DrawerContent>
-      </Drawer>
+          {panelTab === "breakdown" && (
+            <BreakdownList breakdown={preview?.breakdown} />
+          )}
+        </EditorPanel>
+      )}
     </article>
   )
 }

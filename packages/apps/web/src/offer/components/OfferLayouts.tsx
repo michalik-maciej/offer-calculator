@@ -1,13 +1,20 @@
 import { Plus } from "lucide-react"
+import { useState } from "react"
 import { useFieldArray, useFormContext } from "react-hook-form"
 
 import { OfferOutput } from "@/schemas/Offer.schema"
 
+import { EditorPanel, PanelTab } from "./editor/EditorPanel"
 import { WallLayoutPlan } from "./plan/WallLayoutPlan"
 import { Button } from "../../core/ui/button"
 import { createDefaultWallLayout } from "../helpers/createDefaultWallLayout"
 import { useInventoryDimensions } from "../hooks/useInventoryDimensions"
 import { WallOfferInput } from "../offer.types"
+
+type SelectedUnit = {
+  layoutIndex: number
+  unitIndex: number
+}
 
 export function OfferLayouts({ output }: { output: OfferOutput | undefined }) {
   const { control, getValues } = useFormContext<WallOfferInput>()
@@ -15,21 +22,41 @@ export function OfferLayouts({ output }: { output: OfferOutput | undefined }) {
     control,
     name: "layouts",
   })
+  const [selectedUnit, setSelectedUnit] = useState<SelectedUnit | null>(null)
+  const [selectedShelfIndex, setSelectedShelfIndex] = useState(0)
+  const [panelTab, setPanelTab] = useState<PanelTab>("edit")
 
   const dimensions = useInventoryDimensions()
   const defaultLayout = createDefaultWallLayout(dimensions)
 
+  const selectUnit = (layoutIndex: number, unitIndex: number | null) => {
+    setSelectedUnit(unitIndex === null ? null : { layoutIndex, unitIndex })
+    setSelectedShelfIndex(0)
+  }
+
   return (
-    <section className="flex flex-col gap-8 px-8 pb-16">
+    <section className="flex flex-col gap-8 px-8 pb-16 mr-90">
       {fields.map((field, index) => (
         <WallLayoutPlan
           key={field.id}
           layoutIndex={index}
-          onDuplicate={() =>
+          onDuplicate={() => {
             insert(index + 1, structuredClone(getValues(`layouts.${index}`)))
-          }
-          onRemove={() => remove(index)}
+            setSelectedUnit(null)
+          }}
+          onRemove={() => {
+            remove(index)
+            setSelectedUnit(null)
+          }}
+          onSelectShelf={setSelectedShelfIndex}
+          onSelectTab={setPanelTab}
+          onSelectUnit={(unitIndex) => selectUnit(index, unitIndex)}
+          panelTab={panelTab}
           preview={output?.layouts[index]}
+          selectedShelfIndex={selectedShelfIndex}
+          selectedUnitIndex={
+            selectedUnit?.layoutIndex === index ? selectedUnit.unitIndex : null
+          }
         />
       ))}
 
@@ -49,6 +76,14 @@ export function OfferLayouts({ output }: { output: OfferOutput | undefined }) {
           </p>
         )}
       </div>
+
+      {!selectedUnit && (
+        <EditorPanel title="Edycja">
+          <p className="text-sm text-muted-foreground">
+            Kliknij regał na planie, żeby edytować jego wymiary i półki.
+          </p>
+        </EditorPanel>
+      )}
     </section>
   )
 }
