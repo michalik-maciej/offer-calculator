@@ -20,14 +20,18 @@ has been opened in a browser.
 
 ### What Green Means Here
 
-CI runs one job: `pnpm install --frozen-lockfile`, then `pnpm validate`, then `pnpm vitest run`.
-Typecheck and lint fan out across all four packages through Turborepo; the format check is a single
-`prettier --check .` over the whole repository. The workflow also declares a `pull_request` trigger,
-which never fires, because this repository does not use pull requests.
+CI runs two jobs. The first, `validate`, runs `pnpm install --frozen-lockfile`, then `pnpm validate`,
+then `pnpm vitest run`. Typecheck and lint fan out across all four packages through Turborepo; the
+format check is a single `prettier --check .` over the whole repository. The workflow also declares a
+`pull_request` trigger, which never fires, because this repository does not use pull requests.
 
 So CI reports on code that is already on `main`. It catches what a machine other than this one sees,
 which is worth having, but it is a net rather than a gate. The gate is running `pnpm validate` and
 `pnpm vitest run` locally, before the commit.
+
+The second job, `deploy-api`, runs `flyctl deploy --remote-only` after `validate` passes, and only on
+a push to `main`. It exists because Vercel redeploys the front end on every push while Fly.io does not. A single `deploy-api`
+concurrency group keeps two deploys from running the migration release command at the same time.
 
 Two gaps are worth knowing about. Tests are not part of `validate`, they are a separate step, so
 running only `pnpm validate` proves less than it looks. And nothing builds the web bundle, in CI or
@@ -42,9 +46,10 @@ version means changing all of them together.
 
 ### CI Has No Database
 
-The workflow sets a deliberately unusable `DATABASE_URL` purely so `prisma generate` can run. There
-are no service containers and no secrets, so every test must be pure or take its collaborators by
-injection.
+The `validate` job sets a deliberately unusable `DATABASE_URL` purely so `prisma generate` can run.
+There are no service containers and no secrets in that job, so every test must be pure or take its
+collaborators by injection. The one secret the workflow uses, `FLY_API_TOKEN`, belongs to
+`deploy-api` and never reaches a test.
 
 ### Read the Decision Log Before Touching the Foundations
 

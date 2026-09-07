@@ -276,6 +276,10 @@ pnpm build              # Builds all: domain → schemas → api → web
 # pnpm --filter @senior-calculator/api run migrate:deploy
 ```
 
+The deploy is not manual. The `deploy-api` job in `.github/workflows/ci.yml` runs
+`flyctl deploy --remote-only` on every push to `main` once `validate` is green, using the
+`FLY_API_TOKEN` repository secret.
+
 ### Frontend Deployment (Vercel)
 
 Configure Vercel to:
