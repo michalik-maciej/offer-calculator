@@ -39,9 +39,46 @@ function OfferPage() {
   const output = offer?.output
 
   return (
-    <section className="flex max-w-3xl flex-col gap-6 p-8">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-xl font-semibold">Oferta</h1>
+    <section className="flex max-w-5xl flex-col gap-6 p-8">
+      <header className="flex flex-wrap items-end justify-between gap-4">
+        <div className="flex flex-wrap items-end gap-4">
+          <h1 className="text-xl font-semibold">Oferta</h1>
+          {offerId && (
+            <>
+              <div className="flex w-80 flex-col gap-1.5">
+                <Label>Opis oferty</Label>
+                <Input
+                  {...register("title", {
+                    required: "Opis jest wymagany",
+                    validate: (value) =>
+                      value.trim().length > 0 || "Opis nie może być pusty",
+                  })}
+                  placeholder="Opis"
+                />
+              </div>
+              <div className="flex w-24 flex-col gap-1.5">
+                <Label>Rabat (%)</Label>
+                <Input
+                  {...register("discountPercentage", {
+                    setValueAs: (value) =>
+                      value === "" || value === null || value === undefined
+                        ? 0
+                        : Number(value),
+                    validate: (value) => {
+                      if (!Number.isFinite(value)) return "Musi być liczbą"
+                      if (value < 0) return "Minimum 0"
+                      if (value > 100) return "Maksimum 100"
+                      return true
+                    },
+                  })}
+                  inputMode="numeric"
+                  placeholder="Rabat"
+                  type="number"
+                />
+              </div>
+            </>
+          )}
+        </div>
         <div className="flex items-center gap-2">
           {offerId && (
             <span
@@ -85,7 +122,7 @@ function OfferPage() {
             Usuń
           </Button>
         </div>
-      </div>
+      </header>
 
       {!offerId ? (
         <p className="text-sm text-muted-foreground">
@@ -93,51 +130,11 @@ function OfferPage() {
         </p>
       ) : (
         <>
-          <div className="flex max-w-md flex-col gap-2">
-            <Label>Opis oferty</Label>
-            <Input
-              {...register("title", {
-                required: "Opis jest wymagany",
-                validate: (value) =>
-                  value.trim().length > 0 || "Opis nie może być pusty",
-              })}
-              placeholder="Opis"
-            />
-            <p
-              className={`min-h-5 text-xs text-destructive ${
-                errors.title?.message ? "" : "invisible"
-              }`}
-            >
-              {errors.title?.message}
-            </p>
-          </div>
-
-          <div className="flex max-w-xs flex-col gap-2">
-            <Label>Rabat (%)</Label>
-            <Input
-              {...register("discountPercentage", {
-                setValueAs: (value) =>
-                  value === "" || value === null || value === undefined
-                    ? 0
-                    : Number(value),
-                validate: (value) => {
-                  if (!Number.isFinite(value)) return "Musi być liczbą"
-                  if (value < 0) return "Minimum 0"
-                  if (value > 100) return "Maksimum 100"
-                  return true
-                },
-              })}
-              inputMode="numeric"
-              placeholder="Rabat"
-              type="number"
-            />
-            <p
-              className={`min-h-5 text-xs text-destructive ${
-                errors.discountPercentage?.message ? "" : "invisible"
-              }`}
-            >
-              {errors.discountPercentage?.message}
-            </p>
+          <div className="flex min-h-5 flex-wrap gap-4 text-xs text-destructive">
+            {errors.title?.message && <span>{errors.title.message}</span>}
+            {errors.discountPercentage?.message && (
+              <span>{errors.discountPercentage.message}</span>
+            )}
           </div>
 
           {fields.length === 0 ? (
@@ -151,17 +148,12 @@ function OfferPage() {
                 const layoutOutput = output?.layouts[index]
 
                 return (
-                  <li
-                    className="flex items-center justify-between gap-4 py-2"
-                    key={field.id}
-                  >
-                    <div className="flex min-w-0 items-center gap-3">
-                      <Badge variant="secondary">{index + 1}</Badge>
-                      <span className="truncate text-sm text-muted-foreground">
-                        {layoutOutput?.description ?? "brak wyceny"}
-                      </span>
-                    </div>
-                    <span className="shrink-0 text-sm tabular-nums">
+                  <li className="flex items-center gap-4 py-2" key={field.id}>
+                    <Badge variant="secondary">{index + 1}</Badge>
+                    <span className="min-w-0 flex-1 truncate text-sm text-muted-foreground">
+                      {layoutOutput?.description ?? "brak wyceny"}
+                    </span>
+                    <span className="w-32 shrink-0 text-right text-sm tabular-nums">
                       {layoutOutput ? formatPrice(layoutOutput.basePrice) : "—"}
                     </span>
                   </li>
@@ -171,16 +163,16 @@ function OfferPage() {
           )}
 
           {output && (
-            <dl className="flex max-w-xs flex-col gap-1 text-sm">
-              <div className="flex justify-between gap-4">
+            <dl className="flex flex-col gap-1 text-sm">
+              <div className="flex items-center justify-end gap-4">
                 <dt className="text-muted-foreground">Wartość</dt>
-                <dd className="tabular-nums">
+                <dd className="w-32 text-right tabular-nums">
                   {formatPrice(output.pricing.basePrice)}
                 </dd>
               </div>
-              <div className="flex justify-between gap-4 font-semibold">
+              <div className="flex items-center justify-end gap-4 font-semibold">
                 <dt>Po rabacie {output.pricing.discountPercentage}%</dt>
-                <dd className="tabular-nums">
+                <dd className="w-32 text-right tabular-nums">
                   {formatPrice(output.pricing.discountPrice)}
                 </dd>
               </div>

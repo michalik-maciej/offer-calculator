@@ -37,7 +37,6 @@ describe("buildLayoutDescription", () => {
       gondolaUnits: [
         {
           depth: 47,
-          numberOfGondolaUnits: 2,
           shelfUnits: [
             {
               numberOfShelfUnits: 2,
@@ -53,7 +52,6 @@ describe("buildLayoutDescription", () => {
         },
         {
           depth: 37,
-          numberOfGondolaUnits: 1,
           shelfUnits: [
             {
               numberOfShelfUnits: 1,
@@ -73,5 +71,47 @@ describe("buildLayoutDescription", () => {
 
   it("returns default description", () => {
     expect(buildLayoutDescription(null)).toEqual("opis niedostępny")
+  })
+  it("names the end caps of a gondola layout", () => {
+    const description = buildLayoutDescription({
+      height: 130,
+      numberOfLayouts: 1,
+      gondolaUnits: [
+        {
+          depth: 47,
+          shelfUnits: [
+            {
+              numberOfShelfUnits: 2,
+              shelves: [],
+              width: 80,
+            },
+          ],
+        },
+      ],
+      leftEndCap: {
+        depth: 37,
+        shelfUnits: [
+          {
+            numberOfShelfUnits: 1,
+            shelves: [],
+            width: 100,
+          },
+        ],
+      },
+      rightEndCap: {
+        depth: 30,
+        shelfUnits: [
+          {
+            numberOfShelfUnits: 1,
+            shelves: [],
+            width: 66,
+          },
+        ],
+      },
+    })
+
+    expect(description).toEqual(
+      "1 x ciąg regałów dwustronnych / 2x80 / baza 47 / h-130 / szczyt lewy 100/37 / szczyt prawy 66/30",
+    )
   })
 })

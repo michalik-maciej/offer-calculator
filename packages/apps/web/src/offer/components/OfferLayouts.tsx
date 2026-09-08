@@ -12,9 +12,11 @@ import { createDefaultGondolaLayout } from "../helpers/createDefaultGondolaLayou
 import { createDefaultWallLayout } from "../helpers/createDefaultWallLayout"
 import { isGondolaLayout } from "../helpers/isGondolaLayout"
 import { useInventoryDimensions } from "../hooks/useInventoryDimensions"
+import { LayoutPart } from "../offer.types"
 
 type SelectedUnit = {
   layoutIndex: number
+  part: LayoutPart
   unitIndex: number
 }
 
@@ -32,8 +34,14 @@ export function OfferLayouts({ output }: { output: OfferOutput | undefined }) {
   const defaultWallLayout = createDefaultWallLayout(dimensions)
   const defaultGondolaLayout = createDefaultGondolaLayout(dimensions)
 
-  const selectUnit = (layoutIndex: number, unitIndex: number | null) => {
-    setSelectedUnit(unitIndex === null ? null : { layoutIndex, unitIndex })
+  const selectUnit = (
+    layoutIndex: number,
+    unitIndex: number | null,
+    part: LayoutPart = "middle",
+  ) => {
+    setSelectedUnit(
+      unitIndex === null ? null : { layoutIndex, part, unitIndex },
+    )
     setSelectedShelfIndex(0)
   }
 
@@ -41,49 +49,53 @@ export function OfferLayouts({ output }: { output: OfferOutput | undefined }) {
     <section className="flex flex-col gap-8 px-8 pb-16 mr-90">
       {fields.map((field, index) => {
         const layout = getValues(`layouts.${index}`)
-        const Plan =
-          layout && isGondolaLayout(layout) ? GondolaLayoutPlan : WallLayoutPlan
+        const isSelectedLayout = selectedUnit?.layoutIndex === index
+        const planProps = {
+          layoutIndex: index,
+          onDuplicate: () => {
+            insert(index + 1, structuredClone(getValues(`layouts.${index}`)))
+            setSelectedUnit(null)
+          },
+          onRemove: () => {
+            remove(index)
+            setSelectedUnit(null)
+          },
+          onSelectShelf: setSelectedShelfIndex,
+          onSelectTab: setPanelTab,
+          panelTab,
+          preview: output?.layouts[index],
+          selectedShelfIndex,
+          selectedUnitIndex: isSelectedLayout ? selectedUnit.unitIndex : null,
+        }
 
-        return (
-          <Plan
+        return layout && isGondolaLayout(layout) ? (
+          <GondolaLayoutPlan
             key={field.id}
-            layoutIndex={index}
-            onDuplicate={() => {
-              insert(index + 1, structuredClone(getValues(`layouts.${index}`)))
-              setSelectedUnit(null)
-            }}
-            onRemove={() => {
-              remove(index)
-              setSelectedUnit(null)
-            }}
-            onSelectShelf={setSelectedShelfIndex}
-            onSelectTab={setPanelTab}
-            onSelectUnit={(unitIndex) => selectUnit(index, unitIndex)}
-            panelTab={panelTab}
-            preview={output?.layouts[index]}
-            selectedShelfIndex={selectedShelfIndex}
-            selectedUnitIndex={
-              selectedUnit?.layoutIndex === index
-                ? selectedUnit.unitIndex
-                : null
+            {...planProps}
+            onSelectUnit={(unitIndex, part) =>
+              selectUnit(index, unitIndex, part)
             }
+            selectedPart={isSelectedLayout ? selectedUnit.part : "middle"}
+          />
+        ) : (
+          <WallLayoutPlan
+            key={field.id}
+            {...planProps}
+            onSelectUnit={(unitIndex) => selectUnit(index, unitIndex)}
           />
         )
       })}
 
       <div className="flex flex-col items-start gap-2">
-        <div className="flex flex-wrap items-center bg-muted rounded-md gap-1">
-          <div className="flex items-center mx-4">
-            <Plus className="h-4 w-4" />
-            Dodaj ciąg
-          </div>
+        <div className="flex flex-wrap items-center gap-2">
           <Button
             disabled={!defaultWallLayout}
             onClick={() => defaultWallLayout && append(defaultWallLayout)}
             type="button"
             variant="outline"
           >
-            przyścienny
+            <Plus className="h-4 w-4" />
+            Dodaj ciąg przyścienny
           </Button>
           <Button
             disabled={!defaultGondolaLayout}
@@ -91,7 +103,8 @@ export function OfferLayouts({ output }: { output: OfferOutput | undefined }) {
             type="button"
             variant="outline"
           >
-            gondola
+            <Plus className="h-4 w-4" />
+            Dodaj gondolę
           </Button>
         </div>
         {!defaultWallLayout && (

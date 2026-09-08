@@ -13,7 +13,6 @@ describe("calculateOfferDemand", () => {
           gondolaUnits: [
             {
               depth: 37,
-              numberOfGondolaUnits: 1,
               shelfUnits: [
                 {
                   numberOfShelfUnits: 1,
@@ -41,10 +40,10 @@ describe("calculateOfferDemand", () => {
     )
 
     const expectedResult = [
-      { id: "back-40-80", quantity: 3 },
-      { id: "shelf-80-37", quantity: 1 },
+      { id: "back-40-80", quantity: 6 },
+      { id: "shelf-80-37", quantity: 2 },
       { id: "leg-130-8-3", quantity: 2 },
-      { id: "foot-37", quantity: 2 },
+      { id: "foot-37", quantity: 4 },
       { id: "back-40-100", quantity: 5 },
       { id: "shelf-100-47", quantity: 1 },
       { id: "leg-210-8-3", quantity: 2 },

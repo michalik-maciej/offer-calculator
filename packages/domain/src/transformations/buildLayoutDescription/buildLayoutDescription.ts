@@ -48,6 +48,19 @@ export function buildLayoutDescription(layout: unknown) {
       parts.push(`półki ${firstShelf.numberOfShelves}x${firstShelf.depth}`)
     }
 
+    const endCaps = [
+      ["lewy", layout.leftEndCap],
+      ["prawy", layout.rightEndCap],
+    ] as const
+
+    for (const [side, endCap] of endCaps) {
+      const unit = endCap?.shelfUnits[0]
+
+      if (endCap && unit) {
+        parts.push(`szczyt ${side} ${unit.width}/${endCap.depth}`)
+      }
+    }
+
     return parts.join(" / ")
   }
 

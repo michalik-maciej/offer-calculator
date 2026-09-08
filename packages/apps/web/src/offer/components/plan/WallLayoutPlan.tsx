@@ -133,6 +133,7 @@ export function WallLayoutPlan({
               })}
               onSelectShelf={onSelectShelf}
               onSelectUnit={onSelectUnit}
+              optionsPath={`layouts.${layoutIndex}`}
               selectedShelfIndex={selectedShelfIndex}
               unitCount={shelfUnits.fields.length}
               unitIndex={selectedUnitIndex}

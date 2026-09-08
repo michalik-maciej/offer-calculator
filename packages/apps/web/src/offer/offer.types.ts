@@ -2,9 +2,11 @@ import { FieldPathByValue } from "react-hook-form"
 
 import { OfferInput } from "@/schemas/Offer.schema"
 
-export type NumericPath = FieldPathByValue<OfferInput, number>
-export type CountPath = FieldPathByValue<OfferInput, number | undefined>
+export type NumberPath = FieldPathByValue<OfferInput, number | undefined>
+export type LayoutPart = "leftEndCap" | "middle" | "rightEndCap"
+type EndCapPath = `layouts.${number}.${Exclude<LayoutPart, "middle">}`
+export type RunOptionsPath = `layouts.${number}` | EndCapPath
 
 export type UnitsPath =
-  | `layouts.${number}`
+  | RunOptionsPath
   | `layouts.${number}.gondolaUnits.${number}`

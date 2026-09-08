@@ -4,9 +4,10 @@
 
 `gondolaUnits` to **strony gondoli**, nie segmenty wzdłuż ciągu. Obie wcześniejsze implementacje
 zgadzają się co do tego niezależnie. Wersja pierwsza, jedyna która realnie wyceniała gondole na
-produkcji, **dzieliła nogi na pół między strony** (`0.5 *` na stronę), czego dzisiejszy
-`calculateGondolaLayoutDemand` nie robi: to rozbieżność cenowa wobec zachowania, które u klienta
-działało. „Rozłącz gondolę" też już istniało, jako kłódka trzymająca obie strony w symetrii.
+produkcji, **dzieliła nogi na pół między strony** (`0.5 *` na stronę). Dzisiejszy
+`calculateGondolaLayoutDemand` wychodzi na to samo inną drogą: liczy jedną wspólną kolumnę nóg na
+gondolę, przypisaną stronie zerowej. „Rozłącz gondolę" też już istniało, jako kłódka trzymająca obie
+strony w symetrii.
 
 ## Key Decisions
 
@@ -17,14 +18,13 @@ działało. „Rozłącz gondolę" też już istniało, jako kłódka trzymając
 
 ## Open Questions / Risks
 
-- Dzielenie nóg między strony: v1 liczyło pół nogi na stronę, dzisiejszy kod liczy pełną.
-  Własny test repo (`calculateGondolaLayoutDemand.test.ts`) utrwala wersję bez dzielenia.
-  Do rozstrzygnięcia przez maintainera, bo to decyzja fizyczna i cenowa, nie programistyczna.
-- `numberOfGondolaUnits` nie ma odpowiednika w prior art. W obu wersjach liczba stron była
-  strukturalnie równa dwa. Nazwa zaprasza do błędnego odczytu „segmenty".
+- Dzielenie nóg między strony: rozstrzygnięte przez maintainera. Nogi liczą się raz na gondolę,
+  dla strony o indeksie zero, więc dla dwóch stron wychodzi tyle co w v1. Stopy zostają per strona.
+- `numberOfGondolaUnits` już nie istnieje. Liczba stron jest strukturalnie równa dwa i siedzi w
+  stałej `GONDOLA_SIDES` w `LayoutGondola.schema.ts`, a nie w danych ciągu.
 - Reguła „półka nie głębsza niż baza" nie istniała nigdy. To nowe wymaganie klienta, nie regresja.
-- Szczyt istniał tylko w v2, jako osobny rodzaj grupy. Wciśnięcie go do `gondolaUnits` pogłębi
-  dwuznaczność stron kontra segmentów.
+- Szczyt jest osobnym polem (`leftEndCap`, `rightEndCap`), nie wpisem w `gondolaUnits`, więc
+  dwuznaczność stron kontra segmentów się nie pogłębiła.
 
 ---
 
@@ -70,7 +70,7 @@ Podział odpowiedzialności, identyczny z dzisiejszym:
 | strona (`subCollection`) | `depth`, `hasBaseCover`                               | głębokość jest per strona  |
 | segment (`stand`)        | `width`, `numberOfStands`, `backVariant`, `shelves[]` | szerokość jest per segment |
 
-## v1: dzielenie nóg, czyli rozbieżność cenowa
+## v1: dzielenie nóg między strony
 
 `src/utils/order/orderLegs.ts`:
 
@@ -89,9 +89,9 @@ Połówki sumowane po stronach, potem `Math.ceil` w agregacie. Stopy (`orderFeet
 dzielone: każda strona dostaje własne `sumBy("numberOfStands", stands) + 1`. Asymetria celowa i
 fizyczna: jedna wspólna kolumna nóg, dwa niezależne komplety stóp.
 
-Dzisiejszy `calculateGondolaLayoutDemand` woła `calculateWallLayoutDemand` per strona bez dzielenia.
-Własny test repo utrwala `{ id: "leg-130-8-3", quantity: 8 }` dla trzech regałów i dwóch stron,
-czyli `(3+1)*2`. Reguła v1 dałaby `4`.
+Dzisiejszy `calculateGondolaLayoutDemand` woła `calculateWallLayoutDemand` per strona, ale nogi
+liczy raz, przez `numberOfLegLayouts`. Własny test repo utrwala `{ id: "leg-130-8-3", quantity: 4 }`
+dla trzech regałów i dwóch stron, czyli tyle, ile dawała reguła v1.
 
 Uwaga: v1 miało tu własny błąd, `price` liczone z niepodzielonego `number`, więc cena nóg gondoli
 była podwójna wobec ilości. Tego nie przenosić.

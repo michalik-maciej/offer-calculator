@@ -3,8 +3,6 @@ import { LayoutGondola } from "@/schemas/LayoutGondola.schema"
 import { createDefaultWallLayout } from "./createDefaultWallLayout"
 import { InventoryDimensions } from "../hooks/useInventoryDimensions"
 
-const GONDOLA_SIDES = 2
-
 export function createDefaultGondolaLayout(
   dimensions: InventoryDimensions,
 ): LayoutGondola | null {
@@ -17,7 +15,6 @@ export function createDefaultGondolaLayout(
     gondolaUnits: [
       {
         depth: wallLayout.depth,
-        numberOfGondolaUnits: GONDOLA_SIDES,
         shelfUnits: wallLayout.shelfUnits,
       },
     ],

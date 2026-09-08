@@ -1,19 +1,31 @@
+import { Plus, Trash2 } from "lucide-react"
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form"
 
+import { GONDOLA_SIDES } from "@/schemas/LayoutGondola.schema"
 import { OfferInput, OfferOutput } from "@/schemas/Offer.schema"
 
 import { LayoutPlanHeader } from "./LayoutPlanHeader"
 import { SCALE_PX_PER_CM } from "./planScale"
 import { ShelvesSummary } from "./ShelvesSummary"
+import { Button } from "../../../core/ui/button"
+import { createDefaultEndCap } from "../../helpers/createDefaultEndCap"
 import { isGondolaLayout } from "../../helpers/isGondolaLayout"
+import { useInventoryDimensions } from "../../hooks/useInventoryDimensions"
+import { LayoutPart } from "../../offer.types"
 import { BreakdownList } from "../BreakdownList"
 import { EditorPanel, PanelTab } from "../editor/EditorPanel"
 import { ShelfUnitEditor } from "../editor/ShelfUnitEditor"
 
 type LayoutPreview = OfferOutput["layouts"][number]
-
 const GONDOLA_UNIT_INDEX = 0
-const SIDES = [1, 2]
+const END_CAP_UNIT_INDEX = 0
+const END_CAP_UNIT_COUNT = 1
+const SIDES = Array.from({ length: GONDOLA_SIDES }, (_, side) => side)
+
+const END_CAP_LABELS: Record<Exclude<LayoutPart, "middle">, string> = {
+  leftEndCap: "Szczyt lewy",
+  rightEndCap: "Szczyt prawy",
+}
 
 export function GondolaLayoutPlan({
   layoutIndex,
@@ -24,6 +36,7 @@ export function GondolaLayoutPlan({
   onSelectUnit,
   panelTab,
   preview,
+  selectedPart,
   selectedShelfIndex,
   selectedUnitIndex,
 }: {
@@ -32,31 +45,36 @@ export function GondolaLayoutPlan({
   onRemove: () => void
   onSelectShelf: (shelfIndex: number) => void
   onSelectTab: (tab: PanelTab) => void
-  onSelectUnit: (unitIndex: number | null) => void
+  onSelectUnit: (unitIndex: number | null, part?: LayoutPart) => void
   panelTab: PanelTab
   preview: LayoutPreview | undefined
+  selectedPart: LayoutPart
   selectedShelfIndex: number
   selectedUnitIndex: number | null
 }) {
-  const { control, getValues } = useFormContext<OfferInput>()
+  const { control, getValues, setValue } = useFormContext<OfferInput>()
   const layout = useWatch({ control, name: `layouts.${layoutIndex}` })
+  const dimensions = useInventoryDimensions()
+  const defaultEndCap = createDefaultEndCap(dimensions)
 
-  const unitsPath =
+  const middlePath =
     `layouts.${layoutIndex}.gondolaUnits.${GONDOLA_UNIT_INDEX}` as const
 
   const shelfUnits = useFieldArray({
     control,
-    name: `${unitsPath}.shelfUnits`,
+    name: `${middlePath}.shelfUnits`,
   })
 
   const canRemoveUnit = shelfUnits.fields.length > 1
-  const selectedUnit =
-    selectedUnitIndex === null ? null : shelfUnits.fields[selectedUnitIndex]
+  const selectedMiddleUnit =
+    selectedPart === "middle" && selectedUnitIndex !== null
+      ? shelfUnits.fields[selectedUnitIndex]
+      : null
 
   const handleDuplicateUnit = (unitIndex: number) =>
     shelfUnits.insert(
       unitIndex + 1,
-      structuredClone(getValues(`${unitsPath}.shelfUnits.${unitIndex}`)),
+      structuredClone(getValues(`${middlePath}.shelfUnits.${unitIndex}`)),
     )
 
   const handleRemoveUnit = (unitIndex: number) => {
@@ -66,11 +84,32 @@ export function GondolaLayoutPlan({
     onSelectUnit(wasLast ? unitIndex - 1 : unitIndex)
   }
 
+  const handleAddEndCap = (part: Exclude<LayoutPart, "middle">) => {
+    if (!defaultEndCap) return
+
+    setValue(`layouts.${layoutIndex}.${part}`, defaultEndCap, {
+      shouldDirty: true,
+    })
+    onSelectUnit(END_CAP_UNIT_INDEX, part)
+  }
+
+  const handleRemoveEndCap = (part: Exclude<LayoutPart, "middle">) => {
+    setValue(`layouts.${layoutIndex}.${part}`, undefined, {
+      shouldDirty: true,
+    })
+    onSelectUnit(null)
+  }
+
   if (!layout || !isGondolaLayout(layout)) return null
 
   const gondolaUnit = layout.gondolaUnits[GONDOLA_UNIT_INDEX]
 
   if (!gondolaUnit) return null
+
+  const selectedEndCapPart = selectedPart === "middle" ? null : selectedPart
+  const selectedEndCap = selectedEndCapPart
+    ? layout[selectedEndCapPart]
+    : undefined
 
   const renderSide = (side: number) => (
     <div className="flex w-max border border-foreground/40">
@@ -79,17 +118,18 @@ export function GondolaLayoutPlan({
 
         if (!unit) return null
 
+        const isSelected =
+          selectedPart === "middle" && selectedUnitIndex === unitIndex
+
         return Array.from(
           { length: Math.max(unit.numberOfShelfUnits, 0) },
           (_, copyIndex) => (
             <button
               className={`flex shrink-0 flex-col items-center justify-center gap-1 border border-border text-xs tabular-nums transition-colors hover:bg-accent ${
-                selectedUnitIndex === unitIndex
-                  ? "border-primary bg-accent"
-                  : ""
+                isSelected ? "border-primary bg-accent" : ""
               }`}
               key={`${unitField.id}-${copyIndex}-${side}`}
-              onClick={() => onSelectUnit(unitIndex)}
+              onClick={() => onSelectUnit(unitIndex, "middle")}
               style={{
                 height: gondolaUnit.depth * SCALE_PX_PER_CM,
                 width: unit.width * SCALE_PX_PER_CM,
@@ -101,9 +141,7 @@ export function GondolaLayoutPlan({
               </span>
               <span className="text-muted-foreground">
                 <ShelvesSummary
-                  highlightedIndex={
-                    selectedUnitIndex === unitIndex ? selectedShelfIndex : null
-                  }
+                  highlightedIndex={isSelected ? selectedShelfIndex : null}
                   shelves={unit.shelves}
                 />
               </span>
@@ -113,6 +151,54 @@ export function GondolaLayoutPlan({
       })}
     </div>
   )
+
+  const renderEndCapSlot = (part: Exclude<LayoutPart, "middle">) => {
+    const endCap = layout[part]
+    const unit = endCap?.shelfUnits[END_CAP_UNIT_INDEX]
+
+    if (!endCap || !unit) {
+      return (
+        <button
+          aria-label={`Dodaj ${END_CAP_LABELS[part].toLowerCase()}`}
+          className="flex w-10 shrink-0 items-center justify-center rounded-md border border-dashed border-foreground/40 text-muted-foreground transition-colors hover:bg-accent disabled:opacity-50"
+          disabled={!defaultEndCap}
+          onClick={() => handleAddEndCap(part)}
+          style={{
+            height: gondolaUnit.depth * GONDOLA_SIDES * SCALE_PX_PER_CM,
+          }}
+          type="button"
+        >
+          <Plus className="h-4 w-4" />
+        </button>
+      )
+    }
+
+    const isSelected = selectedPart === part
+
+    return (
+      <div className="border border-foreground/40">
+        <button
+          className={`flex shrink-0 flex-col items-center justify-center gap-1 border border-border text-xs tabular-nums transition-colors hover:bg-accent ${
+            isSelected ? "border-primary bg-accent" : ""
+          }`}
+          onClick={() => onSelectUnit(END_CAP_UNIT_INDEX, part)}
+          style={{
+            height: unit.width * SCALE_PX_PER_CM,
+            width: endCap.depth * SCALE_PX_PER_CM,
+          }}
+          type="button"
+        >
+          <span>{[unit.width, endCap.depth, layout.height].join("/")}</span>
+          <span className="text-muted-foreground">
+            <ShelvesSummary
+              highlightedIndex={isSelected ? selectedShelfIndex : null}
+              shelves={unit.shelves}
+            />
+          </span>
+        </button>
+      </div>
+    )
+  }
 
   return (
     <article className="flex flex-col gap-3">
@@ -126,39 +212,79 @@ export function GondolaLayoutPlan({
       <div className="overflow-x-auto pb-2">
         <div className="w-max">
           <p className="mb-1.5 text-xs text-muted-foreground">Strona 1</p>
-          <div className="flex flex-col gap-[3px]">
-            {SIDES.map((side) => (
-              <div key={side}>{renderSide(side)}</div>
-            ))}
+          <div className="flex items-center gap-[3px]">
+            {renderEndCapSlot("leftEndCap")}
+            <div className="flex flex-col gap-[3px]">
+              {SIDES.map((side) => (
+                <div key={side}>{renderSide(side)}</div>
+              ))}
+            </div>
+            {renderEndCapSlot("rightEndCap")}
           </div>
           <p className="mt-1.5 text-xs text-muted-foreground">Strona 2</p>
         </div>
       </div>
 
-      {selectedUnitIndex !== null && selectedUnit && (
+      {(selectedMiddleUnit || selectedEndCap) && (
         <EditorPanel
           onSelectTab={onSelectTab}
           tab={panelTab}
           title={`Ciąg ${layoutIndex + 1}`}
         >
-          {panelTab === "edit" && (
+          {panelTab === "edit" &&
+            selectedMiddleUnit &&
+            selectedUnitIndex !== null && (
+              <>
+                <p className="mb-4 text-sm text-muted-foreground">
+                  Zmiany dotyczą obu stron gondoli.
+                </p>
+                <ShelfUnitEditor
+                  key={selectedMiddleUnit.id}
+                  layoutIndex={layoutIndex}
+                  onDuplicateUnit={() => handleDuplicateUnit(selectedUnitIndex)}
+                  {...(canRemoveUnit && {
+                    onRemoveUnit: () => handleRemoveUnit(selectedUnitIndex),
+                  })}
+                  onSelectShelf={onSelectShelf}
+                  onSelectUnit={onSelectUnit}
+                  optionsPath={`layouts.${layoutIndex}`}
+                  selectedShelfIndex={selectedShelfIndex}
+                  unitCount={shelfUnits.fields.length}
+                  unitIndex={selectedUnitIndex}
+                  unitsPath={middlePath}
+                />
+              </>
+            )}
+          {panelTab === "edit" && selectedEndCapPart && selectedEndCap && (
             <>
-              <p className="mb-4 text-sm text-muted-foreground">
-                Zmiany dotyczą obu stron gondoli.
-              </p>
+              <div className="mb-4 flex items-center justify-between gap-2">
+                <p className="text-sm text-muted-foreground">
+                  {END_CAP_LABELS[selectedEndCapPart]}
+                </p>
+                <Button
+                  className="shrink-0 text-destructive hover:text-destructive"
+                  onClick={() => handleRemoveEndCap(selectedEndCapPart)}
+                  size="sm"
+                  type="button"
+                  variant="ghost"
+                >
+                  <Trash2 className="h-3 w-3" />
+                  Usuń szczyt
+                </Button>
+              </div>
               <ShelfUnitEditor
-                key={selectedUnit.id}
+                key={selectedEndCapPart}
+                isSingleModule
                 layoutIndex={layoutIndex}
-                onDuplicateUnit={() => handleDuplicateUnit(selectedUnitIndex)}
-                {...(canRemoveUnit && {
-                  onRemoveUnit: () => handleRemoveUnit(selectedUnitIndex),
-                })}
                 onSelectShelf={onSelectShelf}
-                onSelectUnit={onSelectUnit}
+                onSelectUnit={(unitIndex) =>
+                  onSelectUnit(unitIndex, selectedEndCapPart)
+                }
+                optionsPath={`layouts.${layoutIndex}.${selectedEndCapPart}`}
                 selectedShelfIndex={selectedShelfIndex}
-                unitCount={shelfUnits.fields.length}
-                unitIndex={selectedUnitIndex}
-                unitsPath={unitsPath}
+                unitCount={END_CAP_UNIT_COUNT}
+                unitIndex={END_CAP_UNIT_INDEX}
+                unitsPath={`layouts.${layoutIndex}.${selectedEndCapPart}`}
               />
             </>
           )}

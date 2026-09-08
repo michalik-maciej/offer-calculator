@@ -4,7 +4,7 @@ import { Controller, useFormContext } from "react-hook-form"
 import { OfferInput } from "@/schemas/Offer.schema"
 
 import { Button } from "../../../core/ui/button"
-import { CountPath } from "../../offer.types"
+import { NumberPath } from "../../offer.types"
 
 /**
  * Row with a label and a minus/value/plus stepper.
@@ -20,7 +20,7 @@ export function CountStepper({
 }: {
   label: string
   min?: number
-  name: CountPath
+  name: NumberPath
   onRemove?: () => void
 }) {
   const { control } = useFormContext<OfferInput>()
