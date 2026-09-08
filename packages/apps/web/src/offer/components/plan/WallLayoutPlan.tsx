@@ -1,47 +1,16 @@
-import { Copy, Trash2 } from "lucide-react"
-import { Fragment } from "react"
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form"
 
-import { LayoutWall } from "@/schemas/LayoutWall.schema"
-import { OfferOutput } from "@/schemas/Offer.schema"
+import { OfferInput, OfferOutput } from "@/schemas/Offer.schema"
 
-import { Badge } from "../../../core/ui/badge"
-import { Button } from "../../../core/ui/button"
-import { Input } from "../../../core/ui/input"
-import { Label } from "../../../core/ui/label"
-import { WallOfferInput } from "../../offer.types"
+import { LayoutPlanHeader } from "./LayoutPlanHeader"
+import { SCALE_PX_PER_CM } from "./planScale"
+import { ShelvesSummary } from "./ShelvesSummary"
+import { isGondolaLayout } from "../../helpers/isGondolaLayout"
 import { BreakdownList } from "../BreakdownList"
 import { EditorPanel, PanelTab } from "../editor/EditorPanel"
 import { ShelfUnitEditor } from "../editor/ShelfUnitEditor"
 
-const SCALE_PX_PER_CM = 1.6
-
 type LayoutPreview = OfferOutput["layouts"][number]
-
-function ShelvesSummary({
-  highlightedIndex,
-  shelves,
-}: {
-  highlightedIndex: number | null
-  shelves: LayoutWall["shelfUnits"][number]["shelves"]
-}) {
-  if (shelves.length === 0) {
-    return "bez półek"
-  }
-
-  return shelves.map(({ depth, numberOfShelves }, shelfIndex) => (
-    <Fragment key={shelfIndex}>
-      {shelfIndex > 0 && " + "}
-      <span
-        className={
-          shelfIndex === highlightedIndex ? "font-semibold text-green-500" : ""
-        }
-      >
-        {numberOfShelves}x{depth}
-      </span>
-    </Fragment>
-  ))
-}
 
 export function WallLayoutPlan({
   layoutIndex,
@@ -66,7 +35,7 @@ export function WallLayoutPlan({
   selectedShelfIndex: number
   selectedUnitIndex: number | null
 }) {
-  const { control, getValues, register } = useFormContext<WallOfferInput>()
+  const { control, getValues } = useFormContext<OfferInput>()
   const layout = useWatch({ control, name: `layouts.${layoutIndex}` })
 
   const shelfUnits = useFieldArray({
@@ -93,48 +62,16 @@ export function WallLayoutPlan({
     onSelectUnit(wasLast ? unitIndex - 1 : unitIndex)
   }
 
-  if (!layout) return null
+  if (!layout || isGondolaLayout(layout)) return null
 
   return (
     <article className="flex flex-col gap-3">
-      <header className="flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <Badge variant="secondary">{layoutIndex + 1}</Badge>
-          <p className="text-sm text-muted-foreground">
-            {preview?.description ?? "liczenie…"}
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <Label className="text-sm text-muted-foreground">Liczba ciągów</Label>
-          <Input
-            {...register(`layouts.${layoutIndex}.numberOfLayouts`, {
-              valueAsNumber: true,
-            })}
-            className="h-8 w-16"
-            min={1}
-            type="number"
-          />
-          <Button
-            aria-label="Powiel ciąg"
-            onClick={onDuplicate}
-            size="icon"
-            type="button"
-            variant="outline"
-          >
-            <Copy className="h-4 w-4" />
-          </Button>
-          <Button
-            aria-label="Usuń ciąg"
-            className="text-destructive hover:text-destructive"
-            onClick={onRemove}
-            size="icon"
-            type="button"
-            variant="ghost"
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        </div>
-      </header>
+      <LayoutPlanHeader
+        layoutIndex={layoutIndex}
+        onDuplicate={onDuplicate}
+        onRemove={onRemove}
+        preview={preview}
+      />
 
       <div className="overflow-x-auto pb-2">
         <div className="flex w-max border border-foreground/40">
@@ -199,6 +136,7 @@ export function WallLayoutPlan({
               selectedShelfIndex={selectedShelfIndex}
               unitCount={shelfUnits.fields.length}
               unitIndex={selectedUnitIndex}
+              unitsPath={`layouts.${layoutIndex}`}
             />
           )}
           {panelTab === "breakdown" && (

@@ -3,19 +3,18 @@ import { FormProvider, useForm, useFormState, useWatch } from "react-hook-form"
 import { toast } from "sonner"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
-import { SavedOffer } from "@/schemas/Offer.schema"
+import { OfferInput, SavedOffer } from "@/schemas/Offer.schema"
 
 import { PreviewErrorBanner } from "./PreviewErrorBanner"
 import { createDefaultOfferTitle } from "../helpers/createDefaultOfferTitle"
 import { describeMissingComponent } from "../helpers/describeMissingComponent"
 import { useOffer } from "../hooks/useOffer"
 import { offerApi, offerMutationKeys, offerQueries } from "../offer.api"
-import { WallOfferInput } from "../offer.types"
 
 const AUTOSAVE_DEBOUNCE_MS = 800
 
 export function OfferFormProvider({ children }: { children: ReactNode }) {
-  const form = useForm<WallOfferInput>({
+  const form = useForm<OfferInput>({
     defaultValues: {
       discountPercentage: 30,
       layouts: [],
@@ -34,13 +33,13 @@ export function OfferFormProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (offer && hydratedIdRef.current !== offer.id) {
       hydratedIdRef.current = offer.id
-      reset(offer.input as WallOfferInput)
+      reset(offer.input)
     }
   }, [offer, reset])
 
   const autoSave = useMutation({
     mutationKey: offerMutationKeys.autoSave,
-    mutationFn: (values: WallOfferInput) =>
+    mutationFn: (values: OfferInput) =>
       offerApi.update({ data: values, params: { id: offerId ?? "" } }),
     retry: 2,
     onSuccess: (saved: SavedOffer) => {

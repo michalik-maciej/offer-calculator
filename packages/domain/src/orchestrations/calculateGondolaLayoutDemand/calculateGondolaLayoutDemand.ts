@@ -13,6 +13,7 @@ export function calculateGondolaLayoutDemand(
         depth,
         height,
         numberOfLayouts: numberOfLayouts * numberOfGondolaUnits,
+        numberOfLegLayouts: numberOfLayouts,
         shelfUnits,
       }
       return calculateWallLayoutDemand(context, inventory)

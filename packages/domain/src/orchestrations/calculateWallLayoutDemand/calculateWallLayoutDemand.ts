@@ -9,6 +9,10 @@ import { calculateShelfDemand } from "../../calculations/calculateShelfDemand/ca
 import { Component } from "../../models/component"
 import { countShelfUnitsByWidth } from "../../transformations/countShelfUnitsByWidth/countShelfUnitsByWidth"
 
+type WallLayoutCalculationContext = LayoutWall & {
+  numberOfLegLayouts?: number
+}
+
 export function calculateWallLayoutDemand(
   {
     backVariant,
@@ -16,9 +20,10 @@ export function calculateWallLayoutDemand(
     height,
     shelfUnits,
     numberOfLayouts,
+    numberOfLegLayouts = numberOfLayouts,
     hasBaseCover = false,
     extras = [],
-  }: LayoutWall,
+  }: WallLayoutCalculationContext,
   inventory: Component[],
 ) {
   const shelfUnitsByWidth = countShelfUnitsByWidth(shelfUnits, numberOfLayouts)
@@ -49,7 +54,7 @@ export function calculateWallLayoutDemand(
 
   const legContext = {
     height,
-    numberOfLayouts,
+    numberOfLayouts: numberOfLegLayouts,
     numberOfUnits,
   }
 

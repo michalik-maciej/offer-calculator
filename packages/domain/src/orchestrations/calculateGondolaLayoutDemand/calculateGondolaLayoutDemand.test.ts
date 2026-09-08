@@ -48,7 +48,7 @@ describe("calculateGondolaLayoutDemand", () => {
       { id: "back-40-100", quantity: 6 },
       { id: "shelf-80-47", quantity: 4 },
       { id: "shelf-100-47", quantity: 2 },
-      { id: "leg-130-8-3", quantity: 8 },
+      { id: "leg-130-8-3", quantity: 4 },
       { id: "foot-47", quantity: 8 },
       { id: "back-40-100", quantity: 3 },
       { id: "shelf-100-37", quantity: 1 },
@@ -58,6 +58,102 @@ describe("calculateGondolaLayoutDemand", () => {
     ]
 
     expect(result).toHaveLength(11)
+    expect(result).toEqual(expectedResult)
+  })
+
+  it("counts one upright column per run copy of a two-sided entry", () => {
+    const result = calculateGondolaLayoutDemand(
+      {
+        height: 130,
+        numberOfLayouts: 3,
+        gondolaUnits: [
+          {
+            depth: 47,
+            numberOfGondolaUnits: 2,
+            shelfUnits: [
+              {
+                numberOfShelfUnits: 2,
+                shelves: [],
+                width: 80,
+              },
+            ],
+          },
+        ],
+      },
+      componentCatalogMock,
+    )
+
+    const expectedResult = [
+      { id: "back-40-80", quantity: 36 },
+      { id: "shelf-80-47", quantity: 12 },
+      { id: "leg-130-8-3", quantity: 9 },
+      { id: "foot-47", quantity: 18 },
+    ]
+
+    expect(result).toEqual(expectedResult)
+  })
+
+  it("counts feet per side while uprights stay shared", () => {
+    const result = calculateGondolaLayoutDemand(
+      {
+        height: 130,
+        numberOfLayouts: 2,
+        gondolaUnits: [
+          {
+            depth: 37,
+            numberOfGondolaUnits: 2,
+            shelfUnits: [
+              {
+                numberOfShelfUnits: 3,
+                shelves: [],
+                width: 100,
+              },
+            ],
+          },
+        ],
+      },
+      componentCatalogMock,
+    )
+
+    const expectedResult = [
+      { id: "back-40-100", quantity: 36 },
+      { id: "shelf-100-37", quantity: 12 },
+      { id: "leg-130-8-3", quantity: 8 },
+      { id: "foot-37", quantity: 16 },
+    ]
+
+    expect(result).toEqual(expectedResult)
+  })
+
+  it("counts the upright column once whatever the side count", () => {
+    const result = calculateGondolaLayoutDemand(
+      {
+        height: 130,
+        numberOfLayouts: 1,
+        gondolaUnits: [
+          {
+            depth: 47,
+            numberOfGondolaUnits: 3,
+            shelfUnits: [
+              {
+                numberOfShelfUnits: 2,
+                shelves: [],
+                width: 80,
+              },
+            ],
+          },
+        ],
+      },
+      componentCatalogMock,
+    )
+
+    const expectedResult = [
+      { id: "back-40-80", quantity: 18 },
+      { id: "shelf-80-47", quantity: 6 },
+      { id: "leg-130-8-3", quantity: 3 },
+      { id: "foot-47", quantity: 9 },
+    ]
+
     expect(result).toEqual(expectedResult)
   })
 })

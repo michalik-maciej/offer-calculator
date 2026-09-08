@@ -2,6 +2,7 @@ import { useFieldArray, useFormContext, useWatch } from "react-hook-form"
 import { useQuery } from "@tanstack/react-query"
 
 import { COMPONENT_CATEGORIES } from "@/domain/models/component"
+import { OfferInput } from "@/schemas/Offer.schema"
 
 import { CountStepper } from "./CountStepper"
 import {
@@ -15,10 +16,9 @@ import {
 } from "../../../core/ui/select"
 import { inventoryQueries } from "../../../inventory/inventory.api"
 import { CATEGORY_LABELS } from "../../helpers/categoryLabels"
-import { WallOfferInput } from "../../offer.types"
 
 export function ExtrasFields({ layoutIndex }: { layoutIndex: number }) {
-  const { control } = useFormContext<WallOfferInput>()
+  const { control } = useFormContext<OfferInput>()
   const { data: inventoryItems = [] } = useQuery(inventoryQueries.list())
 
   const extras = useFieldArray({

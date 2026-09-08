@@ -1,8 +1,10 @@
 import { Minus, Plus, Trash2 } from "lucide-react"
 import { Controller, useFormContext } from "react-hook-form"
 
+import { OfferInput } from "@/schemas/Offer.schema"
+
 import { Button } from "../../../core/ui/button"
-import { CountPath, WallOfferInput } from "../../offer.types"
+import { CountPath } from "../../offer.types"
 
 /**
  * Row with a label and a minus/value/plus stepper.
@@ -21,7 +23,7 @@ export function CountStepper({
   name: CountPath
   onRemove?: () => void
 }) {
-  const { control } = useFormContext<WallOfferInput>()
+  const { control } = useFormContext<OfferInput>()
 
   return (
     <div className="flex items-center gap-1.5">

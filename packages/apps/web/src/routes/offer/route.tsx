@@ -3,6 +3,8 @@ import { useState } from "react"
 import { useFieldArray, useFormContext, useFormState } from "react-hook-form"
 import { createFileRoute } from "@tanstack/react-router"
 
+import { OfferInput } from "@/schemas/Offer.schema"
+
 import { Badge } from "../../core/ui/badge"
 import { Button } from "../../core/ui/button"
 import { ConfirmDialog } from "../../core/ui/confirm-dialog"
@@ -14,7 +16,6 @@ import { useAutoSaveState } from "../../offer/hooks/useAutoSaveState"
 import { useCreateOffer } from "../../offer/hooks/useCreateOffer"
 import { useDeleteOffer } from "../../offer/hooks/useDeleteOffer"
 import { useOffer } from "../../offer/hooks/useOffer"
-import { WallOfferInput } from "../../offer/offer.types"
 
 export const Route = createFileRoute("/offer")({
   component: OfferPage,
@@ -25,7 +26,7 @@ function OfferPage() {
     control,
     formState: { errors },
     register,
-  } = useFormContext<WallOfferInput>()
+  } = useFormContext<OfferInput>()
   const { isDirty } = useFormState({ control })
   const { fields } = useFieldArray({ control, name: "layouts" })
 

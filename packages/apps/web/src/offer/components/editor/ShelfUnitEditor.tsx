@@ -7,13 +7,14 @@ import {
 } from "react-hook-form"
 
 import { DEFAULT_SHELF_COUNT_BY_HEIGHT } from "@/domain/models/shelfDefaults"
+import { OfferInput } from "@/schemas/Offer.schema"
 
 import { CountStepper } from "./CountStepper"
 import { OptionsFields } from "./OptionsFields"
 import { SectionLabel } from "./SectionLabel"
 import { Button } from "../../../core/ui/button"
 import { useInventoryDimensions } from "../../hooks/useInventoryDimensions"
-import { NumericPath, WallOfferInput } from "../../offer.types"
+import { NumericPath, UnitsPath } from "../../offer.types"
 
 const ValueDisplay = ({ value }: { value: number | null | undefined }) => (
   <span className="flex h-8 w-16 shrink-0 items-center justify-center rounded-md border border-input text-sm tabular-nums">
@@ -66,7 +67,7 @@ const OptionStepper = ({
   name: NumericPath
   options: number[]
 }) => {
-  const { control } = useFormContext<WallOfferInput>()
+  const { control } = useFormContext<OfferInput>()
 
   return (
     <div className="flex items-center gap-1.5">
@@ -124,24 +125,26 @@ const ShelvesFields = ({
   selectedShelfIndex,
   shelfDepthOptions,
   unitIndex,
+  unitsPath,
 }: {
   layoutIndex: number
   onSelectShelf: (shelfIndex: number) => void
   selectedShelfIndex: number
   shelfDepthOptions: number[]
   unitIndex: number
+  unitsPath: UnitsPath
 }) => {
-  const { control } = useFormContext<WallOfferInput>()
+  const { control } = useFormContext<OfferInput>()
   const height = useWatch({ control, name: `layouts.${layoutIndex}.height` })
   const shelves = useFieldArray({
     control,
-    name: `layouts.${layoutIndex}.shelfUnits.${unitIndex}.shelves`,
+    name: `${unitsPath}.shelfUnits.${unitIndex}.shelves`,
   })
 
   const shelfCount = shelves.fields.length
   const shelfIndex = Math.min(selectedShelfIndex, Math.max(shelfCount - 1, 0))
   const shelfPath =
-    `layouts.${layoutIndex}.shelfUnits.${unitIndex}.shelves.${shelfIndex}` as const
+    `${unitsPath}.shelfUnits.${unitIndex}.shelves.${shelfIndex}` as const
 
   const handleAppend = () => {
     shelves.append({
@@ -213,6 +216,7 @@ export function ShelfUnitEditor({
   selectedShelfIndex,
   unitCount,
   unitIndex,
+  unitsPath,
 }: {
   layoutIndex: number
   onDuplicateUnit: () => void
@@ -222,14 +226,15 @@ export function ShelfUnitEditor({
   selectedShelfIndex: number
   unitCount: number
   unitIndex: number
+  unitsPath: UnitsPath
 }) {
-  const { control } = useFormContext<WallOfferInput>()
+  const { control } = useFormContext<OfferInput>()
   const { layoutDepths, layoutHeights, shelfDepths, shelfUnitWidths } =
     useInventoryDimensions()
 
   const unit = useWatch({
     control,
-    name: `layouts.${layoutIndex}.shelfUnits.${unitIndex}`,
+    name: `${unitsPath}.shelfUnits.${unitIndex}`,
   })
 
   if (!unit) return null
@@ -240,7 +245,7 @@ export function ShelfUnitEditor({
         <SectionLabel>Ciąg</SectionLabel>
         <OptionStepper
           label="Głębokość bazy"
-          name={`layouts.${layoutIndex}.depth`}
+          name={`${unitsPath}.depth`}
           options={layoutDepths}
         />
         <OptionStepper
@@ -260,13 +265,13 @@ export function ShelfUnitEditor({
         </div>
         <OptionStepper
           label="Szerokość"
-          name={`layouts.${layoutIndex}.shelfUnits.${unitIndex}.width`}
+          name={`${unitsPath}.shelfUnits.${unitIndex}.width`}
           options={shelfUnitWidths}
         />
         <CountStepper
           label="Liczba regałów"
           min={1}
-          name={`layouts.${layoutIndex}.shelfUnits.${unitIndex}.numberOfShelfUnits`}
+          name={`${unitsPath}.shelfUnits.${unitIndex}.numberOfShelfUnits`}
           onRemove={onRemoveUnit}
         />
         <Button
@@ -286,6 +291,7 @@ export function ShelfUnitEditor({
         selectedShelfIndex={selectedShelfIndex}
         shelfDepthOptions={shelfDepths}
         unitIndex={unitIndex}
+        unitsPath={unitsPath}
       />
       <OptionsFields layoutIndex={layoutIndex} />
     </div>
