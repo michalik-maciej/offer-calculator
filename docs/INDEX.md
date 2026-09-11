@@ -113,11 +113,11 @@ These standards apply to backend code (APIs, domain logic, auth, data layer).
 
 #### API Design (`standards/backend/api.md`)
 
-One controller file per endpoint, routers that only wire, `app.ts` as the composition root, controllers calling the domain while repositories touch the database, resource paths, and why `bootstrap.ts` keeps its dynamic import.
+One controller file per endpoint exporting a handler or a factory for it, one feature factory assembling the offer handlers, routers that only wire, `app.ts` as the composition root, controllers calling the domain while repositories touch the database, resource paths, and why `bootstrap.ts` keeps its dynamic import.
 
 #### Authentication and Route Protection (`standards/backend/auth.md`)
 
-Stateless JWT in an httpOnly cookie, `requireAuth` on every data route with only the health check and login public, why the guard goes on the same line as the route, CORS is not authorization, never log or return credentials.
+Stateless JWT in an httpOnly cookie bound through the `withAuth` router wrapper, with only the health check, login and registration public, why the guard stays per route, the payload validated and not just the signature, offers scoped to their author with ADMIN exempt and a 404 for anybody else, CORS is not authorization, never log or return credentials.
 
 #### Domain Layer (`standards/backend/domain.md`)
 
@@ -125,7 +125,7 @@ The domain package depending on nothing, four layers running in one direction (m
 
 #### Models and Persistence (`standards/backend/models.md`)
 
-Prisma confined to `src/db`, an offer storing its own output rather than being recomputed, clear names with real database constraints, validation belonging above the database.
+Prisma confined to `src/db`, an offer storing its own output rather than being recomputed and belonging to the user who created it, clear names with real database constraints, validation belonging above the database.
 
 #### Queries (`standards/backend/queries.md`)
 

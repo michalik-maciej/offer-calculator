@@ -8,7 +8,7 @@ import {
   SavedOfferSchema,
 } from "@/schemas/Offer.schema"
 
-import { apiType, createApiMethod } from "../core/createMethod.api"
+import { apiType, createApiMethod, isNotFound } from "../core/createMethod.api"
 
 const OfferListSchema = v.array(OfferSummarySchema)
 
@@ -65,6 +65,8 @@ export const offerQueries = {
   details: (id: string) => ({
     queryKey: ["offer", "details", id] as const,
     queryFn: () => offerApi.details({ params: { id } }),
+    retry: (failureCount: number, error: Error) =>
+      !isNotFound(error) && failureCount < 3,
   }),
   preview: (draft: OfferInput | null) => ({
     queryKey: ["offer", "preview", draft] as const,

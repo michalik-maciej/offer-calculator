@@ -2,20 +2,37 @@
 
 ### One Controller File per Endpoint
 
-Each endpoint lives in `src/controllers/{feature}/{verb}{Resource}.controller.ts` and exports a
-single handler named `{verb}{Resource}Controller`, typed `(req: Request, res: Response)`. A handler
-that needs a dependency keeps the file name and exports a factory instead, as
-`calculateOffer.controller.ts` exports `createCalculateOfferController`. Helpers living in the same
-folder drop the suffix: `requireAuth.ts`, `priceOffer.ts`.
+Each endpoint lives in `src/controllers/{feature}/{verb}{Resource}.controller.ts` and exports one
+function named `{verb}{Resource}Controller`, after its own file. Where the endpoint needs no
+dependency that export is the handler itself, typed `(req: Request, res: Response)`, as every
+inventory controller is. Where it does, the export takes the dependencies and returns the handler,
+as `getOffers.controller.ts` exports `getOffersController({ getAllOffers })`. Every offer controller
+is of the second kind, so within one feature folder the rule does not change from file to file.
+Helpers living in the same folder drop the suffix: `requireAuth.ts`, `priceOffer.ts`,
+`toOfferScope.ts`.
+
+### One Feature Factory Assembles the Handlers
+
+`controllers/offer/offerControllers.ts` builds every offer handler from a single dependency object
+and returns them under the names the routes use (`list`, `details`, `create`, `update`, `remove`,
+`preview`). The router asks for the set and binds it; it never assembles a controller itself. The
+dependency type is exported next to that factory, as `OfferControllerDependencies`.
+
+```ts
+const offer = offerControllers(dependencies)
+```
 
 ### Routers Only Wire
 
 A route file creates a `Router()`, binds paths to imported controllers and exports it. No logic, no
-validation, no database access. Middleware is applied per route rather than router-wide. A router
-that needs a dependency becomes a `create{X}Router({ dep })` factory instead of a module singleton.
+validation, no database access. Middleware is applied per route rather than router-wide, through the
+`withAuth` wrapper described in `auth.md`. A router that needs a dependency becomes a
+`create{X}Router(dependencies)` factory instead of a module singleton.
 
 ```ts
-router.get("/items", requireAuth, getComponentsController)
+const guarded = withAuth(router)
+
+guarded.get("/items", getComponentsController)
 ```
 
 ### app.ts Is the Composition Root
@@ -27,6 +44,7 @@ exported next to the factory that consumes it.
 ```ts
 export function createApp({
   getInventory = getAllComponents,
+  offers = offerStore,
 }: Partial<AppDependencies> = {}): Express
 ```
 

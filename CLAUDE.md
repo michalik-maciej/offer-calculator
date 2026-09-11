@@ -196,7 +196,8 @@ src/
 
 - `User`: Email, hashed password, role (ADMIN/USER)
 - `Component`: Catalog inventory (category, dimensions, price)
-- `Offer`: Offer records (input JSON, output JSON, discount)
+- `Offer`: Offer records (input JSON, output JSON, discount), owned by the `User` that created
+  them (`userId`, required)
 
 **API Endpoints**:
 
@@ -205,7 +206,7 @@ src/
 - `POST /api/inventory`: Add component
 - `PATCH /api/inventory/:id`: Update component
 - `POST /api/offers`: Create offer (calls domain logic)
-- `GET /api/offers`: List offers
+- `GET /api/offers`: List offers (only the caller's own, unless they are an ADMIN)
 - `GET /api/health`: Health check
 
 #### `packages/apps/web/` (React + Vite Frontend)

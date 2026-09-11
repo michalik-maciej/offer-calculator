@@ -57,10 +57,8 @@ export function OfferFormProvider({ children }: { children: ReactNode }) {
   const { mutate: saveNow } = autoSave
   const watchedValues = useWatch({ control })
 
-  // No timer at all while the form matches what was saved, so the reset that
-  // follows a successful save cannot trigger another one.
   useEffect(() => {
-    if (!offerId || !isDirty) {
+    if (!offerId || !isDirty || offer?.id !== offerId) {
       return
     }
 
@@ -70,7 +68,7 @@ export function OfferFormProvider({ children }: { children: ReactNode }) {
     )
 
     return () => window.clearTimeout(timeoutId)
-  }, [getValues, isDirty, offerId, saveNow, watchedValues])
+  }, [getValues, isDirty, offer?.id, offerId, saveNow, watchedValues])
 
   const missingComponent = offer?.missingComponent
   const errorMessage = missingComponent

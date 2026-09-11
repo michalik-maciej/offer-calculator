@@ -2,6 +2,7 @@ import { FilePlus2 } from "lucide-react"
 import { createFileRoute } from "@tanstack/react-router"
 
 import { Button } from "../core/ui/button"
+import { MissingOfferNotice } from "../offer/components/MissingOfferNotice"
 import { OfferLayouts } from "../offer/components/OfferLayouts"
 import { useCreateOffer } from "../offer/hooks/useCreateOffer"
 import { useOffer } from "../offer/hooks/useOffer"
@@ -11,14 +12,18 @@ export const Route = createFileRoute("/config")({
 })
 
 function ConfigPage() {
-  const { offer, offerId } = useOffer()
+  const { isMissing, offer, offerId } = useOffer()
   const createOffer = useCreateOffer()
 
   return (
     <section>
       <h1 className="px-8 pt-8 pb-4 text-xl font-semibold">Konfigurator</h1>
 
-      {offerId ? (
+      {isMissing ? (
+        <div className="px-8">
+          <MissingOfferNotice />
+        </div>
+      ) : offerId ? (
         <OfferLayouts output={offer?.output ?? undefined} />
       ) : (
         <div className="flex flex-col items-start gap-3 px-8">

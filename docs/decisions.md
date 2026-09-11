@@ -164,3 +164,27 @@ the seven task groups behind it would have to be redone; what survives of that w
 not the code. The task's specification, implementation plan, work log, mockups and audit are no
 longer in the working tree, but they are in commits `09b92e1` and `eceb46d` and can be read back
 with `git show`.
+
+## 11. An offer belongs to the user who created it
+
+**Decision.** `Offer.userId` is required and carries a foreign key to `User`. Every offer endpoint
+turns the caller's token into an `OfferScope` (`{ isAdmin, userId }`) and passes it to the
+repository, which filters the list and every read by owner. An offer belonging to somebody else
+answers 404, exactly as one that does not exist. A user with the `ADMIN` role is exempt and reaches
+every offer, including for editing.
+
+**Why.** An offer is a document one person prepares for one customer. With a shared list, everybody
+sees quotes they did not write and can open, edit or delete them, and the autosave makes that damage
+silent. The component inventory stays common, because a price list is the company's, not the
+author's. 404 rather than 403 because an id alone should not confirm that an offer exists.
+
+**Cost.** Nothing hands an offer over to a colleague: there is no sharing, and no endpoint changes
+the owner, which is why `UpdateOfferInput` excludes `userId`. Offers that predated the column could
+not be attributed to anybody and were deleted by migration
+`20260910120000_clear_offers_before_owner`. An ADMIN sees foreign offers in the list with no sign of
+whose they are, because a summary carries only a title and a date.
+
+**Enforced by.** `packages/apps/api/src/tests/offerOwnership.test.ts` drives every offer route as an
+owner, as a stranger and as an admin. To make that possible without a database, the offer repository
+became an injected dependency (`createApp({ offers })`), the way the inventory already was, and the
+five offer controllers became factories assembled by `offerControllers`.

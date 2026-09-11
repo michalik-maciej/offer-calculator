@@ -6,7 +6,9 @@ There is no mocking library in use and none should be introduced: no `vi.mock`, 
 `vi.spyOn`. The domain package depends on nothing, so its rules are plain functions over plain data
 and need no test double. Where a collaborator is genuinely required, it is injected instead:
 `createOfferPreview` takes the inventory as an argument, and the HTTP test builds its app with
-`createApp({ getInventory: async () => componentCatalogMock })`.
+`createApp({ getInventory: async () => componentCatalogMock, offers })`, where `offers` is the
+in-memory store in `src/tests/inMemoryOfferStore.ts`. That store is an implementation of the same
+`OfferStore` type the Prisma repository satisfies, not a stand-in produced by a mocking library.
 
 This follows directly from the dependency-free domain package. A test that reaches for a mock is a
 signal that the code under test grew a dependency it should not have.

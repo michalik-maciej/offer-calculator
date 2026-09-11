@@ -10,6 +10,7 @@ import { Button } from "../../core/ui/button"
 import { ConfirmDialog } from "../../core/ui/confirm-dialog"
 import { Input } from "../../core/ui/input"
 import { Label } from "../../core/ui/label"
+import { MissingOfferNotice } from "../../offer/components/MissingOfferNotice"
 import { OfferList } from "../../offer/components/OfferList"
 import { formatPrice } from "../../offer/helpers/formatPrice"
 import { useAutoSaveState } from "../../offer/hooks/useAutoSaveState"
@@ -30,12 +31,13 @@ function OfferPage() {
   const { isDirty } = useFormState({ control })
   const { fields } = useFieldArray({ control, name: "layouts" })
 
-  const { offer, offerId } = useOffer()
+  const { isMissing, offer, offerId } = useOffer()
   const { hasFailed, isSaving } = useAutoSaveState()
   const createOffer = useCreateOffer()
   const deleteOffer = useDeleteOffer()
   const [confirming, setConfirming] = useState<"delete" | "new" | null>(null)
 
+  const hasOpenOffer = !!offerId && !isMissing
   const output = offer?.output
 
   return (
@@ -43,7 +45,7 @@ function OfferPage() {
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div className="flex flex-wrap items-end gap-4">
           <h1 className="text-xl font-semibold">Oferta</h1>
-          {offerId && (
+          {hasOpenOffer && (
             <>
               <div className="flex w-80 flex-col gap-1.5">
                 <Label>Opis oferty</Label>
@@ -80,7 +82,7 @@ function OfferPage() {
           )}
         </div>
         <div className="flex items-center gap-2">
-          {offerId && (
+          {hasOpenOffer && (
             <span
               className={`mr-2 text-xs ${
                 hasFailed ? "text-destructive" : "text-muted-foreground"
@@ -113,7 +115,7 @@ function OfferPage() {
           <OfferList />
           <Button
             className="text-destructive hover:text-destructive"
-            disabled={!offerId || deleteOffer.isPending}
+            disabled={!hasOpenOffer || deleteOffer.isPending}
             onClick={() => setConfirming("delete")}
             type="button"
             variant="outline"
@@ -128,6 +130,8 @@ function OfferPage() {
         <p className="text-sm text-muted-foreground">
           Nie masz otwartej oferty. Utwórz nową albo wczytaj zapisaną.
         </p>
+      ) : isMissing ? (
+        <MissingOfferNotice />
       ) : (
         <>
           <div className="flex min-h-5 flex-wrap gap-4 text-xs text-destructive">
