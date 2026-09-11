@@ -24,6 +24,9 @@ The application makes that calculation repeatable, and stores each offer togethe
 was quoted at, rather than recomputing it against today's prices. That is a deliberate choice, so
 that reopening an old offer shows what was actually promised (decision 7 in `docs/decisions.md`).
 
+The component inventory is shared by everybody, an offer is not: it belongs to the account that
+created it, and nobody else reaches it (decision 11 in `docs/decisions.md`).
+
 ## Goals (Next 6-12 Months)
 
 1. **Rebuild the configuration UI around a scale-drawing metaphor.** The configuration should read as
@@ -47,6 +50,6 @@ learned and put in place. The standards under `docs/standards/` and the guard ho
 
 ---
 
-_Last Updated_: 2026-09-05
+_Last Updated_: 2026-09-11
 _Auto-detected_: age, status, tech stack, architecture (from codebase analysis)
 _User-provided_: purpose, goals, product direction

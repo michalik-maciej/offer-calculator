@@ -66,19 +66,19 @@ layout cannot drift between client and server, because there is only one shape.
 
 ## Tech stack
 
-| Layer      | Choice                                                           |
-| ---------- | ---------------------------------------------------------------- |
-| Language   | TypeScript (composite project references)                        |
-| Front end  | React 19, Vite, TanStack Router, TanStack Query, react-hook-form |
-| UI         | Tailwind CSS v4, Radix UI primitives, class-variance-authority   |
-| Back end   | Express, Prisma ORM                                              |
-| Database   | PostgreSQL (Neon)                                                |
-| Validation | Valibot, shared between client and server                        |
-| Auth       | JWT, stateless, httpOnly cookies, bcrypt                         |
-| Monorepo   | pnpm workspaces + Turborepo                                      |
-| Tests      | Vitest                                                           |
-| Quality    | ESLint 9, Prettier                                               |
-| Hosting    | Vercel (web), Fly.io (API, Docker)                               |
+| Layer      | Choice                                                                  |
+| ---------- | ----------------------------------------------------------------------- |
+| Language   | TypeScript (composite project references)                               |
+| Front end  | React 19, Vite, TanStack Router, TanStack Query, react-hook-form        |
+| UI         | Tailwind CSS v4, Radix UI primitives, class-variance-authority          |
+| Back end   | Express, Prisma ORM                                                     |
+| Database   | PostgreSQL (Neon)                                                       |
+| Validation | Valibot, shared between client and server                               |
+| Auth       | JWT, stateless, httpOnly cookies, bcrypt, offers scoped to their author |
+| Monorepo   | pnpm workspaces + Turborepo                                             |
+| Tests      | Vitest                                                                  |
+| Quality    | ESLint 9, Prettier                                                      |
+| Hosting    | Vercel (web), Fly.io (API, Docker)                                      |
 
 The reasoning behind several of these is recorded in [`docs/decisions.md`](docs/decisions.md).
 
@@ -105,7 +105,7 @@ Other entry points: `pnpm dev:web`, `pnpm dev:api`, `pnpm build`.
 ## Tests and quality
 
 ```bash
-pnpm test           # 35 tests across 17 files
+pnpm test           # 56 tests across 19 files
 pnpm test:coverage  # collected from the domain package
 pnpm typecheck
 pnpm lint
@@ -116,9 +116,11 @@ Tests concentrate on the domain package, where the logic that can actually be wr
 integration test that exercises the offer endpoint end to end. UI components are deliberately not
 unit-tested: they are thin, and the interesting behaviour sits below them.
 
-**The suite needs no database.** The preview endpoint receives its component inventory as an
-injected dependency, wired in `createApp`, so the integration test builds an app around a fixture
-catalogue and the whole suite runs offline in about a second. Every command above, and the CI
+**The suite needs no database.** The offer endpoints receive both the component inventory and the
+offer storage as injected dependencies, wired in `createApp`, so the integration tests build an app
+around a fixture catalogue and an in-memory store. That is what lets the ownership rules (a user
+sees and edits only their own offers) be tested as HTTP requests, and the whole suite still runs
+offline in about a second. Every command above, and the CI
 workflow, runs on a clean clone with nothing installed but dependencies.
 
 ## Project history
