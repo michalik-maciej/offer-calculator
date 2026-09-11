@@ -51,6 +51,21 @@ ones at the top of the function body, both `UPPER_SNAKE_CASE` and usually carryi
 Domain and API code uses curried, data-last `lodash/fp` helpers for collection work. The browser
 bundle imports lodash nowhere and uses native array methods.
 
+### No Nested Ternaries
+
+A ternary handles one either/or and nothing more; nesting one inside another is an ESLint error
+(`no-nested-ternary`). Three or more branches go into a named function with early returns, or, in
+JSX, into separate conditional blocks whose conditions are mutually exclusive.
+
+```ts
+export function describeSaveState({ hasFailed, isDirty, isSaving }: SaveState) {
+  if (hasFailed) return "Nie zapisano"
+  if (isSaving) return "Zapisywanie…"
+  if (isDirty) return "Niezapisane zmiany"
+  return "Zapisano"
+}
+```
+
 ### Descriptive Names, Focused Functions
 
 Names communicate intent; no cryptic abbreviations outside tight loops. A function does one thing.

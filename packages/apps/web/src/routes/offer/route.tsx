@@ -12,6 +12,7 @@ import { Input } from "../../core/ui/input"
 import { Label } from "../../core/ui/label"
 import { MissingOfferNotice } from "../../offer/components/MissingOfferNotice"
 import { OfferList } from "../../offer/components/OfferList"
+import { describeSaveState } from "../../offer/helpers/describeSaveState"
 import { formatPrice } from "../../offer/helpers/formatPrice"
 import { useAutoSaveState } from "../../offer/hooks/useAutoSaveState"
 import { useCreateOffer } from "../../offer/hooks/useCreateOffer"
@@ -88,13 +89,7 @@ function OfferPage() {
                 hasFailed ? "text-destructive" : "text-muted-foreground"
               }`}
             >
-              {hasFailed
-                ? "Nie zapisano"
-                : isSaving
-                  ? "Zapisywanie…"
-                  : isDirty
-                    ? "Niezapisane zmiany"
-                    : "Zapisano"}
+              {describeSaveState({ hasFailed, isDirty, isSaving })}
             </span>
           )}
           <Button
@@ -126,13 +121,15 @@ function OfferPage() {
         </div>
       </header>
 
-      {!offerId ? (
+      {!offerId && (
         <p className="text-sm text-muted-foreground">
           Nie masz otwartej oferty. Utwórz nową albo wczytaj zapisaną.
         </p>
-      ) : isMissing ? (
-        <MissingOfferNotice />
-      ) : (
+      )}
+
+      {isMissing && <MissingOfferNotice />}
+
+      {hasOpenOffer && (
         <>
           <div className="flex min-h-5 flex-wrap gap-4 text-xs text-destructive">
             {errors.title?.message && <span>{errors.title.message}</span>}

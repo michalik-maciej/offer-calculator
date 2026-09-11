@@ -33,6 +33,7 @@ export default [
         "warn",
         { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
       ],
+      "no-nested-ternary": "error",
       "no-restricted-imports": [
         "error",
         {

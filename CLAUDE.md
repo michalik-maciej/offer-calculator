@@ -350,6 +350,8 @@ Enforced across all packages:
   import { helper } from "./utils" // Relative
   ```
 - **Unused variables**: Error unless prefixed with `_`
+- **No nested ternaries**: Error (`no-nested-ternary`); three or more branches go into a named
+  function with early returns
 - **No relative imports outside package**: Error (use aliases instead)
   ```typescript
   // ❌ Bad: import { Component } from "../../src/models"

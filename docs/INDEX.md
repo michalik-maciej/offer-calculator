@@ -49,7 +49,7 @@ These standards apply across the entire codebase, regardless of frontend/backend
 
 #### Coding Style (`standards/global/coding-style.md`)
 
-Prettier settings that are not negotiable, three-tier import grouping, aliases across packages with relative paths inside one, named exports, function declarations for exported functions, `type` over `interface`, giving numbers names, guarding index access instead of asserting it away, lodash/fp in domain and API against native methods in web, descriptive names and focused functions, no dead code.
+Prettier settings that are not negotiable, three-tier import grouping, aliases across packages with relative paths inside one, named exports, function declarations for exported functions, `type` over `interface`, giving numbers names, guarding index access instead of asserting it away, lodash/fp in domain and API against native methods in web, no nested ternaries, descriptive names and focused functions, no dead code.
 
 #### Commenting (`standards/global/commenting.md`)
 
