@@ -2,18 +2,19 @@ import type { Router as ExpressRouter } from "express"
 import { Router } from "express"
 import { get } from "lodash/fp"
 
+import { withAuth } from "./withAuth"
 import { loginController } from "../controllers/auth/login.controller"
 import { logoutController } from "../controllers/auth/logout.controller"
 import { registerController } from "../controllers/auth/register.controller"
-import { requireAuth } from "../controllers/auth/requireAuth"
 
 const router: ExpressRouter = Router()
+const guarded = withAuth(router)
 
-router.get("/user", requireAuth, (req, res) => {
+guarded.get("/user", (req, res) => {
   res.json({ user: get("user", req) })
 })
 router.post("/login", loginController)
-router.post("/logout", requireAuth, logoutController)
+guarded.post("/logout", logoutController)
 router.post("/register", registerController)
 
 export default router

@@ -10,7 +10,14 @@ import { createApp } from "../app"
 process.env.JWT_SECRET = "test-secret"
 
 const app = createApp({ getInventory: async () => componentCatalogMock })
-const authCookie = `accessToken=${jwt.sign({ email: "tester@example.com" }, process.env.JWT_SECRET)}`
+const authCookie = `accessToken=${jwt.sign(
+  {
+    sub: "44444444-4444-4444-4444-444444444444",
+    email: "tester@example.com",
+    role: "USER",
+  },
+  process.env.JWT_SECRET,
+)}`
 
 describe("POST /api/offers/preview", () => {
   it("returns offer preview for valid input", async () => {

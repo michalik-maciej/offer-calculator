@@ -13,6 +13,7 @@ model User {
   password  String
   role      Role     @default(USER)
   createdAt DateTime @default(now())
+  offers    Offer[]
 }
 
 enum Role {
@@ -53,6 +54,9 @@ model Offer {
   input              Json
   output             Json?
   createdAt          DateTime @default(now())
+  userId             String
+  user               User     @relation(fields: [userId], references: [id])
 
   @@index([createdAt])
+  @@index([userId])
 }

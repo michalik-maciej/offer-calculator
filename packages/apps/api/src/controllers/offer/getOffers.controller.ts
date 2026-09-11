@@ -1,8 +1,19 @@
 import { Request, Response } from "express"
 
-import { getAllOffers } from "../../db/offer.repository"
+import { toOfferScope } from "./toOfferScope"
+import { OfferStore } from "../../db/offer.repository"
 
-export async function getOffersController(_: Request, res: Response) {
-  const offers = await getAllOffers()
-  res.status(200).json(offers)
+export function getOffersController({
+  getAllOffers,
+}: Pick<OfferStore, "getAllOffers">) {
+  return async (req: Request, res: Response) => {
+    const scope = toOfferScope(req.user)
+
+    if (!scope) {
+      return res.status(401).json({ error: "Unauthorized" })
+    }
+
+    const offers = await getAllOffers(scope)
+    return res.status(200).json(offers)
+  }
 }

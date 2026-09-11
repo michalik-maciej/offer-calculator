@@ -15,7 +15,7 @@ type ErrorResponse = {
   missingComponent?: MissingComponent
 }
 
-export function createCalculateOfferController({
+export function calculateOfferController({
   getInventory,
 }: {
   getInventory: InventorySource

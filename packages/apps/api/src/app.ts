@@ -5,6 +5,7 @@ import express from "express"
 
 import { InventorySource } from "./controllers/offer/calculateOffer.controller"
 import { getAllComponents } from "./db/inventory.repository"
+import { OfferStore, offerStore } from "./db/offer.repository"
 import authRoutes from "./routes/auth.routes"
 import healthRoutes from "./routes/health.routes"
 import inventoryRoutes from "./routes/inventory.routes"
@@ -12,20 +13,24 @@ import { createOffersRouter } from "./routes/offers.routes"
 
 type AppDependencies = {
   getInventory: InventorySource
+  offers: OfferStore
 }
 
 /**
  * Builds the Express application with its middleware and routes.
  *
  * This is the composition root: the only place that decides where the offer
- * routes read the component inventory from.
+ * routes read the component inventory and the saved offers from.
  *
  * @param getInventory - Source of the component catalogue. Defaults to the
  * database repository; tests pass a fixture so the offer endpoint can be
  * exercised without a database.
+ * @param offers - Persistence for saved offers. Defaults to the Prisma
+ * repository; tests pass an in-memory store.
  */
 export function createApp({
   getInventory = getAllComponents,
+  offers = offerStore,
 }: Partial<AppDependencies> = {}): Express {
   const app: Express = express()
 
@@ -36,7 +41,7 @@ export function createApp({
   app.use("/api/health", healthRoutes)
   app.use("/api/auth", authRoutes)
   app.use("/api/inventory", inventoryRoutes)
-  app.use("/api/offers", createOffersRouter({ getInventory }))
+  app.use("/api/offers", createOffersRouter({ getInventory, offers }))
 
   return app
 }

@@ -1,17 +1,18 @@
 import type { Router as ExpressRouter } from "express"
 import { Router } from "express"
 
-import { requireAuth } from "../controllers/auth/requireAuth"
+import { withAuth } from "./withAuth"
 import { createComponentController } from "../controllers/inventory/createComponent.controller"
 import { deleteComponentController } from "../controllers/inventory/deleteComponent.controller"
 import { getComponentsController } from "../controllers/inventory/getComponents.controller"
 import { updateComponentController } from "../controllers/inventory/updateComponent.controller"
 
 const router: ExpressRouter = Router()
+const guarded = withAuth(router)
 
-router.get("/items", requireAuth, getComponentsController)
-router.post("/items", requireAuth, createComponentController)
-router.put("/items/:id", requireAuth, updateComponentController)
-router.delete("/items/:id", requireAuth, deleteComponentController)
+guarded.get("/items", getComponentsController)
+guarded.post("/items", createComponentController)
+guarded.put("/items/:id", updateComponentController)
+guarded.delete("/items/:id", deleteComponentController)
 
 export default router
