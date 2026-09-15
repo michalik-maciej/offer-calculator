@@ -14,9 +14,14 @@ invented example.
 pnpm/Turborepo monorepo
 
 > The hosted app sits behind a login, so the link above shows a sign-in form. To see the calculator
-> itself, run it locally with the steps below.
+> itself, run it locally with the steps below: the seed creates an account to sign in with.
 
-<!-- TODO: screenshot of the offer editor goes here -->
+![The configurator with two runs: a wall run of five shelf units and a double sided gondola, with
+the editor panel for the selected unit on the right](docs/screenshots/configurator.png)
+
+_The configurator. Run 1 is a wall run repeated twice, run 2 a double sided gondola shown side by
+side with its end caps; the panel on the right edits whatever unit is selected. The interface is in
+Polish, the language of the people who use it._
 
 ## What it computes
 
@@ -25,6 +30,12 @@ its own width and shelf configuration; a gondola is the double-sided variant. Tu
 something you can price means resolving how many uprights, feet, legs, back panels, base shelves and
 regular shelves the configuration actually implies, at which widths, and then costing them against a
 component inventory.
+
+![The bill of materials grouped by category: backs, feet, legs, shelves and
+supports, each line carrying a quantity](docs/screenshots/bill-of-materials.png)
+
+_What that resolving produces: every component the two runs above imply, grouped by category and
+summed across all layouts in the offer._
 
 The `domain` package does exactly that and nothing else:
 
@@ -38,6 +49,13 @@ The `domain` package does exactly that and nothing else:
   (`calculateWallLayoutDemand`, `calculateGondolaLayoutDemand`, `calculateOfferDemand`,
   `createOfferPreview`)
 - `models/` and `fixtures/` — domain types, constraints and test data
+
+![The offer screen with a description field, a discount field, one line per run with its price and
+the totals before and after the discount](docs/screenshots/offer.png)
+
+_The same configuration as an offer: one line per run, a discount, and the two totals. The offer is
+saved with the output it was quoted at, so reopening it later shows the numbers that were promised
+rather than today's prices._
 
 ## Architecture
 
@@ -90,15 +108,32 @@ Requires Node 24+, pnpm 9+ and a PostgreSQL connection string.
 pnpm install
 
 # packages/apps/api/.env
-#   DATABASE_URL=postgresql://...
+#   DATABASE_URL=postgresql://localhost:5432/senior_calculator
 #   JWT_SECRET=any-long-random-string
 #   PORT=3000
 
+# packages/apps/web/.env.local
+#   VITE_API_URL=http://localhost:3000/api
+
 pnpm --filter @senior-calculator/api exec prisma migrate deploy
-pnpm --filter @senior-calculator/api exec prisma db seed
+pnpm --filter @senior-calculator/api exec prisma db seed   # catalogue + demo account
 
 pnpm dev        # web on :5173, api on :3000
 ```
+
+Open http://localhost:5173 and sign in as **demo@example.com** / **demo1234**, the account the seed
+creates. The catalogue it seeds alongside gives the calculator something to price, so the offer
+editor works immediately.
+
+![The component catalogue with the edit dialog open on a foot, showing name, price, category and
+the dimensions that category requires](docs/screenshots/inventory.png)
+
+_That catalogue is editable in the app. Which dimensions a component needs follows from its
+category, so a foot asks for a depth and nothing else._
+
+Because that password is published here, the seed refuses to run against anything but a database on
+`localhost`. `SEED_FORCE=1` overrides the check, which is only ever right for the component
+catalogue on a database you own.
 
 Other entry points: `pnpm dev:web`, `pnpm dev:api`, `pnpm build`.
 
