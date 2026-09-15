@@ -13,7 +13,13 @@ export function getOffersController({
       return res.status(401).json({ error: "Unauthorized" })
     }
 
-    const offers = await getAllOffers(scope)
-    return res.status(200).json(offers)
+    try {
+      const offers = await getAllOffers(scope)
+
+      return res.status(200).json(offers)
+    } catch (error) {
+      console.error("Reading the offers failed:", error)
+      return res.status(500).json({ error: "Reading the offers failed" })
+    }
   }
 }

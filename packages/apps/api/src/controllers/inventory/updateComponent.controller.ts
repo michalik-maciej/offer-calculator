@@ -14,9 +14,15 @@ export async function updateComponentController(req: Request, res: Response) {
     return res.status(400).json({ error: "Invalid request" })
   }
 
-  const updated = await updateComponent({
-    ...body.output,
-    id: params.output.id,
-  })
-  return res.status(200).json(updated)
+  try {
+    const updated = await updateComponent({
+      ...body.output,
+      id: params.output.id,
+    })
+
+    return res.status(200).json(updated)
+  } catch (error) {
+    console.error("Component update failed:", error)
+    return res.status(500).json({ error: "Component update failed" })
+  }
 }

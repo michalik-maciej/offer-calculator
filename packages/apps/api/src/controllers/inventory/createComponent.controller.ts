@@ -15,7 +15,12 @@ export async function createComponentController(req: Request, res: Response) {
     })
   }
 
-  const component = await createComponent(parsed.output)
+  try {
+    const component = await createComponent(parsed.output)
 
-  return res.status(201).json(component)
+    return res.status(201).json(component)
+  } catch (error) {
+    console.error("Component creation failed:", error)
+    return res.status(500).json({ error: "Component creation failed" })
+  }
 }

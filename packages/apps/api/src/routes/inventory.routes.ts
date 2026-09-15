@@ -7,13 +7,24 @@ import { deleteComponentController } from "../controllers/inventory/deleteCompon
 import { getComponentsController } from "../controllers/inventory/getComponents.controller"
 import { requireInventoryWriter } from "../controllers/inventory/requireInventoryWriter"
 import { updateComponentController } from "../controllers/inventory/updateComponent.controller"
+import { InventorySource } from "../controllers/offer/calculateOffer.controller"
 
-const router: ExpressRouter = Router()
-const guarded = withAuth(router)
+export function createInventoryRouter({
+  getInventory,
+}: {
+  getInventory: InventorySource
+}): ExpressRouter {
+  const router: ExpressRouter = Router()
+  const guarded = withAuth(router)
 
-guarded.get("/items", getComponentsController)
-guarded.post("/items", requireInventoryWriter, createComponentController)
-guarded.put("/items/:id", requireInventoryWriter, updateComponentController)
-guarded.delete("/items/:id", requireInventoryWriter, deleteComponentController)
+  guarded.get("/items", getComponentsController({ getInventory }))
+  guarded.post("/items", requireInventoryWriter, createComponentController)
+  guarded.put("/items/:id", requireInventoryWriter, updateComponentController)
+  guarded.delete(
+    "/items/:id",
+    requireInventoryWriter,
+    deleteComponentController,
+  )
 
-export default router
+  return router
+}

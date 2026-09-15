@@ -22,12 +22,17 @@ export function getOfferController({
       return res.status(401).json({ error: "Unauthorized" })
     }
 
-    const offer = await getOfferById(params.output.id, scope)
+    try {
+      const offer = await getOfferById(params.output.id, scope)
 
-    if (!offer) {
-      return res.status(404).json({ error: "Offer not found" })
+      if (!offer) {
+        return res.status(404).json({ error: "Offer not found" })
+      }
+
+      return res.status(200).json(offer)
+    } catch (error) {
+      console.error("Reading the offer failed:", error)
+      return res.status(500).json({ error: "Reading the offer failed" })
     }
-
-    return res.status(200).json(offer)
   }
 }

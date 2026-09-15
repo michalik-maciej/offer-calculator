@@ -1,8 +1,20 @@
 import { Request, Response } from "express"
 
-import { getAllComponents } from "../../db/inventory.repository"
+import { InventorySource } from "../offer/calculateOffer.controller"
 
-export async function getComponentsController(_: Request, res: Response) {
-  const components = await getAllComponents()
-  res.status(200).json(components)
+export function getComponentsController({
+  getInventory,
+}: {
+  getInventory: InventorySource
+}) {
+  return async (_req: Request, res: Response) => {
+    try {
+      const components = await getInventory()
+
+      return res.status(200).json(components)
+    } catch (error) {
+      console.error("Reading the catalogue failed:", error)
+      return res.status(500).json({ error: "Reading the catalogue failed" })
+    }
+  }
 }

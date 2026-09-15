@@ -10,7 +10,7 @@ import { OfferStore, offerStore } from "./db/offer.repository"
 import { UserStore, userStore } from "./db/user.repository"
 import { createAuthRouter } from "./routes/auth.routes"
 import healthRoutes from "./routes/health.routes"
-import inventoryRoutes from "./routes/inventory.routes"
+import { createInventoryRouter } from "./routes/inventory.routes"
 import { createOffersRouter } from "./routes/offers.routes"
 
 type AppDependencies = {
@@ -47,7 +47,7 @@ export function createApp({
 
   app.use("/api/health", healthRoutes)
   app.use("/api/auth", createAuthRouter({ users }))
-  app.use("/api/inventory", inventoryRoutes)
+  app.use("/api/inventory", createInventoryRouter({ getInventory }))
   app.use("/api/offers", createOffersRouter({ getInventory, offers }))
 
   return app
