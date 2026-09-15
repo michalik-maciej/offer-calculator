@@ -459,11 +459,24 @@ Key Turbo settings in `turbo.json`:
 - **`lint`**, **`typecheck`**: `dependsOn: ["^lint"]`, `dependsOn: ["^typecheck"]`
 - **`dev`**: `cache: false, persistent: true` (no caching, runs indefinitely)
 
+**`^build` is not enough here, and the per-package entries are not decoration.** Because no package
+lists another in its `package.json` (see the package wiring section), Turbo sees four unrelated
+packages and would run their builds in parallel. They are not unrelated: `tsc -b` in `api` and in
+`web` both write `packages/schemas/dist` and `packages/domain/dist` through project references, so
+two parallel builds race on the same files and fail with `TS6305` on a cold cache. That is why
+`turbo.json` spells out `@senior-calculator/api#build` and `web#build` depending on the domain and
+schemas builds, and why `domain` and `schemas` have `build` scripts of their own.
+
+For the same reason the API's build script is `prisma generate && tsc -b` and must not regain
+`tsc -b --clean`: a clean run from `api` deletes the shared `schemas` and `domain` output that a
+parallel `web` build is reading.
+
 When adding tasks, consider:
 
 - Include `.env*` in `inputs` if tasks read env vars (for cache invalidation)
 - Set `cache: false` for persistent processes (dev servers)
 - Use `^taskName` dependency for tasks needing upstream completion
+- Add an explicit `{package}#{task}` edge whenever a task touches output owned by another package
 
 ## Common Workflows
 

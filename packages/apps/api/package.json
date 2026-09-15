@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "tsx watch --include \"../../domain/src/**/*.ts\" --include \"../../schemas/src/**/*.ts\" src/server.ts",
-    "build": "prisma generate && tsc -b --clean && tsc -b",
+    "build": "prisma generate && tsc -b",
     "start": "node dist/bootstrap.js",
     "migrate:deploy": "prisma migrate deploy",
     "lint": "eslint \"**/*.{ts,tsx}\"",

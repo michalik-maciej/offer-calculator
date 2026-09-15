@@ -69,8 +69,14 @@ resolved by TypeScript `paths` in `tsconfig.base.json`, and separately at each s
 whatever consumes them. Aliases keep imports readable (`@/domain/orchestrations/...`) without a
 publish step or a `workspace:*` protocol that would still need path mapping for the type checker.
 
-**Cost.** Three mechanisms have to stay in agreement, and they fail at different times. In
-particular the API's compiled output is CommonJS that Node cannot resolve on its own:
+**Cost.** Four mechanisms have to stay in agreement, and they fail at different times. The fourth is
+Turborepo's task graph: with no package listing another, `^build` has nothing to order, so the
+dependency has to be written out as `{package}#build` edges in `turbo.json`. Without them Turbo
+builds `api` and `web` in parallel while both write the same `domain` and `schemas` output through
+TypeScript project references, and CI fails on a cold cache with `TS6305` while a warm local machine
+passes.
+
+In particular the API's compiled output is CommonJS that Node cannot resolve on its own:
 `bootstrap.ts` registers the aliases against the compiled `dist` folders and only then dynamically
 imports `./server`. Turning that dynamic import into a static one breaks production startup while
 leaving `tsx` dev mode working.

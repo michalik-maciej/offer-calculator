@@ -7,12 +7,49 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["dist/**", "tsconfig.tsbuildinfo"]
     },
-    "lint": {
-      "dependsOn": ["^lint"]
+    "@senior-calculator/domain#build": {
+      "dependsOn": ["@senior-calculator/schemas#build"],
+      "outputs": ["dist/**", "tsconfig.tsbuildinfo"]
+    },
+    "@senior-calculator/api#build": {
+      "dependsOn": [
+        "@senior-calculator/schemas#build",
+        "@senior-calculator/domain#build"
+      ],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": ["dist/**", "tsconfig.tsbuildinfo"]
+    },
+    "web#build": {
+      "dependsOn": [
+        "@senior-calculator/schemas#build",
+        "@senior-calculator/domain#build"
+      ],
+      "outputs": ["dist/**"]
     },
     "typecheck": {
       "dependsOn": ["^typecheck"],
       "outputs": ["dist/**", "tsconfig.tsbuildinfo"]
+    },
+    "@senior-calculator/domain#typecheck": {
+      "dependsOn": ["@senior-calculator/schemas#typecheck"],
+      "outputs": ["dist/**", "tsconfig.tsbuildinfo"]
+    },
+    "@senior-calculator/api#typecheck": {
+      "dependsOn": [
+        "@senior-calculator/schemas#typecheck",
+        "@senior-calculator/domain#typecheck"
+      ],
+      "outputs": ["dist/**", "tsconfig.tsbuildinfo"]
+    },
+    "web#typecheck": {
+      "dependsOn": [
+        "@senior-calculator/schemas#typecheck",
+        "@senior-calculator/domain#typecheck"
+      ],
+      "outputs": ["dist/**", "tsconfig.tsbuildinfo"]
+    },
+    "lint": {
+      "dependsOn": ["^lint"]
     },
     "test": {
       "dependsOn": ["^test"]
