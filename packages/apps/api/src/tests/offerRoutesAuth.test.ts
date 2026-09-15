@@ -5,6 +5,8 @@ import { componentCatalogMock } from "@/domain/fixtures/componentCatalog"
 
 import { createApp } from "../app"
 
+process.env.JWT_SECRET = "test-secret"
+
 const app = createApp({ getInventory: async () => componentCatalogMock })
 const offerId = "9c92ab09-1f56-403d-a86f-c70087645c62"
 

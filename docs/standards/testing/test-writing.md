@@ -13,6 +13,15 @@ in-memory store in `src/tests/inMemoryOfferStore.ts`. That store is an implement
 This follows directly from the dependency-free domain package. A test that reaches for a mock is a
 signal that the code under test grew a dependency it should not have.
 
+### A Test Sets the Environment It Needs
+
+A test file that depends on an environment variable sets it itself, at the top, as the auth tests do
+with `process.env.JWT_SECRET = "test-secret"`. Nothing may rely on `packages/apps/api/.env`: it is
+not in the repository, so it exists on the maintainer's machine and not on the runner. It reaches the
+tests only by accident, because `@prisma/client` loads it when the client is constructed, and that
+accident is what lets a suite pass locally and fail in CI on exactly the assertions that cover
+misconfiguration.
+
 ### Tests Sit Beside Their Subject
 
 A unit's test lives in the same folder, named `{name}.test.ts`. Only the HTTP integration test sits
