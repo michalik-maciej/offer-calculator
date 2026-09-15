@@ -16,6 +16,11 @@ export const authApi = {
     response: LoginResponseSchema,
     data: apiType<LoginInput>(),
   }),
+  demo: createApiMethod({
+    method: "POST",
+    path: `${apiUrl}/auth/demo`,
+    response: LoginResponseSchema,
+  }),
   logout: createApiMethod({
     method: "POST",
     path: `${apiUrl}/auth/logout`,

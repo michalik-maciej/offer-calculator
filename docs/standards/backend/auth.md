@@ -50,6 +50,23 @@ A missing `JWT_SECRET` is the server's fault, not the caller's, so `requireAuth`
 `{ error: "Server misconfigured" }` instead of 401. In a correctly started process this cannot
 happen, because `parseEnv` refuses to boot without it (see `../global/conventions.md`).
 
+### Three Roles, and What Each May Touch
+
+`Role` has three values and they differ only in what they may write:
+
+| Role    | Offers                      | Component catalogue | Registration |
+| ------- | --------------------------- | ------------------- | ------------ |
+| `ADMIN` | every offer, read and write | read and write      | allowed      |
+| `USER`  | its own                     | read and write      | refused, 403 |
+| `DEMO`  | its own                     | read only           | refused, 403 |
+
+`DEMO` exists so the login screen can offer a way in without an account. `POST /api/auth/demo`
+starts a session on one shared demo account, creating it on first use with a random password nobody
+holds, so the ordinary login is not a way into it. `requireInventoryWriter` is what makes the
+catalogue read-only for that role: the catalogue is shared by everybody, so a visitor editing it
+would be editing the real one. Offers are per author already, so a demo visitor writing offers
+touches nothing but their own.
+
 ### Registration Is an Admin Action
 
 `POST /api/auth/register` sits behind `requireAuth` and `requireAdmin`, so a signed-in user without

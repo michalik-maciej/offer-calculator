@@ -194,3 +194,27 @@ whose they are, because a summary carries only a title and a date.
 owner, as a stranger and as an admin. To make that possible without a database, the offer repository
 became an injected dependency (`createApp({ offers })`), the way the inventory already was, and the
 five offer controllers became factories assembled by `offerControllers`.
+
+## 12. The demo is a role, not an environment
+
+**Decision.** Visitors reach the application through a `Demo` button on the login screen, which calls
+`POST /api/auth/demo` and starts a session on one shared account with the `DEMO` role. That role may
+do everything an ordinary account may, except write to the component catalogue. There is no separate
+database, no separate API and no separate deployment.
+
+**Why.** The alternative that was designed first was a third Neon branch with its own Fly app and its
+own front end. It is the safer shape and it was rejected deliberately: it triples the number of
+places a change has to be applied, for a product with one commercial user. Making the demo a role
+instead costs one enum value, one guard and one endpoint, and it keeps the demo on exactly the code
+path that real users are on, which is also what makes the demo honest.
+
+The catalogue is the only shared thing anyone can write, which is why it is the only thing the role
+takes away. Offers already belong to their author (decision 11), so a visitor cannot see or damage
+anybody else's work.
+
+**Cost.** A visitor sees the real component catalogue, prices included, because pricing an offer
+needs it. Demo offers are written into the production database alongside real ones, distinguishable
+only by their owner. Every visitor shares one account, so two people using the demo at the same time
+share a workspace and the autosave lets them overwrite each other. Each of these is the price of not
+running a second environment, and each is reversible: a separate branch and deployment is still
+possible later without changing this code, because the role travels with the account.

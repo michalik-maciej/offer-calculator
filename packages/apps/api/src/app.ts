@@ -7,6 +7,7 @@ import helmet from "helmet"
 import { InventorySource } from "./controllers/offer/calculateOffer.controller"
 import { getAllComponents } from "./db/inventory.repository"
 import { OfferStore, offerStore } from "./db/offer.repository"
+import { UserStore, userStore } from "./db/user.repository"
 import { createAuthRouter } from "./routes/auth.routes"
 import healthRoutes from "./routes/health.routes"
 import inventoryRoutes from "./routes/inventory.routes"
@@ -15,6 +16,7 @@ import { createOffersRouter } from "./routes/offers.routes"
 type AppDependencies = {
   getInventory: InventorySource
   offers: OfferStore
+  users: UserStore
 }
 
 /**
@@ -32,6 +34,7 @@ type AppDependencies = {
 export function createApp({
   getInventory = getAllComponents,
   offers = offerStore,
+  users = userStore,
 }: Partial<AppDependencies> = {}): Express {
   const app: Express = express()
 
@@ -43,7 +46,7 @@ export function createApp({
   app.use(cors({ credentials: true, origin: process.env.WEBAPP_DOMAIN }))
 
   app.use("/api/health", healthRoutes)
-  app.use("/api/auth", createAuthRouter())
+  app.use("/api/auth", createAuthRouter({ users }))
   app.use("/api/inventory", inventoryRoutes)
   app.use("/api/offers", createOffersRouter({ getInventory, offers }))
 

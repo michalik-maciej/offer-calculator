@@ -1,4 +1,4 @@
-import { Loader2, UserPen } from "lucide-react"
+import { Loader2, PlayCircle, UserPen } from "lucide-react"
 import { useForm } from "react-hook-form"
 
 import { Button } from "../../core/ui/button"
@@ -10,10 +10,12 @@ import {
 } from "../../core/ui/dialog"
 import { Input } from "../../core/ui/input"
 import { Label } from "../../core/ui/label"
+import { useDemoLogin } from "../hooks/useDemoLogin"
 import { useLoginUser } from "../hooks/useLoginUser"
 
 export const LoginForm = () => {
   const { mutate: login, isPending } = useLoginUser()
+  const { mutate: openDemo, isPending: isDemoPending } = useDemoLogin()
   const form = useForm({
     defaultValues: {
       email: "",
@@ -61,6 +63,24 @@ export const LoginForm = () => {
             {isPending ? <Loader2 className="animate-spin" /> : <UserPen />}
           </Button>
         </form>
+        <div className="mt-6 flex w-54 flex-col gap-2 border-t border-border pt-4">
+          <Button
+            disabled={isDemoPending}
+            onClick={() => openDemo()}
+            type="button"
+            variant="secondary"
+          >
+            {isDemoPending ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              <PlayCircle />
+            )}
+            Demo
+          </Button>
+          <p className="text-xs text-foreground/60">
+            Wejście bez konta. Ograniczona funkcjonalność.
+          </p>
+        </div>
       </DialogContent>
     </Dialog>
   )

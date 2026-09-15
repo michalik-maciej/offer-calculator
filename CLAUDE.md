@@ -194,7 +194,7 @@ src/
 
 **Database** (Prisma):
 
-- `User`: Email, hashed password, role (ADMIN/USER)
+- `User`: Email, hashed password, role (ADMIN/USER/DEMO)
 - `Component`: Catalog inventory (category, dimensions, price)
 - `Offer`: Offer records (input JSON, output JSON, discount), owned by the `User` that created
   them (`userId`, required)
@@ -202,6 +202,7 @@ src/
 **API Endpoints**:
 
 - `POST /api/auth/login`: Authenticate, return JWT cookie
+- `POST /api/auth/demo`: Start a session on the shared demo account (role DEMO, catalogue read-only)
 - `GET /api/inventory`: List components
 - `POST /api/inventory`: Add component
 - `PATCH /api/inventory/:id`: Update component

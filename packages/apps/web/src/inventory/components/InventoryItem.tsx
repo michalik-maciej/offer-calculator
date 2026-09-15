@@ -14,6 +14,7 @@ import { Button } from "../../core/ui/button"
 import { Input } from "../../core/ui/input"
 import { Label } from "../../core/ui/label"
 import { RadioGroup, RadioGroupItem } from "../../core/ui/radio-group"
+import { useIsDemo } from "../../user/hooks/useIsDemo"
 import { useCreateInventoryItem } from "../hooks/useCreateInventoryItem"
 import { useDeleteInventoryItem } from "../hooks/useDeleteInventoryItem"
 import { useUpdateInventoryItem } from "../hooks/useUpdateInventoryItem"
@@ -35,6 +36,7 @@ type Props = {
 export function InventoryItem({ defaultValues, onClose }: Props) {
   const { componentId } = useParams({ strict: false })
   const createMutation = useCreateInventoryItem()
+  const isDemo = useIsDemo()
   const updateMutation = useUpdateInventoryItem()
   const deleteMutation = useDeleteInventoryItem()
 
@@ -190,7 +192,7 @@ export function InventoryItem({ defaultValues, onClose }: Props) {
             disabled={deleteMutation.isPending}
             variant="destructive"
             onClick={handleDelete}
-            hidden={!componentId}
+            hidden={!componentId || isDemo}
           >
             {deleteMutation.isPending ? (
               <Loader2 className="animate-spin" />
@@ -203,6 +205,7 @@ export function InventoryItem({ defaultValues, onClose }: Props) {
               variant="secondary"
               type="submit"
               disabled={formState.isSubmitting}
+              hidden={isDemo}
             >
               {formState.isSubmitting ? (
                 <Loader2 className="animate-spin" />

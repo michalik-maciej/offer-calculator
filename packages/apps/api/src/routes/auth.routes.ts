@@ -4,12 +4,18 @@ import { get } from "lodash/fp"
 
 import { createLoginRateLimit } from "./loginRateLimit"
 import { withAuth } from "./withAuth"
+import { demoLoginController } from "../controllers/auth/demoLogin.controller"
 import { loginController } from "../controllers/auth/login.controller"
 import { logoutController } from "../controllers/auth/logout.controller"
 import { registerController } from "../controllers/auth/register.controller"
 import { requireAdmin } from "../controllers/auth/requireAdmin"
+import { UserStore } from "../db/user.repository"
 
-export function createAuthRouter(): ExpressRouter {
+export function createAuthRouter({
+  users,
+}: {
+  users: UserStore
+}): ExpressRouter {
   const router: ExpressRouter = Router()
   const guarded = withAuth(router)
 
@@ -17,6 +23,7 @@ export function createAuthRouter(): ExpressRouter {
     res.json({ user: get("user", req) })
   })
   router.post("/login", createLoginRateLimit(), loginController)
+  router.post("/demo", demoLoginController(users))
   guarded.post("/logout", logoutController)
   guarded.post("/register", requireAdmin, registerController)
 

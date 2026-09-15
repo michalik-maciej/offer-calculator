@@ -1,10 +1,10 @@
 import bcrypt from "bcryptjs"
 import { Request, Response } from "express"
-import jwt from "jsonwebtoken"
 import * as v from "valibot"
 
 import { LoginInputSchema } from "@/schemas/auth/Login.schema"
 
+import { issueSession } from "./issueSession"
 import { getUserByEmail } from "../../db/user.repository"
 
 type LoginResponse = {
@@ -49,28 +49,11 @@ export async function loginController(
     return res.status(401).json({ error: "Invalid credentials" })
   }
 
-  const token = jwt.sign(
-    {
-      sub: user.id,
-      email: user.email,
-      role: user.role,
-    },
-    secret,
-    { expiresIn: "7d" },
-  )
-
-  res.cookie("accessToken", token, {
-    httpOnly: true,
-    path: "/",
-    secure: true,
-    sameSite: "none",
-  })
-
   return res.status(200).json({
-    user: {
-      id: user.id,
-      email: user.email,
-      role: user.role,
-    },
+    user: issueSession(
+      res,
+      { email: user.email, id: user.id, role: user.role },
+      secret,
+    ),
   })
 }

@@ -19,6 +19,7 @@ model User {
 enum Role {
   ADMIN
   USER
+  DEMO
 }
 
 model Component {

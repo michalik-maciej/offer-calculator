@@ -9,10 +9,12 @@ import {
   AccordionTrigger,
 } from "../../core/ui/accordion"
 import { Button } from "../../core/ui/button"
+import { useIsDemo } from "../../user/hooks/useIsDemo"
 import { CATEGORY_LABELS } from "../components/labels.inventory"
 import { inventoryQueries } from "../inventory.api"
 
 export function InventoryPage() {
+  const isDemo = useIsDemo()
   const { data, isPending, error } = useQuery({
     ...inventoryQueries.list(),
     select: (components) =>
@@ -35,12 +37,18 @@ export function InventoryPage() {
     <section className="m-8 w-md">
       <div className="flex items-center justify-between mb-6">
         <h1>Katalog części</h1>
-        <Button variant="secondary" size="sm" asChild>
-          <Link search={true} to="/inventory/new">
-            <CopyPlusIcon />
-            Dodaj
-          </Link>
-        </Button>
+        {isDemo ? (
+          <p className="text-xs text-muted-foreground">
+            Wersja demo: katalog tylko do odczytu
+          </p>
+        ) : (
+          <Button variant="secondary" size="sm" asChild>
+            <Link search={true} to="/inventory/new">
+              <CopyPlusIcon />
+              Dodaj
+            </Link>
+          </Button>
+        )}
       </div>
       <Accordion type="single" collapsible className="max-w-lg">
         {Object.entries(data).map(([category, items]) => (
