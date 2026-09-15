@@ -46,6 +46,10 @@ the same as one that does not exist, so an id cannot be used to discover that an
 A user with the `ADMIN` role is exempt and reaches every offer. See decision 11 in
 `docs/decisions.md`.
 
+A missing `JWT_SECRET` is the server's fault, not the caller's, so `requireAuth` answers 500
+`{ error: "Server misconfigured" }` instead of 401. In a correctly started process this cannot
+happen, because `parseEnv` refuses to boot without it (see `../global/conventions.md`).
+
 ### Registration Is an Admin Action
 
 `POST /api/auth/register` sits behind `requireAuth` and `requireAdmin`, so a signed-in user without

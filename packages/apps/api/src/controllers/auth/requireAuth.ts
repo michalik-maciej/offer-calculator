@@ -13,22 +13,20 @@ declare global {
   }
 }
 
-function verifyToken(token: string) {
+export function requireAuth(req: Request, res: Response, next: NextFunction) {
   const secret = process.env.JWT_SECRET
   if (!secret) {
-    throw new Error("Missing JWT_SECRET")
+    console.error("Missing JWT_SECRET")
+    return res.status(500).json({ error: "Server misconfigured" })
   }
-  return jwt.verify(token, secret)
-}
 
-export function requireAuth(req: Request, res: Response, next: NextFunction) {
   const token = req.cookies?.accessToken
   if (!token) {
     return res.status(401).json({ error: "Unauthorized" })
   }
 
   try {
-    req.user = v.parse(JwtPayloadSchema, verifyToken(token))
+    req.user = v.parse(JwtPayloadSchema, jwt.verify(token, secret))
     next()
   } catch {
     return res.status(401).json({ error: "Invalid token" })

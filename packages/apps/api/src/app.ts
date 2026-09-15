@@ -49,5 +49,3 @@ export function createApp({
 
   return app
 }
-
-export const app: Express = createApp()

@@ -502,6 +502,10 @@ Required:
 - `JWT_SECRET`: Secret for signing JWTs
 - `WEBAPP_DOMAIN`: Frontend origin (CORS policy)
 
+Optional: `PORT` (defaults to 3000). All of them are validated at startup by `parseEnv`
+(`packages/apps/api/src/env.ts`); the process refuses to listen when one is missing or malformed.
+`ALLOW_DEMO_SEED=1` is read by the seed only, and only where a demo account is wanted.
+
 ### Frontend
 
 Frontend reads from environment at build time (Vite). Set in Vercel dashboard or `.env.local`:

@@ -16,6 +16,13 @@ app, one folder per unit of logic in the domain. A new file goes where its neigh
 Configuration lives in environment variables and secrets are never committed. The API requires
 `DATABASE_URL`, `JWT_SECRET` and `WEBAPP_DOMAIN`; the web build reads `VITE_API_URL` at build time.
 
+The API checks them once, at startup. `parseEnv` in `src/env.ts` validates `process.env` against a
+Valibot schema and `server.ts` refuses to listen when anything is missing or malformed, naming every
+offending variable in one message. This is not ceremony: each of those variables fails quietly when
+it is absent. Without `WEBAPP_DOMAIN`, `cors` is handed `undefined` and stops restricting anything;
+without `JWT_SECRET`, guarded routes answer as if the caller were at fault. A process that will not
+serve traffic misconfigured is easier to debug than one that serves it wrongly.
+
 ### Minimal Dependencies
 
 Dependencies stay lean. The domain package in particular has none, by decision, and that is enforced

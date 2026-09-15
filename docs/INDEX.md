@@ -57,7 +57,7 @@ No inline comments, two lines at most and say why rather than what, JSDoc as the
 
 #### Conventions (`standards/global/conventions.md`)
 
-pnpm only and from the workspace root, predictable structure, environment variables, minimal dependencies, building only what is needed, documentation that follows the code.
+pnpm only and from the workspace root, predictable structure, environment variables validated once at startup so the process refuses to serve traffic misconfigured, minimal dependencies, building only what is needed, documentation that follows the code.
 
 #### Error Handling (`standards/global/error-handling.md`)
 

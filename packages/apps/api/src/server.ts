@@ -1,7 +1,16 @@
-import { app } from "./app"
+import { createApp } from "./app"
+import { parseEnv } from "./env"
 
-const PORT = Number(process.env.PORT ?? 3000)
+try {
+  const { PORT } = parseEnv()
 
-app.listen(PORT, () => {
-  console.log(`API running on port ${PORT}`)
-})
+  createApp().listen(PORT, () => {
+    console.log(`API running on port ${PORT}`)
+  })
+} catch (error) {
+  console.error(
+    "Startup failed:",
+    error instanceof Error ? error.message : error,
+  )
+  process.exit(1)
+}
