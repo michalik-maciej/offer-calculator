@@ -7,6 +7,7 @@ import { withAuth } from "./withAuth"
 import { loginController } from "../controllers/auth/login.controller"
 import { logoutController } from "../controllers/auth/logout.controller"
 import { registerController } from "../controllers/auth/register.controller"
+import { requireAdmin } from "../controllers/auth/requireAdmin"
 
 export function createAuthRouter(): ExpressRouter {
   const router: ExpressRouter = Router()
@@ -17,7 +18,7 @@ export function createAuthRouter(): ExpressRouter {
   })
   router.post("/login", createLoginRateLimit(), loginController)
   guarded.post("/logout", logoutController)
-  router.post("/register", registerController)
+  guarded.post("/register", requireAdmin, registerController)
 
   return router
 }

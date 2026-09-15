@@ -12,8 +12,8 @@ The cost is accepted deliberately: a token cannot be revoked before it expires.
 ### Every Data Route Requires requireAuth
 
 A route that reads or writes persisted data is bound through `withAuth`, which wraps a `Router()`
-and injects `requireAuth` ahead of the handlers. Public by design are only the health check, login
-and registration.
+and injects `requireAuth` ahead of the handlers. Public by design are only the health check and
+login.
 
 ```ts
 const guarded = withAuth(router)
@@ -46,6 +46,24 @@ the same as one that does not exist, so an id cannot be used to discover that an
 A user with the `ADMIN` role is exempt and reaches every offer. See decision 11 in
 `docs/decisions.md`.
 
+### Registration Is an Admin Action
+
+`POST /api/auth/register` sits behind `requireAuth` and `requireAdmin`, so a signed-in user without
+the `ADMIN` role is answered 403 and an anonymous one 401. It was public for months, which on an
+application where offers belong to their author meant anybody could give themselves a working
+account.
+
+The endpoint has no client: the browser never calls it, accounts are made deliberately. That leaves
+the question of where the first admin comes from, and the answer is the database, not the API. On a
+fresh deployment, promote the account you created:
+
+```sql
+UPDATE "User" SET role = 'ADMIN' WHERE email = 'you@example.com';
+```
+
+`prisma.user.create` in the repository sets no role, so every account starts as `USER`, including
+the one the seed makes for the demo.
+
 ### Login Has a Budget of Failed Attempts
 
 `POST /api/auth/login` is wrapped in a per-IP rate limit (`createLoginRateLimit` in
@@ -60,6 +78,14 @@ a password from free to inconvenient. It is not a defence against a distributed 
 
 For a per-IP budget to mean anything behind Fly's proxy, `createApp` sets `app.set("trust proxy", 1)`.
 Without it every request arrives carrying the proxy's address and the whole world shares one budget.
+
+### Security Headers Come From helmet
+
+`createApp` mounts `helmet()` before anything else, so every response carries the usual defensive
+headers (`nosniff`, `X-Frame-Options`, HSTS and the rest) and no longer advertises Express through
+`X-Powered-By`. The defaults are taken as they come: this is a JSON API that serves no HTML, so the
+parts of helmet that matter here are the small ones, and a hand-tuned policy would be a liability to
+keep current for no gain.
 
 ### CORS Is Not Authorization
 

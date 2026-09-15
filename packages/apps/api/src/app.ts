@@ -2,6 +2,7 @@ import cookieParser from "cookie-parser"
 import cors from "cors"
 import type { Express } from "express"
 import express from "express"
+import helmet from "helmet"
 
 import { InventorySource } from "./controllers/offer/calculateOffer.controller"
 import { getAllComponents } from "./db/inventory.repository"
@@ -36,6 +37,7 @@ export function createApp({
 
   app.set("trust proxy", 1)
 
+  app.use(helmet())
   app.use(express.json())
   app.use(cookieParser())
   app.use(cors({ credentials: true, origin: process.env.WEBAPP_DOMAIN }))
