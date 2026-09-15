@@ -116,7 +116,7 @@ pnpm install
 #   VITE_API_URL=http://localhost:3000/api
 
 pnpm --filter @senior-calculator/api exec prisma migrate deploy
-pnpm --filter @senior-calculator/api exec prisma db seed   # catalogue + demo account
+ALLOW_DEMO_SEED=1 pnpm --filter @senior-calculator/api exec prisma db seed
 
 pnpm dev        # web on :5173, api on :3000
 ```
@@ -131,9 +131,10 @@ the dimensions that category requires](docs/screenshots/inventory.png)
 _That catalogue is editable in the app. Which dimensions a component needs follows from its
 category, so a foot asks for a depth and nothing else._
 
-Because that password is published here, the seed refuses to run against anything but a database on
-`localhost`. `SEED_FORCE=1` overrides the check, which is only ever right for the component
-catalogue on a database you own.
+The seed always loads the component catalogue. It creates the demo account only when
+`ALLOW_DEMO_SEED=1` is set, because the password above is published here: the deployment that holds
+real data is never given that variable, so the account cannot exist there. The account is an
+ordinary user, so it sees its own offers and nobody else's.
 
 Other entry points: `pnpm dev:web`, `pnpm dev:api`, `pnpm build`.
 

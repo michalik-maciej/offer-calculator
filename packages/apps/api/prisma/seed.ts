@@ -1,6 +1,50 @@
+import bcrypt from "bcryptjs"
+import { Role } from "@prisma/client"
+
 import { prisma } from "../src/db/prisma"
 
-async function main() {
+declare const process: {
+  env: Record<string, string | undefined>
+  exit(code?: number): never
+}
+
+const DEMO_USER = {
+  email: "demo@example.com",
+  password: "demo1234",
+}
+
+const PASSWORD_SALT_ROUNDS = 10
+
+function databaseHost() {
+  const url = process.env.DATABASE_URL
+
+  if (!url) {
+    throw new Error("Missing DATABASE_URL")
+  }
+
+  return new URL(url).hostname
+}
+
+async function seedDemoUser() {
+  if (process.env.ALLOW_DEMO_SEED !== "1") {
+    console.log("Skipped the demo account: ALLOW_DEMO_SEED is not set to 1.")
+    return
+  }
+
+  await prisma.user.upsert({
+    where: { email: DEMO_USER.email },
+    update: {},
+    create: {
+      email: DEMO_USER.email,
+      password: await bcrypt.hash(DEMO_USER.password, PASSWORD_SALT_ROUNDS),
+      role: Role.USER,
+    },
+  })
+
+  console.log(`Seeded the demo account ${DEMO_USER.email}.`)
+}
+
+async function seedComponents() {
   await prisma.component.createMany({
     data: [
       {
@@ -423,4 +467,13 @@ async function main() {
   })
 }
 
-main()
+async function main() {
+  console.log(`Seeding ${databaseHost()}`)
+  await seedComponents()
+  await seedDemoUser()
+}
+
+main().catch((error) => {
+  console.error("Seeding failed:", error)
+  process.exit(1)
+})
