@@ -57,7 +57,7 @@ jobs:
       - name: Generate Prisma client
         run: pnpm --filter @senior-calculator/api exec prisma generate
       - name: Test
-        run: pnpm vitest run
+        run: pnpm test:coverage
 
   deploy-api:
     name: Deploy API to Fly.io
@@ -72,5 +72,5 @@ jobs:
       FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
     steps:
       - uses: actions/checkout@v7
-      - uses: superfly/flyctl-actions/setup-flyctl@1.5
+      - uses: superfly/flyctl-actions/setup-flyctl@1.6
       - run: flyctl deploy --remote-only

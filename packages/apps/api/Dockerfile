@@ -35,7 +35,6 @@ RUN pnpm install --frozen-lockfile
 # =================================
 FROM deps AS build
 
-# RUN pnpm --filter=@senior-calculator/api run prisma generate 
 RUN pnpm turbo run build --filter=@senior-calculator/api
 
 # =================================

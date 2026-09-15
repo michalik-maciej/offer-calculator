@@ -10,6 +10,12 @@ export default defineConfig({
       provider: "v8",
       reporter: ["text", "html"],
       include: ["packages/domain/**/*.ts"],
+      thresholds: {
+        branches: 80,
+        functions: 90,
+        lines: 90,
+        statements: 90,
+      },
     },
   },
 })

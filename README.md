@@ -178,3 +178,7 @@ for keeping those rules in a package that depends on nothing.
 Feature-complete for its user's needs and in active use. Every push to `main` runs typecheck, lint,
 formatting and the test suite (see the badge at the top). There is no public demo account yet, so
 the live link shows a sign-in form; running it locally is the way to see the calculator itself.
+
+## License
+
+MIT, see [`LICENSE`](LICENSE).

@@ -59,6 +59,14 @@ Node 24 is pinned in `engines.node`, in the CI `setup-node` step and in the API 
 9.0.0 comes from the `packageManager` field and is read by both CI and the Docker build. Changing the
 version means changing all of them together.
 
+### The Test Job Enforces Coverage
+
+CI runs `pnpm test:coverage`, not a bare `vitest run`, so the thresholds in `vitest.config.ts`
+(measured over `packages/domain` only) fail the
+build rather than being reported and ignored. They sit below what the suite currently reaches, deliberately
+loosely: the point is to catch a change that guts the domain tests, not to make every ordinary commit
+negotiate with a percentage.
+
 ### CI Has No Database
 
 The `build` and `test` jobs set a deliberately unusable `DATABASE_URL`, purely so `prisma generate`
