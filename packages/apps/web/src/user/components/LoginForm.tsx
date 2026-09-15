@@ -22,6 +22,7 @@ export const LoginForm = () => {
       password: "",
     },
   })
+  const { errors } = form.formState
 
   return (
     <Dialog open>
@@ -42,7 +43,21 @@ export const LoginForm = () => {
             <Label className="text-foreground/60 text-xs" htmlFor="email">
               Email
             </Label>
-            <Input id="email" {...form.register("email")} />
+            <Input
+              id="email"
+              {...form.register("email", {
+                required: "Podaj adres e-mail",
+                pattern: {
+                  value: /\S+@\S+\.\S+/,
+                  message: "To nie wygląda na adres e-mail",
+                },
+              })}
+            />
+            {errors.email?.message && (
+              <span className="text-xs text-destructive">
+                {errors.email.message}
+              </span>
+            )}
           </div>
           <div className="mt-2 flex flex-col gap-2">
             <Label className="text-foreground/60 text-xs" htmlFor="password">
@@ -51,14 +66,21 @@ export const LoginForm = () => {
             <Input
               id="password"
               type="password"
-              {...form.register("password")}
+              {...form.register("password", {
+                required: "Podaj hasło",
+                minLength: {
+                  value: 8,
+                  message: "Hasło ma co najmniej 8 znaków",
+                },
+              })}
             />
+            {errors.password?.message && (
+              <span className="text-xs text-destructive">
+                {errors.password.message}
+              </span>
+            )}
           </div>
-          <Button
-            className="self-end mt-8"
-            onClick={() => login(form.getValues())}
-            disabled={isPending}
-          >
+          <Button className="self-end mt-8" disabled={isPending} type="submit">
             Zaloguj
             {isPending ? <Loader2 className="animate-spin" /> : <UserPen />}
           </Button>
