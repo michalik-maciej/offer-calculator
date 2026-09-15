@@ -6,7 +6,7 @@ import express from "express"
 import { InventorySource } from "./controllers/offer/calculateOffer.controller"
 import { getAllComponents } from "./db/inventory.repository"
 import { OfferStore, offerStore } from "./db/offer.repository"
-import authRoutes from "./routes/auth.routes"
+import { createAuthRouter } from "./routes/auth.routes"
 import healthRoutes from "./routes/health.routes"
 import inventoryRoutes from "./routes/inventory.routes"
 import { createOffersRouter } from "./routes/offers.routes"
@@ -34,12 +34,14 @@ export function createApp({
 }: Partial<AppDependencies> = {}): Express {
   const app: Express = express()
 
+  app.set("trust proxy", 1)
+
   app.use(express.json())
   app.use(cookieParser())
   app.use(cors({ credentials: true, origin: process.env.WEBAPP_DOMAIN }))
 
   app.use("/api/health", healthRoutes)
-  app.use("/api/auth", authRoutes)
+  app.use("/api/auth", createAuthRouter())
   app.use("/api/inventory", inventoryRoutes)
   app.use("/api/offers", createOffersRouter({ getInventory, offers }))
 

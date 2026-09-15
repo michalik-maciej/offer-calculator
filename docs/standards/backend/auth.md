@@ -46,6 +46,21 @@ the same as one that does not exist, so an id cannot be used to discover that an
 A user with the `ADMIN` role is exempt and reaches every offer. See decision 11 in
 `docs/decisions.md`.
 
+### Login Has a Budget of Failed Attempts
+
+`POST /api/auth/login` is wrapped in a per-IP rate limit (`createLoginRateLimit` in
+`src/routes/loginRateLimit.ts`): ten failed attempts per fifteen minutes, successful ones not
+counted, answered with 429 and `{ error: "Too many login attempts" }`. The limiter is built per app
+instead of being imported as a module singleton, so one app's counter never leaks into another's,
+which is also what makes it testable.
+
+The store is in memory, which follows from the machine that stops when idle (decision 6): there is
+nowhere to keep a shared counter and the budget resets on restart. This raises the cost of guessing
+a password from free to inconvenient. It is not a defence against a distributed attempt.
+
+For a per-IP budget to mean anything behind Fly's proxy, `createApp` sets `app.set("trust proxy", 1)`.
+Without it every request arrives carrying the proxy's address and the whole world shares one budget.
+
 ### CORS Is Not Authorization
 
 `cors({ credentials: true, origin: WEBAPP_DOMAIN })` constrains browsers, and only browsers. It stops

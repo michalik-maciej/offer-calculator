@@ -117,7 +117,7 @@ One controller file per endpoint exporting a handler or a factory for it, one fe
 
 #### Authentication and Route Protection (`standards/backend/auth.md`)
 
-Stateless JWT in an httpOnly cookie bound through the `withAuth` router wrapper, with only the health check, login and registration public, why the guard stays per route, the payload validated and not just the signature, offers scoped to their author with ADMIN exempt and a 404 for anybody else, CORS is not authorization, never log or return credentials.
+Stateless JWT in an httpOnly cookie bound through the `withAuth` router wrapper, with only the health check, login and registration public, why the guard stays per route, the payload validated and not just the signature, a per-IP budget of failed login attempts with the proxy trusted for one hop, offers scoped to their author with ADMIN exempt and a 404 for anybody else, CORS is not authorization, never log or return credentials.
 
 #### Domain Layer (`standards/backend/domain.md`)
 
