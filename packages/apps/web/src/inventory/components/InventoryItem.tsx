@@ -5,7 +5,7 @@ import { useParams } from "@tanstack/react-router"
 import {
   COMPONENT_CATEGORIES,
   type ComponentCategory,
-} from "@/domain/models/component"
+} from "@/schemas/inventory/Component.schema"
 
 import { InventoryItemDimensionField } from "./InventoryItemDimensionField"
 import { CATEGORY_LABELS } from "./labels.inventory"

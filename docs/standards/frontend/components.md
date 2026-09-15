@@ -48,10 +48,12 @@ Router and is never edited by hand.
 The domain package is backend-only: importing it into the web app ships domain logic in the browser
 bundle. Calculations are reached through API endpoints.
 
-**Known deviation, to be repaid.** Eleven files under `packages/apps/web/src` currently import
-runtime values from `@/domain/models/*` (`COMPONENT_CATEGORIES`, `CATEGORY_REQUIREMENTS`,
-`DEFAULT_SHELF_COUNT_BY_HEIGHT`, `layoutConstraints`). The fix is to move shared constants into
-`packages/schemas`, which is explicitly the shared package. Do not add new imports of this kind.
+Anything both sides genuinely share lives in `packages/schemas`, which is the shared package by
+design: the category list and what each category requires (`COMPONENT_CATEGORIES`,
+`CATEGORY_REQUIREMENTS` in `inventory/Component.schema.ts`), the default shelf counts
+(`ShelfDefaults.ts`) and the dimension constraints (`LayoutConstraints.ts`). The browser imports
+those from `@/schemas/*`; `@/domain/*` does not appear in `packages/apps/web/src` at all, and a new
+import of that kind is a regression.
 
 ### Single Responsibility, Minimal Props
 

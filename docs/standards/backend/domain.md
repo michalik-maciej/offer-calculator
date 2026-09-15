@@ -12,7 +12,7 @@ no database, no server and no mocks.
 
 ### Four Layers, in One Direction
 
-- `models/` holds domain types and constants
+- `models/` holds domain types (constants the browser also needs live in `packages/schemas`)
 - `calculations/` holds single mathematical formulas
 - `transformations/` holds pure data mapping
 - `orchestrations/` is the public API: it takes user input and returns an `OfferOutput`

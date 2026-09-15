@@ -1,5 +1,6 @@
 import * as v from "valibot"
 
+import { ComponentCategorySchema } from "./inventory/Component.schema"
 import { LayoutGondolaValue } from "./LayoutGondola.schema"
 import { LayoutWallValue } from "./LayoutWall.schema"
 import { MissingComponentSchema } from "./OfferError.schema"
@@ -13,7 +14,7 @@ export const OfferInputSchema = v.object({
 export type OfferInput = v.InferOutput<typeof OfferInputSchema>
 
 const BreakdownSchema = v.record(
-  v.picklist(["back", "baseCover", "foot", "leg", "misc", "shelf", "support"]),
+  ComponentCategorySchema,
   v.array(
     v.object({
       id: v.string(),

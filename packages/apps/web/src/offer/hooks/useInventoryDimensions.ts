@@ -4,7 +4,7 @@ import {
   SHELF_CONSTRAINTS,
   SHELF_UNIT_CONSTRAINTS,
   WALL_LAYOUT_CONSTRAINTS,
-} from "@/domain/models/layoutConstraints"
+} from "@/schemas/LayoutConstraints"
 
 import { getDimensionOptions } from "../../inventory/helpers/getDimensionOptions"
 import { inventoryQueries } from "../../inventory/inventory.api"

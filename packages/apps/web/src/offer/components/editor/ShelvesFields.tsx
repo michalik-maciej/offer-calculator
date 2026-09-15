@@ -1,8 +1,8 @@
 import { Plus } from "lucide-react"
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form"
 
-import { DEFAULT_SHELF_COUNT_BY_HEIGHT } from "@/domain/models/shelfDefaults"
 import { OfferInput } from "@/schemas/Offer.schema"
+import { DEFAULT_SHELF_COUNT_BY_HEIGHT } from "@/schemas/ShelfDefaults"
 
 import { CountStepper } from "./CountStepper"
 import { OptionStepper } from "./OptionStepper"

@@ -1,6 +1,6 @@
 import * as v from "valibot"
 
-export const ComponentCategorySchema = v.picklist([
+export const COMPONENT_CATEGORIES = [
   "back",
   "baseCover",
   "foot",
@@ -8,7 +8,24 @@ export const ComponentCategorySchema = v.picklist([
   "misc",
   "shelf",
   "support",
-])
+] as const
+
+export const ComponentCategorySchema = v.picklist(COMPONENT_CATEGORIES)
+
+export type ComponentCategory = v.InferOutput<typeof ComponentCategorySchema>
+
+export const CATEGORY_REQUIREMENTS: Record<
+  ComponentCategory,
+  { required: ("width" | "height" | "depth")[] }
+> = {
+  back: { required: ["width", "height"] },
+  baseCover: { required: ["width"] },
+  foot: { required: ["depth"] },
+  leg: { required: ["width", "height", "depth"] },
+  misc: { required: [] },
+  shelf: { required: ["width", "depth"] },
+  support: { required: ["depth"] },
+}
 
 export const ComponentBaseSchema = v.object({
   category: ComponentCategorySchema,

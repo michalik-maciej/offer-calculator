@@ -1,6 +1,6 @@
 import { Fragment } from "react"
 
-import { COMPONENT_CATEGORIES } from "@/domain/models/component"
+import { COMPONENT_CATEGORIES } from "@/schemas/inventory/Component.schema"
 import { OfferOutput } from "@/schemas/Offer.schema"
 
 import { CATEGORY_LABELS } from "../helpers/categoryLabels"

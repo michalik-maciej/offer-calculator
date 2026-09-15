@@ -1,4 +1,4 @@
-import type { ComponentCategory } from "./component"
+import type { ComponentCategory } from "@/schemas/inventory/Component.schema"
 
 export type MissingComponentQuery = {
   category?: ComponentCategory

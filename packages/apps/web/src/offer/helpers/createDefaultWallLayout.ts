@@ -1,5 +1,5 @@
-import { DEFAULT_SHELF_COUNT_BY_HEIGHT } from "@/domain/models/shelfDefaults"
 import { DEFAULT_BACK_VARIANT, LayoutWall } from "@/schemas/LayoutWall.schema"
+import { DEFAULT_SHELF_COUNT_BY_HEIGHT } from "@/schemas/ShelfDefaults"
 
 import { InventoryDimensions } from "../hooks/useInventoryDimensions"
 

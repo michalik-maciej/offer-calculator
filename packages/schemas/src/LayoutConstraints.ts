@@ -1,7 +1,5 @@
-import type { ComponentCategory } from "./component"
+import type { ComponentCategory } from "./inventory/Component.schema"
 
-// Derived from the calculations consuming each dimension: calculateLegDemand
-// (height), calculateFootDemand (depth), calculateShelfDemand (width, depth).
 export const WALL_LAYOUT_CONSTRAINTS = {
   height: "leg",
   depth: "foot",

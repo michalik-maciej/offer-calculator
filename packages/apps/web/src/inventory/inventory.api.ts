@@ -1,6 +1,6 @@
 import * as v from "valibot"
 
-import type { ComponentCategory } from "@/domain/models/component"
+import type { ComponentCategory } from "@/schemas/inventory/Component.schema"
 
 import { apiType, createApiMethod } from "../core/createMethod.api"
 

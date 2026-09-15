@@ -1,7 +1,7 @@
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form"
 import { useQuery } from "@tanstack/react-query"
 
-import { COMPONENT_CATEGORIES } from "@/domain/models/component"
+import { COMPONENT_CATEGORIES } from "@/schemas/inventory/Component.schema"
 import { OfferInput } from "@/schemas/Offer.schema"
 
 import { CountStepper } from "./CountStepper"
