@@ -1,6 +1,7 @@
-import { BreakdownList } from "packages/apps/web/src/offer/components/BreakdownList"
-import { useOffer } from "packages/apps/web/src/offer/hooks/useOffer"
 import { createFileRoute } from "@tanstack/react-router"
+
+import { BreakdownList } from "../offer/components/BreakdownList"
+import { useOffer } from "../offer/hooks/useOffer"
 
 export const Route = createFileRoute("/order")({
   component: OrderPage,
