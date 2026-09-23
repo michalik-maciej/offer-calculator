@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router"
 
 import { useTheme } from "../core/hooks/useTheme"
 import { Button } from "../core/ui/button"
+import { UserManagementButton } from "../user/components/UserManagementButton"
 import { useLogoutUser } from "../user/hooks/useLogoutUser"
 
 function UserButton() {
@@ -68,6 +69,7 @@ export function TopBar() {
         <div className="flex items-center gap-4">
           <ThemeToggle />
           <UserButton />
+          <UserManagementButton />
         </div>
       </nav>
     </header>

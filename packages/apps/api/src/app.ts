@@ -12,6 +12,7 @@ import { createAuthRouter } from "./routes/auth.routes"
 import healthRoutes from "./routes/health.routes"
 import { createInventoryRouter } from "./routes/inventory.routes"
 import { createOffersRouter } from "./routes/offers.routes"
+import { createUsersRouter } from "./routes/users.routes"
 
 type AppDependencies = {
   getInventory: InventorySource
@@ -49,6 +50,7 @@ export function createApp({
   app.use("/api/auth", createAuthRouter({ users }))
   app.use("/api/inventory", createInventoryRouter({ getInventory }))
   app.use("/api/offers", createOffersRouter({ getInventory, offers }))
+  app.use("/api/users", createUsersRouter({ users }))
 
   return app
 }

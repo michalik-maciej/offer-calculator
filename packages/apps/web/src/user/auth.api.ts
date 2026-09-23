@@ -25,6 +25,11 @@ export const authApi = {
     method: "POST",
     path: `${apiUrl}/auth/logout`,
   }),
+  register: createApiMethod({
+    method: "POST",
+    path: `${apiUrl}/auth/register`,
+    data: apiType<LoginInput>(),
+  }),
   user: createApiMethod({
     method: "GET",
     path: `${apiUrl}/auth/user`,
