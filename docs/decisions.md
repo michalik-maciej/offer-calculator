@@ -95,6 +95,12 @@ it are thin, mostly forms and lists, and testing them would mostly assert that R
 **Cost.** A regression in the UI is caught by using the app, not by the suite. That is an accepted
 trade for a tool with one user and a maintainer who runs it.
 
+**Amended 2026-09-15.** The rule stands for components, and one end-to-end test now sits above it:
+`e2e/offer.spec.ts` drives a browser through the demo entrance, creates an offer, adds a run and
+checks that it comes back priced. It exists because the trade above assumed a maintainer who opens
+the app; a public demo is opened by people who will not report that it is broken. It is a smoke test
+and stays one: it asserts that the whole path holds together, never how a component renders.
+
 ## 6. Authentication is a stateless JWT in an httpOnly cookie
 
 **Decision.** Login signs a JWT (7-day expiry) and sets it as an `httpOnly`, `secure`,

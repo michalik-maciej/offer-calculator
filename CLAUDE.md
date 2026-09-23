@@ -94,6 +94,7 @@ pnpm validate         # Full validation: typecheck + lint + format:check + build
 pnpm test             # Run all tests in watch mode
 pnpm test:watch       # Alias for pnpm test
 pnpm test:coverage    # Generate coverage report (includes domain/ only)
+pnpm test:e2e         # Playwright smoke test (needs a database and installed browsers)
 ```
 
 ### Per-Package Commands

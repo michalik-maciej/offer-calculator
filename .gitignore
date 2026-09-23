@@ -6,3 +6,5 @@ dist
 tsconfig.tsbuildinfo
 coverage
 .playwright-mcp
+test-results
+playwright-report

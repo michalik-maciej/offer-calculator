@@ -13,6 +13,18 @@ in-memory store in `src/tests/inMemoryOfferStore.ts`. That store is an implement
 This follows directly from the dependency-free domain package. A test that reaches for a mock is a
 signal that the code under test grew a dependency it should not have.
 
+### One End-to-End Test, Outside the Unit Suite
+
+`e2e/*.spec.ts` holds the Playwright smoke test and is deliberately outside the Vitest glob, which
+only takes `*.test.ts`. That is why these files carry the `.spec.ts` suffix that unit tests must not
+use: the name is what keeps the two suites apart. `pnpm test:e2e` runs them, `playwright.config.ts`
+starts the API and the web server, and they need a real database, which is why CI gives them their
+own job with a Postgres service rather than folding them into `test`.
+
+They cover the path, not the pixels: sign in through the demo entrance, create an offer, add a run,
+see a price. A test that asserts how a component renders belongs nowhere in this repository (see
+decision 5).
+
 ### A Test Sets the Environment It Needs
 
 A test file that depends on an environment variable sets it itself, at the top, as the auth tests do

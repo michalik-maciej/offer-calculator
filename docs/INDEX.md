@@ -145,7 +145,7 @@ These standards apply to all testing code.
 
 #### Test Writing (`standards/testing/test-writing.md`)
 
-Nothing is mocked, a test sets the environment it needs instead of leaning on the maintainer's `.env`, tests sit beside their subject, explicit imports with a single `describe` and `it`, fixtures come from the domain package, assertions on the whole result and on the failure, coverage measured on the domain only with the UI deliberately untested, the HTTP layer exercised through supertest, and no domain change finished without a test change.
+Nothing is mocked, a test sets the environment it needs instead of leaning on the maintainer's `.env`, tests sit beside their subject, explicit imports with a single `describe` and `it`, fixtures come from the domain package, assertions on the whole result and on the failure, coverage measured on the domain only with UI components deliberately untested, one Playwright smoke test in `e2e/` outside the Vitest glob, the HTTP layer exercised through supertest, and no domain change finished without a test change.
 
 ---
 
@@ -161,7 +161,7 @@ The agent never stages, commits or pushes, everything happens on `main` without 
 
 #### Working Process (`standards/workflow/process.md`)
 
-One concern per step, problems reported rather than quietly fixed, verification with `pnpm validate` and `pnpm vitest run`, what green actually means here, the four CI jobs with coverage thresholds enforced in the test job and why there is no typecheck job among them, the toolchain version pinned in three places, CI running without a database, and reading `docs/decisions.md` before touching wiring, auth or persistence.
+One concern per step, problems reported rather than quietly fixed, verification with `pnpm validate` and `pnpm vitest run`, what green actually means here, the five CI jobs with coverage thresholds enforced in the test job and a database only in the end-to-end one, why there is no typecheck job among them, the toolchain version pinned in three places, CI running without a database, and reading `docs/decisions.md` before touching wiring, auth or persistence.
 
 ---
 

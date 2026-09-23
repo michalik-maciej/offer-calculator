@@ -67,12 +67,17 @@ build rather than being reported and ignored. They sit below what the suite curr
 loosely: the point is to catch a change that guts the domain tests, not to make every ordinary commit
 negotiate with a percentage.
 
-### CI Has No Database
+### The Unit Suite Has No Database, the End-to-End Job Has One
 
 The `build` and `test` jobs set a deliberately unusable `DATABASE_URL`, purely so `prisma generate`
-can run. There are no service containers and no secrets in either of them, so every test must be pure
-or take its collaborators by injection. The one secret the workflow uses, `FLY_API_TOKEN`, belongs to
-`deploy-api` and never reaches a test.
+can run. There are no service containers and no secrets in either of them, so every unit and HTTP
+test must be pure or take its collaborators by injection.
+
+The `e2e` job is the exception and is separate for exactly that reason: it runs a Postgres service,
+applies the migrations, seeds the catalogue and drives a browser. Keeping it apart is what stops the
+fast suite from growing a database dependency by accident. `deploy-api` waits for it along with the
+other three. The one secret the workflow uses, `FLY_API_TOKEN`, belongs to `deploy-api` and never
+reaches a test.
 
 ### Read the Decision Log Before Touching the Foundations
 

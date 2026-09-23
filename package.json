@@ -15,10 +15,12 @@
     "test": "vitest",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
     "validate": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm build"
   },
   "devDependencies": {
     "@eslint/js": "^9.18.0",
+    "@playwright/test": "^1.63.0",
     "@types/lodash": "^4.17.13",
     "@vitest/coverage-v8": "4.0.16",
     "eslint": "^9.18.0",

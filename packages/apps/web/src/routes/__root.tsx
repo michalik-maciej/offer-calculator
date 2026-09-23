@@ -2,6 +2,8 @@ import type { QueryClient } from "@tanstack/react-query"
 import { createRootRouteWithContext, Outlet } from "@tanstack/react-router"
 import { TanStackRouterDevtools } from "@tanstack/router-devtools"
 
+import { RouteError } from "../app/RouteError"
+import { RouteNotFound } from "../app/RouteNotFound"
 import { AppLayout } from "../layout/AppLayout"
 import { OfferFormProvider } from "../offer/components/OfferFormProvider"
 
@@ -27,4 +29,6 @@ export const Route = createRootRouteWithContext<RouterContext>()({
       <TanStackRouterDevtools />
     </>
   ),
+  errorComponent: ({ error }) => <RouteError error={error} />,
+  notFoundComponent: () => <RouteNotFound />,
 })
