@@ -1,16 +1,19 @@
 import { toast } from "sonner"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 
-import { authApi } from "../auth.api"
+import { authApi, authQueries } from "../auth.api"
 
 export function useLogoutUser() {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
+
   return useMutation({
     mutationFn: () => authApi.logout(),
-    onSuccess: () => {
+    onSuccess: async () => {
+      queryClient.removeQueries({ queryKey: authQueries.user().queryKey })
+      await navigate({ to: "/" })
       toast.success("Pomyślnie wylogowano.", { position: "top-center" })
-      navigate({ to: "/" })
     },
     onError: (error) => {
       console.error("Error logging out:", error)

@@ -41,7 +41,7 @@ function CreateUserForm() {
 
   return (
     <form
-      className="flex items-start gap-2 border-b pb-4"
+      className="flex items-end gap-2 border-b pb-4"
       onSubmit={form.handleSubmit(submit)}
     >
       <div className="flex flex-col gap-1 grow">
@@ -118,6 +118,7 @@ function UserRow({
           onClick={() => onRequestDelete(user)}
           size="icon"
           type="button"
+          disabled={user.role === "ADMIN"}
           variant="destructive"
           aria-label="Usuń użytkownika"
         >
