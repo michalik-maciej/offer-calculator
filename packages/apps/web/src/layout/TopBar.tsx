@@ -1,3 +1,4 @@
+import { ArrowUpRight } from "lucide-react"
 import { Link } from "@tanstack/react-router"
 
 import { OfferSaveStatus } from "../offer/components/OfferSaveStatus"
@@ -14,15 +15,19 @@ export function TopBar() {
         aria-label="Primary"
       >
         <div className="flex items-center gap-8">
-          <a
-            className="flex items-center gap-2.5 font-display text-xl font-bold uppercase tracking-wide"
-            href="https://projekty-sklepow.pl/"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            <img alt="" className="h-9" src="/logo.svg" />
-            Projektownia
-          </a>
+          <div className="grid grid-cols-[auto_auto] items-center gap-x-2.5">
+            <Link
+              className="contents font-display text-xl font-bold uppercase tracking-wide"
+              search={(previous) => previous}
+              to="/offer"
+            >
+              <img alt="" className="row-span-2 h-9" src="/logo.svg" />
+              <span className="leading-none">Kalkulator</span>
+            </Link>
+            <span className="pointer-events-none leading-none min-w-36">
+              <OfferSaveStatus />
+            </span>
+          </div>
           <div className="flex gap-1">
             <Link
               className={tabClassName}
@@ -51,7 +56,18 @@ export function TopBar() {
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <OfferSaveStatus />
+          <a
+            className="flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
+            href="https://projekty-sklepow.pl/"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            dla
+            <span className="font-display text-sm font-bold uppercase tracking-wide">
+              Projektowni
+            </span>
+            <ArrowUpRight className="size-3.5" />
+          </a>
           <UserMenu />
         </div>
       </nav>

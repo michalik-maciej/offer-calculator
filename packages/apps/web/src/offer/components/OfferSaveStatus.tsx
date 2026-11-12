@@ -1,4 +1,4 @@
-import { useFormContext, useFormState, useWatch } from "react-hook-form"
+import { useFormContext, useFormState } from "react-hook-form"
 
 import { OfferInput } from "@/schemas/Offer.schema"
 
@@ -9,7 +9,6 @@ import { useOffer } from "../hooks/useOffer"
 export function OfferSaveStatus() {
   const { control } = useFormContext<OfferInput>()
   const { isDirty } = useFormState({ control })
-  const title = useWatch({ control, name: "title" })
   const { isMissing, offerId } = useOffer()
   const { hasFailed, isSaving } = useAutoSaveState()
 
@@ -21,7 +20,7 @@ export function OfferSaveStatus() {
         hasFailed ? "text-destructive" : "text-muted-foreground"
       }`}
     >
-      Oferta: {title} · {describeSaveState({ hasFailed, isDirty, isSaving })}
+      {describeSaveState({ hasFailed, isDirty, isSaving })}
     </span>
   )
 }
