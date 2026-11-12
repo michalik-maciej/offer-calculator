@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.8.0](https://github.com/michalik-maciej/projektownia-calculator/compare/v1.7.1...v1.8.0) (2026-11-12)
+
+
+### Features
+
+* restore the scroll position when returning to a page ([24c69d6](https://github.com/michalik-maciej/projektownia-calculator/commit/24c69d6654b89f877a326940196d7d71fa223f3b))
+
+
+### Bug Fixes
+
+* answer 404 for an unknown component and report invalid update fields ([44cbe89](https://github.com/michalik-maciej/projektownia-calculator/commit/44cbe8959db3caac02d87d7fbfd9cfa227f67486))
+* answer 409 for an already registered email and update the auth standard ([bf834e0](https://github.com/michalik-maciej/projektownia-calculator/commit/bf834e072e372fe0ca30cf60061e8b11c282c35c))
+* limit demo sessions per address ([3ae256a](https://github.com/michalik-maciej/projektownia-calculator/commit/3ae256afca695ee9b889ce13d3ab1b4beeebe086))
+* send the session cookie with SameSite=Lax ([0f09351](https://github.com/michalik-maciej/projektownia-calculator/commit/0f09351d5e98cfda1ce0778c9aae56600b91b0bd))
+
 ## [1.7.1](https://github.com/michalik-maciej/projektownia-calculator/compare/v1.7.0...v1.7.1) (2026-10-26)
 
 
