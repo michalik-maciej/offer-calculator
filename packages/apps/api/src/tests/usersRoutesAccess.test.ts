@@ -109,6 +109,19 @@ describe("user management routes", () => {
     expect(users.all()).toHaveLength(0)
   })
 
+  it("refuses to register an email that already has an account", async () => {
+    const { app, users } = await setup()
+
+    const res = await request(app)
+      .post("/api/auth/register")
+      .set("Cookie", adminCookie)
+      .send({ email: "other@example.com", password: "password123" })
+
+    expect(res.status).toBe(409)
+    expect(res.body).toEqual({ error: "Email already registered" })
+    expect(users.all()).toHaveLength(1)
+  })
+
   it("rejects setting a password for a non-admin", async () => {
     const { app, other } = await setup()
 

@@ -13,8 +13,8 @@ The cost is accepted deliberately: a token cannot be revoked before it expires.
 ### Every Data Route Requires requireAuth
 
 A route that reads or writes persisted data is bound through `withAuth`, which wraps a `Router()`
-and injects `requireAuth` ahead of the handlers. Public by design are only the health check and
-login.
+and injects `requireAuth` ahead of the handlers. Public by design are only the health check, login
+and the demo session.
 
 ```ts
 const guarded = withAuth(router)
@@ -28,9 +28,10 @@ would be wrong to protect wholesale. The wrapper only removes the repetition, so
 the bare `router` is the visible sign that it is public on purpose. The offers router went unguarded
 for months, which is how a whole feature ends up public without anyone deciding it.
 
-The protection is pinned by `packages/apps/api/src/tests/offerRoutesAuth.test.ts`, which walks every
-offer route without a cookie and requires 401, and rejects a forged token as well. The inventory and
-auth routers have no such test yet.
+The protection is pinned per router in `packages/apps/api/src/tests/`: `offerRoutesAuth.test.ts`
+walks every offer route without a cookie and requires 401, and rejects a forged token as well, while
+`authRoutesAccess.test.ts`, `inventoryRoutesAccess.test.ts` and `usersRoutesAccess.test.ts` do the
+same for their routers, including the 403 for a role that may not write.
 
 ### requireAuth Validates the Payload, Not Just the Signature
 
@@ -92,8 +93,10 @@ the account you created:
 UPDATE "User" SET role = 'ADMIN' WHERE email = 'you@example.com';
 ```
 
-`prisma.user.create` in the repository sets no role, so every account starts as `USER`, including
-the one the seed makes for the demo.
+`createUser` in the repository defaults the role to `USER`, so every registered account starts as
+`USER`, and so does the account the seed makes for the demo; only `POST /api/auth/demo` passes
+`DEMO`. Registering an email that already has an account answers 409, which the dialog reports as
+such.
 
 ### User Management Is Three ADMIN-Only Routes
 

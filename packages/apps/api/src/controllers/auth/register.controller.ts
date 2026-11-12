@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs"
 import { Request, Response } from "express"
 import * as v from "valibot"
+import { Prisma } from "@prisma/client"
 
 import { LoginInputSchema } from "@/schemas/auth/Login.schema"
 import type { User } from "@/schemas/user/User.schema"
@@ -29,6 +30,12 @@ export function registerController({
       const user = await createUser(email, await bcrypt.hash(password, 10))
       res.status(201).json({ id: user.id, email: user.email, role: user.role })
     } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === "P2002"
+      ) {
+        return res.status(409).json({ error: "Email already registered" })
+      }
       console.error("Failed to create user:", error)
       res.status(500).json({ error: "Failed to create user" })
     }

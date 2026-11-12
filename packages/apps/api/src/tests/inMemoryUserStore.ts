@@ -12,6 +12,13 @@ type TestUserStore = UserStore & {
   markAsHavingOffers: (id: string) => void
 }
 
+function uniqueEmailError() {
+  return new Prisma.PrismaClientKnownRequestError("Unique constraint failed", {
+    code: "P2002",
+    clientVersion: "test",
+  })
+}
+
 function notFoundError() {
   return new Prisma.PrismaClientKnownRequestError("Record not found", {
     code: "P2025",
@@ -35,6 +42,10 @@ export function createInMemoryUserStore(): TestUserStore {
       passwordHash: string,
       role: Role = Role.USER,
     ) => {
+      if ([...stored.values()].some((user) => user.email === email)) {
+        throw uniqueEmailError()
+      }
+
       const user: User = {
         createdAt: new Date(),
         email,
