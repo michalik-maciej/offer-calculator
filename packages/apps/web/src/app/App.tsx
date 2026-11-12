@@ -46,6 +46,9 @@ const router = createRouter({
   context: {
     queryClient,
   },
+  scrollRestoration: true,
+  // Keyed by address, not by history entry, so returning through the top bar restores the position too.
+  getScrollRestorationKey: (location) => location.href,
 })
 
 declare module "@tanstack/react-router" {
