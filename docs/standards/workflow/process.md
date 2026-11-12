@@ -108,7 +108,7 @@ between code and documentation never shows up in a single change. The areas rota
 | Area                  | Scope                                               | Last audit |
 | --------------------- | --------------------------------------------------- | ---------- |
 | Domain                | `packages/domain`                                   | 2026-10-26 |
-| API: auth and sharing | `packages/apps/api`                                 | never      |
+| API: auth and sharing | `packages/apps/api`                                 | 2026-11-12 |
 | Web                   | `packages/apps/web`: components and data fetching   | never      |
 | Documentation vs code | `CLAUDE.md`, `docs/`                                | never      |
 | Build and CI          | `tsconfig*.json`, `turbo.json`, `.github/workflows` | never      |
