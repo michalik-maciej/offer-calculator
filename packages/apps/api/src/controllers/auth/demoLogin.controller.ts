@@ -1,15 +1,14 @@
-import bcrypt from "bcryptjs"
 import { Request, Response } from "express"
 import { randomUUID } from "node:crypto"
 import { Role } from "@prisma/client"
 
 import { demoExampleOffer } from "./demoExampleOffer"
+import { hashPassword } from "./hashPassword"
 import { issueSession } from "./issueSession"
 import { OfferStore } from "../../db/offer.repository"
 import { UserStore } from "../../db/user.repository"
 
 const DEMO_EMAIL_DOMAIN = "projektownia.app"
-const PASSWORD_SALT_ROUNDS = 10
 
 export function demoLoginController({
   createOffer,
@@ -32,7 +31,7 @@ export function demoLoginController({
 
       const user = await createUser(
         `demo+${randomUUID()}@${DEMO_EMAIL_DOMAIN}`,
-        await bcrypt.hash(randomUUID(), PASSWORD_SALT_ROUNDS),
+        await hashPassword(randomUUID()),
         Role.DEMO,
       )
 

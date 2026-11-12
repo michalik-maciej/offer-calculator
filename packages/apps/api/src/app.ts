@@ -29,14 +29,19 @@ type AppDependencies = {
 /**
  * Builds the Express application with its middleware and routes.
  *
- * This is the composition root: the only place that decides where the offer
- * routes read the component inventory and the saved offers from.
+ * This is the composition root: the only place that picks the real stores the
+ * routes read from and write to.
  *
+ * @param components - Catalogue writes for the admin routes. Defaults to the
+ * Prisma repository.
  * @param getInventory - Source of the component catalogue. Defaults to the
  * database repository; tests pass a fixture so the offer endpoint can be
  * exercised without a database.
  * @param offers - Persistence for saved offers. Defaults to the Prisma
  * repository; tests pass an in-memory store.
+ * @param users - Persistence for accounts, used by sign-in, the demo and user
+ * management. Defaults to the Prisma repository; tests pass an in-memory
+ * store.
  */
 export function createApp({
   components = componentStore,

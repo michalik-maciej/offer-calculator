@@ -1,4 +1,3 @@
-import bcrypt from "bcryptjs"
 import { Request, Response } from "express"
 import * as v from "valibot"
 import { Prisma } from "@prisma/client"
@@ -6,6 +5,7 @@ import { Prisma } from "@prisma/client"
 import { LoginInputSchema } from "@/schemas/auth/Login.schema"
 import type { User } from "@/schemas/user/User.schema"
 
+import { hashPassword } from "./hashPassword"
 import { UserStore } from "../../db/user.repository"
 
 type ErrorResponse = {
@@ -27,7 +27,7 @@ export function registerController({
 
     const { email, password } = output
     try {
-      const user = await createUser(email, await bcrypt.hash(password, 10))
+      const user = await createUser(email, await hashPassword(password))
       res.status(201).json({ id: user.id, email: user.email, role: user.role })
     } catch (error) {
       if (

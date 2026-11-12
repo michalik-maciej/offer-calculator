@@ -1,6 +1,6 @@
-import bcrypt from "bcryptjs"
 import { Role } from "@prisma/client"
 
+import { hashPassword } from "../src/controllers/auth/hashPassword"
 import { prisma } from "../src/db/prisma"
 
 declare const process: {
@@ -12,8 +12,6 @@ const DEMO_USER = {
   email: "demo@example.com",
   password: "demo1234",
 }
-
-const PASSWORD_SALT_ROUNDS = 10
 
 function databaseHost() {
   const url = process.env.DATABASE_URL
@@ -36,7 +34,7 @@ async function seedDemoUser() {
     update: {},
     create: {
       email: DEMO_USER.email,
-      password: await bcrypt.hash(DEMO_USER.password, PASSWORD_SALT_ROUNDS),
+      password: await hashPassword(DEMO_USER.password),
       role: Role.USER,
     },
   })

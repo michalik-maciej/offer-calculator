@@ -1,4 +1,3 @@
-import bcrypt from "bcryptjs"
 import { Request, Response } from "express"
 import * as v from "valibot"
 import { Prisma } from "@prisma/client"
@@ -7,6 +6,7 @@ import { IdParamSchema } from "@/schemas/IdParam.schema"
 import { UserPasswordUpdateSchema } from "@/schemas/user/UserPasswordUpdate.schema"
 
 import { UserStore } from "../../db/user.repository"
+import { hashPassword } from "../auth/hashPassword"
 
 export function setUserPasswordController({ users }: { users: UserStore }) {
   return async (req: Request, res: Response) => {
@@ -26,7 +26,7 @@ export function setUserPasswordController({ users }: { users: UserStore }) {
     }
 
     try {
-      const passwordHash = await bcrypt.hash(parsedBody.output.password, 10)
+      const passwordHash = await hashPassword(parsedBody.output.password)
       await users.updateUserPassword(parsedParams.output.id, passwordHash)
       return res.sendStatus(204)
     } catch (error) {
