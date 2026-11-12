@@ -54,6 +54,21 @@ describe("demo account", () => {
     expect(res.headers["set-cookie"]?.[0]).toMatch(/; SameSite=Lax/)
   })
 
+  it("starts at most ten demo sessions an hour from one address, then answers 429", async () => {
+    const { app, users } = setup()
+    const DEMO_SESSIONS_ALLOWED = 10
+
+    for (let session = 0; session < DEMO_SESSIONS_ALLOWED; session++) {
+      await request(app).post("/api/auth/demo")
+    }
+
+    const blocked = await request(app).post("/api/auth/demo")
+
+    expect(blocked.status).toBe(429)
+    expect(blocked.body).toEqual({ error: "Too many demo sessions" })
+    expect(users.all()).toHaveLength(DEMO_SESSIONS_ALLOWED)
+  })
+
   it("seeds an example offer for a fresh demo account", async () => {
     const { app, offers } = setup()
 

@@ -126,6 +126,11 @@ The store is in memory, which follows from the machine that stops when idle (dec
 nowhere to keep a shared counter and the budget resets on restart. This raises the cost of guessing
 a password from free to inconvenient. It is not a defence against a distributed attempt.
 
+`POST /api/auth/demo` gets the same treatment from `createDemoRateLimit` (`src/routes/demoRateLimit.ts`):
+ten sessions per hour from one address, every call counted, answered with 429 and
+`{ error: "Too many demo sessions" }`. The route is public and each call writes an account and an
+offer that stay for 24 hours, so without a budget a loop could fill the database.
+
 For a per-IP budget to mean anything behind Fly's proxy, `createApp` sets `app.set("trust proxy", 1)`.
 Without it every request arrives carrying the proxy's address and the whole world shares one budget.
 

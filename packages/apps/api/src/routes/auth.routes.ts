@@ -2,6 +2,7 @@ import type { Router as ExpressRouter } from "express"
 import { Router } from "express"
 import { get } from "lodash/fp"
 
+import { createDemoRateLimit } from "./demoRateLimit"
 import { createLoginRateLimit } from "./loginRateLimit"
 import { withAuth } from "./withAuth"
 import { demoLoginController } from "../controllers/auth/demoLogin.controller"
@@ -26,7 +27,11 @@ export function createAuthRouter({
     res.json({ user: get("user", req) })
   })
   router.post("/login", createLoginRateLimit(), loginController(users))
-  router.post("/demo", demoLoginController({ ...users, ...offers }))
+  router.post(
+    "/demo",
+    createDemoRateLimit(),
+    demoLoginController({ ...users, ...offers }),
+  )
   guarded.post("/logout", logoutController())
   guarded.post("/register", requireAdmin, registerController(users))
 
