@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken"
 import request from "supertest"
 import { describe, expect, it } from "vitest"
+import { Prisma } from "@prisma/client"
 
 import { componentCatalogMock } from "@/domain/fixtures/componentCatalog"
 
@@ -56,5 +57,48 @@ describe("inventory routes", () => {
       .send({})
 
     expect(res.status).toBe(400)
+  })
+
+  it("answers 404 when an admin changes a component that does not exist", async () => {
+    const recordNotFound = async () => {
+      throw new Prisma.PrismaClientKnownRequestError("Record not found", {
+        code: "P2025",
+        clientVersion: "test",
+      })
+    }
+    const appWithoutComponent = createApp({
+      components: {
+        createComponent: recordNotFound,
+        deleteComponent: recordNotFound,
+        updateComponent: recordNotFound,
+      },
+      getInventory: async () => componentCatalogMock,
+    })
+    const missingId = "9c92ab09-1f56-403d-a86f-c70087645c62"
+
+    const attempts = await Promise.all([
+      request(appWithoutComponent)
+        .put(`/api/inventory/items/${missingId}`)
+        .set("Cookie", cookieFor("ADMIN"))
+        .send({ price: 10 }),
+      request(appWithoutComponent)
+        .delete(`/api/inventory/items/${missingId}`)
+        .set("Cookie", cookieFor("ADMIN")),
+    ])
+
+    for (const res of attempts) {
+      expect(res.status).toBe(404)
+      expect(res.body).toEqual({ error: "Component not found" })
+    }
+  })
+
+  it("names the invalid field when an admin updates a component", async () => {
+    const res = await request(app)
+      .put("/api/inventory/items/9c92ab09-1f56-403d-a86f-c70087645c62")
+      .set("Cookie", cookieFor("ADMIN"))
+      .send({ price: "dziesięć" })
+
+    expect(res.status).toBe(400)
+    expect(res.body.issues.nested).toHaveProperty("price")
   })
 })
