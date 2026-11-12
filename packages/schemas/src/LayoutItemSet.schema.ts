@@ -6,7 +6,7 @@ export const LayoutItemSetValue = v.object({
   items: v.array(
     v.object({
       id: v.string(),
-      quantity: v.pipe(v.number(), v.minValue(1)),
+      quantity: v.number(),
     }),
   ),
   ...OfferInclusionEntries,

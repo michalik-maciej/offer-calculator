@@ -105,16 +105,17 @@ describe("POST /api/offers", () => {
     })
   })
 
-  it("returns 400 for an item set with a quantity below one", async () => {
+  it("prices an item set with a negative quantity as a deduction", async () => {
     const res = await request(app)
       .post("/api/offers")
       .set("Cookie", authCookie)
       .send({
         discountPercentage: 0,
-        layouts: [{ items: [{ id: "foot-37", quantity: 0 }] }],
+        layouts: [{ items: [{ id: "foot-37", quantity: -2 }] }],
         title: "Zestaw",
       })
 
-    expect(res.status).toBe(400)
+    expect(res.status).toBe(201)
+    expect(res.body.output.pricing).toMatchObject({ basePrice: -88.78 })
   })
 })

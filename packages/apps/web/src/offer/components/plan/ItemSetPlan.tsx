@@ -83,7 +83,6 @@ export function ItemSetPlan({
           {panelTab === "edit" && (
             <ComponentQuantityFields
               label="Elementy"
-              min={1}
               name={`layouts.${layoutIndex}.items`}
             />
           )}
