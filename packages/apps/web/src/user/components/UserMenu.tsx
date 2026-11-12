@@ -26,7 +26,7 @@ export function UserMenu() {
 
   return (
     <>
-      <DropdownMenu>
+      <DropdownMenu modal={false}>
         <DropdownMenuTrigger
           aria-label="Menu użytkownika"
           className="flex size-9 cursor-pointer items-center justify-center rounded-full bg-highlight font-display text-base font-bold uppercase text-foreground"

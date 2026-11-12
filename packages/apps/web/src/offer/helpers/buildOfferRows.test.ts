@@ -10,7 +10,7 @@ const wallLayout = {
 }
 
 describe("buildOfferRows", () => {
-  it("gives every item of a set its own row, after the runs before it", () => {
+  it("lists a set as one row with its items in the description", () => {
     const rows = buildOfferRows({
       keys: ["wall", "set"],
       layoutOutputs: [
@@ -53,18 +53,10 @@ describe("buildOfferRows", () => {
         quantity: 3,
       },
       {
-        basePrice: 88.78,
+        basePrice: 388.78,
         code: "Z-02",
-        description: "stopa 37",
-        key: "set-0",
-        name: "Zestaw elementów",
-        quantity: 2,
-      },
-      {
-        basePrice: 300,
-        code: "Z-02",
-        description: "inne 3/240/3",
-        key: "set-1",
+        description: "stopa 37, inne 3/240/3",
+        key: "set",
         name: "Zestaw elementów",
         quantity: 1,
       },
