@@ -113,13 +113,15 @@ with the most tests in it.
 ## 6. Authentication is a stateless JWT in an httpOnly cookie
 
 **Decision.** Login signs a JWT (7-day expiry) and sets it as an `httpOnly`, `secure`,
-`sameSite: "none"` cookie. There is no session table and no server-side session state.
+`sameSite: "lax"` cookie. There is no session table and no server-side session state.
 
 **Why.** Stateless auth is what lets the API hold no memory between requests, which is what lets the
 Fly machine stop entirely when nobody is using it (`min_machines_running = 0`,
 `auto_stop_machines = 'stop'` in `fly.toml`). A session store would need somewhere to live and
-would have to survive that. `sameSite: "none"` is required because the front end and the API are on
-different sites (Vercel and Fly).
+would have to survive that. `sameSite: "lax"` is enough because the browser never calls Fly
+directly: production requests `/api` on the Vercel origin, which `vercel.json` rewrites to the API,
+and in development both run on `localhost`. A cookie that cross-site requests do not carry protects
+against cross-site request forgery on its own, without relying on CORS or on the body format.
 
 **Cost.** A token cannot be revoked before it expires. For a tool with a handful of known users that
 is acceptable; it would not be for a multi-tenant product.

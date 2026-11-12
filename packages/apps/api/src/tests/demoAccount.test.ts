@@ -46,6 +46,14 @@ describe("demo account", () => {
     expect(users.all()).toHaveLength(2)
   })
 
+  it("issues a session cookie that cross-site requests do not carry", async () => {
+    const { app } = setup()
+
+    const res = await request(app).post("/api/auth/demo")
+
+    expect(res.headers["set-cookie"]?.[0]).toMatch(/; SameSite=Lax/)
+  })
+
   it("seeds an example offer for a fresh demo account", async () => {
     const { app, offers } = setup()
 

@@ -2,10 +2,11 @@
 
 ### Stateless JWT in an httpOnly Cookie
 
-Login signs a JWT with a 7 day expiry and sets it as an `httpOnly`, `secure`, `sameSite: "none"`
+Login signs a JWT with a 7 day expiry and sets it as an `httpOnly`, `secure`, `sameSite: "lax"`
 cookie. There is no session table and no server-side session state, which is what allows the Fly
-machine to stop entirely when nobody is using the app. `sameSite: "none"` is required because the
-front end (Vercel) and the API (Fly) are different sites.
+machine to stop entirely when nobody is using the app. `Lax` holds because the browser only ever
+talks to the Vercel origin, which rewrites `/api` to Fly (`vercel.json`), so the cookie never has to
+cross sites; calling the Fly URL from the browser directly would break sign-in (decision 6).
 
 The cost is accepted deliberately: a token cannot be revoked before it expires.
 

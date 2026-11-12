@@ -25,7 +25,7 @@ export function issueSession(
     httpOnly: true,
     path: "/",
     secure: true,
-    sameSite: "none",
+    sameSite: "lax",
   })
 
   return user
