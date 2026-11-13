@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.9.0](https://github.com/michalik-maciej/projektownia-calculator/compare/v1.8.0...v1.9.0) (2026-11-12)
+
+
+### Features
+
+* list an item set as one row in the offer ([d9cc2c1](https://github.com/michalik-maciej/projektownia-calculator/commit/d9cc2c105638323ad2441751ddaa55653d6d36fb))
+
+
+### Bug Fixes
+
+* allow negative quantities in an item set ([b5eb0a1](https://github.com/michalik-maciej/projektownia-calculator/commit/b5eb0a1718b76b02da0ef76da7a6e433640ee06d))
+* logo linking and status position ([31fc5a9](https://github.com/michalik-maciej/projektownia-calculator/commit/31fc5a9eb057e5eb2de6685850a68b137d04f245))
+
 ## [1.8.0](https://github.com/michalik-maciej/projektownia-calculator/compare/v1.7.1...v1.8.0) (2026-11-12)
 
 
